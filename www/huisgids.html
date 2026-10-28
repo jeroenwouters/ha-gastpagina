@@ -1,0 +1,998 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Huisgids ’t Zeemonster</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..900,0..100;1,9..144,400..900,0..100&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: één smalle leeskolom zoals een gids op tafel; navy band met feiten bovenaan, tentakel eronder, secties als rustige blokken met één accent */
+:root{
+  --bg:#EDF2F2; --surface:#DCE6E7; --card:#F8FAFA; --ink:#2F3D49; --ink-soft:#4A5966;
+  --band:#24394A; --band-text:#EDF2F2; --coral:#E07A5F; --coral-ink:#1E2A34; --terra:#A6503A;
+  --rule:rgba(47,61,73,.16); --mist:#B3C4C8;
+  --f-display:'Fraunces',Georgia,'Times New Roman',serif;
+  --f-body:'Instrument Sans','Helvetica Neue',Arial,system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1B2A36; --surface:#22384A; --card:#263E51; --ink:#E6EEEF; --ink-soft:#B5C4CA;
+  --band:#13212B; --band-text:#E6EEEF; --coral:#E8866C; --coral-ink:#1E2A34; --terra:#EE9A80;
+  --rule:rgba(230,238,239,.16); --mist:#5F7884; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#1B2A36; --surface:#22384A; --card:#263E51; --ink:#E6EEEF; --ink-soft:#B5C4CA;
+  --band:#13212B; --band-text:#E6EEEF; --coral:#E8866C; --coral-ink:#1E2A34; --terra:#EE9A80;
+  --rule:rgba(230,238,239,.16); --mist:#5F7884; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--terra);outline-offset:3px;border-radius:4px}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);font-variation-settings:'SOFT' 30,'WONK' 0;letter-spacing:-.025em;text-wrap:balance;margin:0}
+h1{font-weight:800;font-size:clamp(44px,9vw,76px);line-height:.98}
+h2{font-weight:700;font-size:clamp(30px,5.4vw,42px);line-height:1.06}
+h3{font-weight:700;font-size:23px;line-height:1.2}
+.label{font-size:12.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--terra);margin:0}
+.dry{font-family:var(--f-display);font-style:italic;font-size:19px;color:var(--ink-soft);margin:0}
+p{margin:0}
+.logo{display:block;width:min(300px,70vw);height:auto;color:var(--ink)}
+header.top{padding-block:28px 40px}
+.hero{display:grid;gap:20px;margin-top:44px}
+.hero p.lead{font-size:19px;max-width:34em}
+/* band */
+.band{position:relative;z-index:2;background:var(--band);color:var(--band-text)}
+.band svg.wave{position:absolute;left:0;right:0;top:-38px;width:100%;height:40px;display:block}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding-block:20px 30px;font-family:var(--f-display);font-weight:600;font-size:19px;line-height:1.25;text-align:center}
+.facts>div{padding:4px 10px;border-right:1px solid rgba(237,242,242,.25)}
+.facts>div:last-child{border-right:0}
+.facts small{display:block;font-family:var(--f-body);font-weight:500;font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.75;margin-bottom:4px}
+.tentwrap{position:relative;z-index:1;height:0}
+.tent{position:absolute;right:max(24px,calc(50% - 360px));top:-36px;width:118px;height:auto;transform-origin:50% 0;filter:drop-shadow(0 4px 6px rgba(20,33,43,.2))}
+@media (prefers-reduced-motion:no-preference){.tent{animation:sway 5s ease-in-out infinite}@keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(4deg)}}}
+/* inhoud */
+nav.toc{padding-block:64px 8px}
+nav.toc ul{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px;max-width:calc(100% - 150px)}
+nav.toc a{display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;background:var(--surface);text-decoration:none;font-size:15px;font-weight:600}
+nav.toc a:hover{background:var(--mist)}
+main{display:flex;flex-direction:column}
+section.s{padding-block:56px;border-top:1px solid var(--rule);display:flex;flex-direction:column;gap:18px;scroll-margin-top:12px}
+section.s:first-child{border-top:0}
+.s ul,.s ol{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:6px}
+.s li{padding-left:.2em}
+.note{background:var(--surface);border-radius:0 0 28px 0;padding:16px 20px;display:flex;flex-direction:column;gap:6px}
+.note b{font-weight:600}
+.sub{display:flex;flex-direction:column;gap:14px;padding-top:12px}
+.sub+.sub{border-top:1px dashed var(--rule);padding-top:28px;margin-top:10px}
+.mode{font-weight:600}
+ol.steps{list-style:none;padding:0;counter-reset:st;gap:10px}
+ol.steps li{counter-increment:st;position:relative;padding:0 0 0 44px;min-height:30px}
+ol.steps li::before{content:counter(st);position:absolute;left:0;top:0;width:28px;height:28px;border-radius:999px;background:var(--band);color:var(--band-text);display:grid;place-items:center;font-size:14px;font-weight:600;margin-top:1px}
+.check{list-style:none;padding:0}
+.check li{position:relative;padding:0 0 0 34px}
+.check li::before{content:"";position:absolute;left:0;top:0;width:18px;height:18px;border:2px solid var(--ink);border-radius:5px;margin-top:4px}
+.key{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:12px}
+.key>div{background:var(--card);border:1px solid var(--rule);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.key small{font-size:12.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.key strong{font-family:var(--f-display);font-weight:700;font-size:22px;line-height:1.2;overflow-wrap:anywhere}
+.copy{align-self:flex-start;margin-top:6px;min-height:36px;padding:0 14px;border-radius:999px;border:0;background:var(--coral);color:var(--coral-ink);font:600 14px var(--f-body);cursor:pointer}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:16px}
+th,td{text-align:left;padding:10px 12px 10px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-size:12.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+td:last-child{font-variant-numeric:tabular-nums}
+.warn{border-left:3px solid var(--coral);padding:4px 0 4px 16px;display:flex;flex-direction:column;gap:8px}
+.warn ul{gap:6px}
+.rules{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:10px}
+.rules li{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:12px 16px}
+footer{background:var(--band);color:var(--band-text);margin-top:40px}
+footer .wrap{padding-block:48px 56px;display:flex;flex-direction:column;gap:16px}
+footer .logo{color:var(--band-text);width:200px}
+@media (max-width:620px){
+  .facts{grid-template-columns:1fr 1fr;row-gap:14px}
+  .facts>div:nth-child(2){border-right:0}
+  .tent{width:84px}
+  nav.toc ul{max-width:calc(100% - 96px)}
+  section.s{padding-block:44px}
+}
+/* ===== Bediening ===== */
+:root{--on:#E07A5F; --on-soft:rgba(224,122,95,.16); --on-text:#1E2A34; --tile:#F8FAFA; --tile-off:#E4ECED; --dim:#8A979F; --ok:#4E7F6A}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--on:#E8866C; --on-soft:rgba(232,134,108,.22); --on-text:#1E1612; --tile:#223646; --tile-off:#1E3040; --dim:#7F909A; --ok:#7FB59C}}
+:root[data-theme="dark"]{--on:#E8866C; --on-soft:rgba(232,134,108,.22); --on-text:#1E1612; --tile:#223646; --tile-off:#1E3040; --dim:#7F909A; --ok:#7FB59C}
+nav.toc a.toc-hot{background:var(--coral);color:var(--coral-ink)}
+nav.toc a.toc-hot:hover{background:var(--coral);filter:brightness(1.05)}
+#bediening-sectie{gap:22px}
+.ctl-btn{font:600 15px var(--f-body);color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ctl-btn:disabled{cursor:default}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.quick button{min-height:96px;border-radius:22px 22px 22px 6px;border:0;background:var(--band);color:var(--band-text);display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:10px;padding:16px 18px;text-align:left}
+.quick button:nth-child(2){background:var(--surface);color:var(--ink);border-radius:22px 22px 6px 22px}
+.quick button span.t{font-family:var(--f-display);font-weight:700;font-size:22px;line-height:1.1}
+.quick button span.d{font-size:13px;opacity:.8;font-weight:500}
+.quick svg{width:26px;height:26px}
+.quick button:active{transform:scale(.98)}
+.rooms{display:flex;flex-direction:column;gap:14px}
+.room{background:var(--surface);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.room-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.room-head h3{font-size:21px}
+.room-off{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--rule);background:transparent;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(150px,100%),1fr));gap:10px}
+.tile{position:relative;background:var(--tile);border:1px solid var(--rule);border-radius:16px;min-width:0;display:flex;flex-direction:column}
+.tile.light .main{min-height:76px;border:0;background:transparent;border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:8px;text-align:left;width:100%}
+.tile .ic{width:24px;height:24px;color:var(--dim)}
+.tile .lbl{font-weight:600;font-size:15px;line-height:1.2}
+.tile .st{font-size:13px;color:var(--ink-soft);font-weight:500}
+.tile.is-on{background:var(--on-soft);border-color:transparent}
+.tile.is-on .ic{color:var(--on)}
+.tile.is-on .main .dot{background:var(--on);box-shadow:0 0 12px var(--on)}
+.dot{position:absolute;top:14px;right:14px;width:10px;height:10px;border-radius:999px;background:var(--rule)}
+.dimrow{display:flex;align-items:center;gap:8px;padding:0 14px 12px}
+.dimrow input{flex:1;min-width:0;accent-color:var(--on);height:28px}
+.dimrow output{font-size:12.5px;color:var(--ink-soft);min-width:34px;text-align:right;font-variant-numeric:tabular-nums}
+.tile.na{opacity:.55;background:var(--tile-off)}
+.tile.na .st{color:var(--ink-soft)}
+.tile.cover,.tile.climate,.radio{padding:12px 14px;gap:10px}
+.tile.cover{grid-column:1 / -1}
+.tile.light:not(.is-on) .dimrow{display:none}
+.radio .ic{width:24px;height:24px;color:var(--ink-soft)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.seg button{min-height:44px;border-radius:12px;border:1px solid var(--rule);background:transparent;font-size:14px}
+.seg button[aria-pressed="true"]{background:var(--band);color:var(--band-text);border-color:transparent}
+.bar{height:6px;border-radius:999px;background:var(--tile-off);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ink-soft);border-radius:999px;transition:width .4s}
+.tile.climate{grid-column:1 / -1}
+.clim{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px}
+.clim .now{font-family:var(--f-display);font-weight:700;font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+.clim .now{white-space:nowrap}.clim .now small{font-size:18px}
+.clim .set{display:flex;align-items:center;gap:8px;justify-self:end}
+.clim .set button{width:48px;height:48px;border-radius:999px;border:1px solid var(--rule);background:transparent;font-size:22px;line-height:1}
+.clim .set output{min-width:64px;text-align:center;font-weight:600;font-size:18px;font-variant-numeric:tabular-nums}
+.clim-foot{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.heat{font-size:13px;font-weight:600;color:var(--on);display:inline-flex;align-items:center;gap:6px}
+.heat::before{content:"";width:8px;height:8px;border-radius:999px;background:var(--on)}
+.idle{font-size:13px;color:var(--ink-soft)}
+.toggle{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--rule);background:transparent;font-size:14px}
+.toggle[aria-pressed="true"]{background:var(--on);color:var(--on-text);border-color:transparent}
+.radio{background:var(--tile);border:1px solid var(--rule);border-radius:16px;display:flex;flex-direction:column}
+.stations{display:flex;flex-wrap:wrap;gap:8px}
+.stations button{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--rule);background:transparent;font-size:14px}
+.stations button[aria-pressed="true"]{background:var(--on);color:var(--on-text);border-color:transparent}
+.radio-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.vol{display:flex;align-items:center;gap:8px}
+.vol button{width:44px;height:44px;border-radius:999px;border:1px solid var(--rule);background:transparent;font-size:20px}
+.vol output{min-width:44px;text-align:center;font-weight:600;font-variant-numeric:tabular-nums}
+.playing{font-size:13px;color:var(--ink-soft)}
+.offline{background:var(--surface);border-radius:0 0 28px 0;padding:20px;display:flex;flex-direction:column;gap:8px}
+.offline b{font-family:var(--f-display);font-size:22px;font-weight:700}
+.skel{display:flex;flex-direction:column;gap:12px}
+.skel i{display:block;height:84px;border-radius:18px;background:var(--surface)}
+.skel i:nth-child(1){height:96px}
+@media (prefers-reduced-motion:no-preference){.skel i{animation:pulse 1.4s ease-in-out infinite}.skel i:nth-child(2){animation-delay:.15s}.skel i:nth-child(3){animation-delay:.3s}@keyframes pulse{50%{opacity:.5}}}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--band);color:var(--band-text);border-radius:16px;padding:10px 10px 10px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 12px 30px -10px rgba(10,20,28,.5);width:min(440px,calc(100% - 32px));justify-content:space-between;font-size:15px}
+.toast button{white-space:nowrap;flex-shrink:0}
+.toast button{min-height:40px;padding:0 14px;border-radius:999px;border:0;background:var(--coral);color:var(--coral-ink)}
+.fab{position:fixed;z-index:20;right:max(16px,calc(env(safe-area-inset-right,0px) + 16px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:inline-flex;align-items:center;gap:8px;min-height:52px;padding:0 20px 0 16px;border-radius:999px;background:var(--coral);color:var(--coral-ink);text-decoration:none;font:600 16px var(--f-body);box-shadow:0 10px 24px -8px rgba(20,33,43,.45);transition:opacity .25s,transform .25s}
+.fab svg{width:22px;height:22px}
+.fab.hide{opacity:0;transform:translateY(12px);pointer-events:none}
+.demo{border:1px dashed var(--rule);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--ink-soft)}
+.demo div{display:flex;flex-wrap:wrap;gap:6px}
+.demo button{min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--rule);background:transparent;font:600 13px var(--f-body);color:var(--ink);cursor:pointer}
+.demo button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.gate{background:var(--surface);border-radius:0 0 28px 0;padding:22px 20px;display:flex;flex-direction:column;gap:8px}
+.gate b{font-family:var(--f-display);font-variation-settings:'SOFT' 30,'WONK' 0;letter-spacing:-.02em;font-size:26px;font-weight:700;line-height:1.15}
+.gate p{margin:0}
+.gate-ic{width:44px;height:44px;border-radius:999px;background:var(--band);color:var(--band-text);display:grid;place-items:center}
+.gate-ic .ic{width:22px;height:22px;color:inherit}
+.gate-row{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.gate input{flex:1 1 180px;min-width:0;min-height:52px;padding:0 16px;border-radius:14px;border:1px solid var(--rule);background:var(--card);color:var(--ink);font:600 19px var(--f-body);letter-spacing:.06em;text-transform:uppercase}
+.gate input:focus-visible{outline:2px solid var(--coral);outline-offset:2px}
+.gate input[aria-invalid="true"]{border-color:var(--terra)}
+.gate button{min-height:52px;padding:0 22px;border-radius:999px;border:0;background:var(--coral);color:var(--coral-ink);font-size:16px}
+.gate button:disabled{opacity:.6}
+.gate-err{min-height:1.6em;color:var(--terra);font-weight:600;font-size:15px}
+.gate-again{align-self:flex-start;margin-top:6px;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--rule);background:transparent}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .gate-err{color:var(--coral)}}
+:root[data-theme="dark"] .gate-err{color:var(--coral)}
+@media (min-width:700px){.quick button{min-height:110px}.tile.climate,.tile.cover{grid-column:span 2}}
+
+/* weergaves + tabbalk */
+body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+.tabbar{position:fixed;z-index:25;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr 1fr;gap:8px;background:var(--band);padding:8px max(12px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));box-shadow:0 -8px 24px -12px rgba(10,20,28,.5)}
+.tabbar a{display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;border-radius:16px;color:var(--band-text);text-decoration:none;font:600 16px var(--f-body);opacity:.75}
+.tabbar a svg{width:22px;height:22px}
+.tabbar a[aria-current="page"]{background:var(--coral);color:var(--coral-ink);opacity:1}
+.ctl-top{padding-block:20px 0}
+.logo-sm{width:150px}
+.ctl-sec{border-top:0;padding-block:28px 40px}
+.toast{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+@media (min-width:700px){.tabbar{left:50%;right:auto;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));width:420px;border-radius:22px;padding:8px}}
+</style>
+
+<div id="view-gids">
+<header class="top wrap">
+  <svg class="logo" viewBox="4 17 1188 346" role="img" aria-label="’t Zeemonster"><path fill="#E86141" fill-rule="evenodd" d="M632.39 243.29C626.74 232.04 616.60 224.53 604.12 222.37C601.84 221.97 594.23 221.81 592.96 222.13C592.54 222.23 592.19 222.15 591.93 221.89C590.80 220.76 597.46 205.71 603.70 195.25C609.61 185.37 614.73 178.28 624.38 166.62C630.01 159.83 635.94 151.85 638.25 148.00C639.12 146.56 640.13 144.92 640.51 144.36C643.26 140.33 645.87 134.83 648.16 128.25C652.11 116.89 652.72 107.62 650.26 95.88C648.37 86.81 643.33 77.89 636.36 71.27C634.22 69.24 628.51 65.34 625.88 64.11C615.35 59.20 603.06 58.81 594.51 63.10C588.96 65.89 584.89 70.11 583.36 74.63C582.76 76.42 582.70 76.90 582.80 79.25C582.99 83.74 584.44 85.96 588.51 88.01C592.61 90.06 593.87 91.98 593.87 96.12C593.88 99.14 593.32 100.57 591.30 102.78C588.80 105.51 585.52 106.67 580.94 106.44C577.74 106.27 575.81 105.68 572.89 103.95C564.84 99.17 560.50 90.87 560.50 80.23C560.50 71.06 563.76 62.72 570.77 54.00C580.75 41.57 595.89 33.11 614.12 29.77C628.12 27.22 643.49 28.80 656.75 34.17C672.59 40.58 686.20 52.28 694.24 66.39C699.33 75.33 702.11 82.74 704.12 92.75C706.74 105.79 706.48 122.70 703.47 135.85C701.28 145.38 700.37 148.58 697.83 155.61C692.39 170.67 685.56 184.41 674.51 202.50C669.28 211.07 670.07 210.16 666.09 212.24C655.93 217.57 648.65 224.00 641.07 234.38C639.25 236.86 638.43 238.22 635.39 243.81C634.12 246.15 633.80 246.09 632.39 243.29ZM823.42 241.32C823.12 240.95 822.03 239.78 821.00 238.74C815.78 233.45 807.89 232.89 798.55 237.15C796.16 238.24 795.62 238.25 795.28 237.19C792.80 229.49 791.50 210.13 792.73 199.38C793.50 192.73 793.63 191.96 794.91 186.77C796.06 182.12 798.83 173.58 799.88 171.50C800.19 170.88 800.93 169.20 801.52 167.77C804.63 160.26 812.43 148.68 819.64 140.88C821.70 138.65 823.10 137.34 829.16 131.95C832.78 128.75 839.60 124.25 845.00 121.51C862.29 112.75 881.07 110.34 897.89 114.73C912.92 118.66 925.63 129.00 929.86 140.75C932.86 149.06 932.72 155.47 929.38 163.69C928.21 166.56 926.10 169.62 923.82 171.75C918.76 176.48 915.53 178.00 910.56 178.00C904.32 178.00 900.26 174.34 900.56 168.98C900.74 165.65 902.01 163.87 905.57 161.97C909.42 159.92 911.00 157.60 911.00 154.00C911.00 145.88 900.22 139.57 888.36 140.75C881.76 141.40 871.93 144.97 867.16 148.43C855.10 157.18 848.46 165.46 843.54 177.88C839.30 188.59 838.47 199.43 841.02 210.77C842.69 218.22 844.44 222.64 848.51 229.64C849.88 232.00 851.00 234.10 851.00 234.31C851.00 234.65 850.45 234.68 846.73 234.56C840.69 234.37 836.29 235.08 832.33 236.88C830.57 237.68 825.60 240.90 824.99 241.63C824.54 242.18 824.03 242.08 823.42 241.32ZM830.33 228.10C834.85 226.56 836.32 218.64 833.60 210.52C832.75 207.98 830.60 204.78 829.06 203.75C826.73 202.20 823.51 203.05 821.76 205.69C817.53 212.08 819.82 224.56 825.80 227.65C827.59 228.58 828.63 228.68 830.33 228.10ZM631.45 208.50C634.51 207.30 636.56 205.73 639.02 202.68C644.27 196.18 646.31 191.50 646.29 186.00C646.27 183.10 645.86 181.65 644.54 179.90C639.81 173.63 629.27 176.57 623.41 185.79C619.54 191.88 617.83 198.07 618.78 202.55C620.03 208.45 625.27 210.90 631.45 208.50ZM829.86 191.15C833.79 188.85 836.59 182.73 836.57 176.50C836.55 172.65 835.61 170.58 833.40 169.51C828.24 167.02 822.35 173.88 821.82 183.00C821.43 189.76 825.38 193.77 829.86 191.15ZM656.61 166.51C662.78 164.38 668.44 155.68 668.92 147.58C669.33 140.73 666.72 136.91 661.61 136.88C659.78 136.88 659.43 136.96 657.72 137.80C651.73 140.76 646.81 149.05 646.33 157.00C645.88 164.34 650.50 168.61 656.61 166.51ZM844.71 160.98C847.70 159.52 851.99 154.74 853.42 151.26C854.09 149.63 854.20 146.87 853.65 145.80C850.52 139.81 839.83 144.94 836.74 153.91C834.67 159.91 839.02 163.76 844.71 160.98ZM869.75 141.50C873.51 140.20 876.57 138.08 878.04 135.76C880.46 131.96 876.16 128.92 870.25 130.27C866.44 131.14 861.41 135.01 860.78 137.57C860.29 139.59 861.03 141.25 862.75 141.99C863.79 142.43 867.90 142.14 869.75 141.50ZM671.16 125.26C673.52 124.22 675.50 121.57 677.03 117.38C677.84 115.16 677.85 115.06 677.86 110.75C677.87 107.15 677.79 106.09 677.40 104.75C675.11 96.97 669.22 93.82 664.40 97.79C659.39 101.92 657.99 115.08 661.88 121.50C664.23 125.38 667.68 126.78 671.16 125.26ZM664.87 85.14C672.32 80.78 666.14 63.99 656.12 61.38C650.93 60.03 647.20 63.35 647.56 68.98C647.71 71.29 648.12 72.54 649.94 76.25C652.16 80.77 656.51 84.86 660.07 85.77C661.50 86.14 663.65 85.86 664.87 85.14ZM638.94 60.53C644.01 57.94 640.89 51.49 633.12 48.50C630.77 47.59 626.65 47.62 624.72 48.57C620.98 50.40 620.91 54.49 624.57 57.22C626.79 58.88 631.03 60.69 633.62 61.09C635.21 61.33 637.93 61.05 638.94 60.53Z"/><path fill="currentColor" fill-rule="evenodd" d="M700.62 351.73C690.77 350.97 681.98 348.49 672.70 343.85C655.99 335.49 643.06 319.11 638.23 300.18C634.95 287.35 635.43 270.20 639.38 258.12C644.48 242.55 653.03 231.25 666.65 222.06C676.37 215.50 690.90 211.24 704.88 210.84C719.10 210.43 731.06 212.93 742.87 218.80C751.22 222.94 760.67 231.55 766.37 240.21C770.03 245.76 773.74 253.47 775.47 259.12C778.51 269.12 779.27 284.29 777.24 294.88C775.96 301.52 773.80 307.97 770.95 313.62C765.00 325.43 758.04 333.24 747.00 340.49C734.65 348.61 716.66 352.97 700.62 351.73ZM412.38 350.22C393.38 348.42 377.76 335.41 371.36 316.07C367.65 304.84 367.05 288.71 369.87 275.62C371.42 268.42 373.37 263.35 377.02 256.96C386.35 240.60 402.60 231.00 420.93 231.00C430.49 231.00 439.55 233.59 446.43 238.29C449.21 240.19 454.20 245.13 456.03 247.81C459.92 253.50 462.67 261.67 462.93 268.38C463.14 273.77 462.32 276.40 459.53 279.23C457.30 281.50 455.45 282.37 445.62 285.76C432.13 290.41 426.52 292.34 420.38 294.42C412.10 297.22 409.87 298.11 409.37 298.83C408.32 300.33 409.64 304.65 412.45 308.93C418.43 318.02 427.30 321.38 437.62 318.47C442.20 317.18 444.06 316.07 448.58 311.97C452.72 308.21 455.24 307.19 458.25 308.08C463.65 309.67 464.66 316.33 460.61 323.70C459.35 325.99 455.08 332.12 453.62 333.72C451.45 336.11 446.21 340.74 443.98 342.23C435.27 348.08 422.87 351.21 412.38 350.22ZM1048.00 350.22C1040.88 349.66 1032.92 346.90 1026.76 342.83C1022.72 340.18 1017.67 335.08 1014.79 330.77C1004.89 315.97 1001.78 293.65 1006.86 273.86C1009.98 261.72 1016.90 249.75 1024.36 243.62C1031.20 237.99 1036.41 235.08 1043.55 232.91C1051.68 230.43 1063.11 230.49 1070.50 233.05C1075.22 234.68 1080.09 237.32 1083.08 239.86C1091.36 246.89 1096.53 257.73 1096.93 268.88C1097.13 274.56 1096.36 277.08 1093.57 279.87C1091.46 281.99 1090.19 282.61 1082.38 285.37C1080.72 285.95 1077.80 286.99 1075.88 287.69C1073.95 288.39 1071.36 289.29 1070.12 289.71C1068.89 290.12 1065.91 291.15 1063.50 291.99C1061.09 292.84 1057.21 294.15 1054.88 294.92C1049.86 296.57 1046.43 297.99 1045.57 298.80C1043.06 301.15 1049.23 312.36 1055.20 316.28C1058.96 318.74 1062.41 319.65 1067.21 319.43C1073.89 319.12 1078.37 316.98 1084.16 311.33C1086.83 308.73 1088.38 307.91 1090.64 307.91C1093.27 307.91 1095.38 309.35 1096.60 311.99C1097.38 313.68 1097.33 317.98 1096.52 320.25C1093.59 328.36 1084.72 339.01 1077.08 343.59C1071.10 347.17 1062.90 349.76 1056.38 350.12C1054.86 350.20 1053.01 350.31 1052.25 350.36C1051.49 350.41 1049.58 350.34 1048.00 350.22ZM314.34 349.61C296.82 347.12 283.44 336.33 275.52 318.31C272.32 311.01 270.78 302.52 270.76 292.09C270.75 284.68 271.37 279.55 273.15 272.48C274.94 265.33 278.61 257.80 283.47 251.25C285.36 248.71 292.38 241.78 294.45 240.42C299.75 236.93 304.83 234.51 310.01 233.02C323.99 228.99 336.90 229.87 348.62 235.64C352.57 237.58 354.54 239.03 358.07 242.62C363.25 247.89 366.00 253.32 367.58 261.38C368.98 268.49 369.02 271.58 367.76 275.16C366.88 277.65 363.93 280.66 361.49 281.55C360.88 281.77 358.41 282.65 356.00 283.50C353.59 284.35 350.05 285.61 348.12 286.31C346.20 287.01 341.08 288.73 336.75 290.13C322.85 294.64 316.01 297.17 314.62 298.32C313.70 299.08 313.69 299.11 313.82 300.52C314.06 303.18 317.09 308.95 319.81 311.91C324.44 316.98 331.28 319.84 337.67 319.40C344.14 318.95 349.21 316.55 354.79 311.30C358.19 308.10 359.78 307.46 363.02 307.98C367.27 308.67 369.66 313.42 368.36 318.59C367.29 322.89 363.97 328.74 360.34 332.77C351.90 342.12 342.91 347.14 330.62 349.39C327.46 349.97 317.77 350.10 314.34 349.61ZM975.25 349.75C969.92 348.86 965.84 347.35 962.25 344.93C957.43 341.68 953.19 335.46 951.64 329.38C950.20 323.72 950.22 324.20 950.30 289.86C950.39 253.55 950.68 257.36 947.69 256.50C944.11 255.47 942.80 254.50 941.66 252.03C940.77 250.12 940.88 245.41 941.85 243.31C942.64 241.60 943.96 240.23 945.89 239.11C948.33 237.70 952.75 234.20 954.33 232.43C956.22 230.32 959.50 225.15 960.36 222.93C960.69 222.07 961.60 219.52 962.38 217.25C963.17 214.98 963.97 212.79 964.18 212.38C968.22 204.39 981.34 204.00 985.25 211.75C986.50 214.23 986.54 214.61 986.84 225.56C987.12 235.99 987.12 235.99 987.82 236.68C988.51 237.38 988.51 237.38 995.45 237.50C1002.39 237.62 1002.39 237.62 1004.05 238.45C1011.06 241.90 1010.93 253.22 1003.86 256.02C1002.47 256.57 1001.94 256.61 995.74 256.74C989.97 256.86 989.01 256.93 988.43 257.32C986.88 258.33 986.98 256.36 986.98 285.91C986.99 303.21 987.08 313.36 987.24 314.22C988.13 318.90 989.99 321.85 992.94 323.28C994.75 324.17 997.21 324.07 1000.12 323.00C1002.83 322.01 1004.00 321.96 1005.61 322.77C1009.08 324.50 1010.59 329.03 1009.11 333.32C1008.15 336.11 1004.54 340.56 1001.27 342.98C999.40 344.37 993.22 347.54 990.90 348.30C986.89 349.62 978.90 350.36 975.25 349.75ZM907.88 349.59C905.32 349.20 902.96 348.61 901.41 347.96C898.14 346.58 898.29 346.60 896.38 347.52C893.10 349.10 890.39 348.79 887.98 346.57C885.95 344.68 885.01 342.68 883.63 337.25C880.21 323.77 879.61 316.60 881.63 313.12C883.16 310.48 885.34 309.17 888.17 309.20C891.86 309.23 893.36 310.59 896.15 316.43C899.27 322.97 901.57 325.90 905.05 327.76C909.27 330.01 913.38 328.11 914.25 323.50C914.57 321.81 914.20 319.53 913.37 318.10C911.71 315.24 909.16 312.90 901.50 307.22C881.87 292.66 875.20 278.16 879.77 260.00C882.21 250.30 889.10 242.35 898.59 238.29C905.60 235.29 914.45 234.86 921.32 237.18C924.02 238.09 924.02 238.09 925.67 237.24C930.47 234.79 934.72 236.88 936.33 242.50C937.54 246.72 938.97 261.47 938.51 265.03C937.84 270.29 935.00 273.01 930.53 272.69C927.07 272.45 925.17 270.63 923.38 265.86C920.90 259.26 917.76 255.94 914.00 255.92C909.05 255.88 906.54 261.18 909.06 266.30C910.28 268.76 912.52 271.16 917.08 274.87C919.03 276.46 921.48 278.46 922.52 279.32C923.57 280.17 925.31 281.55 926.39 282.38C927.48 283.20 930.23 285.73 932.52 288.00C937.07 292.52 938.95 295.05 941.44 300.01C946.96 311.01 946.15 325.49 939.45 335.31C934.47 342.62 927.07 347.38 918.00 349.13C915.94 349.53 909.39 349.83 907.88 349.59ZM81.25 349.10C73.60 348.17 66.25 343.93 61.61 337.78C58.60 333.78 56.94 329.80 55.81 323.88C55.15 320.38 55.15 320.38 55.01 289.54C54.88 258.71 54.88 258.71 54.21 258.14C53.81 257.79 52.90 257.44 51.91 257.26C45.51 256.05 42.89 248.55 46.82 242.71C47.92 241.07 48.97 240.18 51.43 238.80C53.86 237.43 58.26 233.87 60.20 231.68C63.83 227.59 65.95 224.29 69.74 216.80C72.98 210.38 73.77 209.38 76.76 207.92C81.16 205.77 85.67 205.68 89.61 207.68C92.18 208.98 93.32 210.24 94.31 212.89C94.85 214.32 94.87 214.80 95.00 225.02C95.10 233.74 95.19 235.75 95.48 236.10C96.37 237.17 96.99 237.26 104.57 237.46C111.21 237.63 111.98 237.70 113.03 238.17C116.84 239.89 118.83 244.48 118.06 249.76C117.61 252.86 116.43 254.64 113.82 256.17C112.62 256.88 112.62 256.88 104.75 257.00C97.03 257.12 96.86 257.14 96.07 257.70C95.55 258.07 95.17 258.62 95.00 259.26C94.82 259.93 94.76 268.55 94.80 286.43C94.88 312.62 94.88 312.62 95.49 314.31C96.64 317.50 98.91 319.69 101.67 320.26C103.67 320.68 105.65 320.14 108.50 318.42C113.84 315.18 118.30 317.09 119.31 323.04C120.04 327.40 117.28 333.18 111.90 338.56C107.69 342.77 100.71 346.63 94.12 348.39C91.90 348.98 91.10 349.07 86.88 349.13C84.26 349.17 81.73 349.15 81.25 349.10ZM781.79 348.24C778.48 347.57 775.89 344.07 776.37 340.93C776.82 338.00 777.46 337.05 780.99 334.01C782.81 332.44 783.73 330.76 784.40 327.75C784.90 325.54 785.14 311.43 785.12 285.75C785.11 267.49 785.25 268.46 782.23 265.10C779.57 262.14 779.13 261.16 779.13 258.25C779.12 255.41 779.81 253.70 781.61 252.04C783.20 250.57 786.08 249.26 797.75 244.70C809.89 239.96 813.98 239.69 817.25 243.42C818.84 245.22 819.08 246.15 819.24 250.98C819.33 253.90 819.47 255.37 819.66 255.43C819.82 255.48 820.96 254.36 822.19 252.95C826.75 247.73 829.39 245.53 833.62 243.42C843.02 238.75 851.58 238.88 859.86 243.81C866.13 247.55 870.53 254.50 872.24 263.37C873.09 267.76 873.24 273.66 873.25 301.79C873.25 328.36 873.26 328.72 873.77 330.39C874.47 332.65 875.20 333.68 877.36 335.46C879.71 337.38 880.28 338.49 880.28 341.12C880.28 343.46 879.73 344.74 878.09 346.25C875.63 348.52 877.19 348.38 855.62 348.38C836.62 348.38 836.62 348.38 835.19 347.67C832.65 346.42 831.25 344.15 831.25 341.25C831.25 338.84 831.84 337.61 834.02 335.48C836.12 333.41 836.78 332.34 837.42 329.95C837.80 328.54 837.86 326.04 837.94 306.25C838.05 278.98 837.87 275.64 835.99 271.83C834.70 269.20 831.72 267.25 829.00 267.25C825.59 267.25 822.16 270.68 821.06 275.18C820.53 277.39 820.25 326.89 820.76 329.25C821.23 331.41 822.15 332.96 824.24 335.12C826.86 337.82 827.12 338.37 827.12 341.00C827.12 344.26 825.70 346.49 822.76 347.85C821.64 348.37 821.38 348.38 802.25 348.41C791.59 348.44 782.39 348.36 781.79 348.24ZM1101.74 348.24C1098.90 347.91 1096.96 346.66 1095.55 344.27C1094.93 343.21 1094.88 342.91 1094.88 340.38C1094.88 336.83 1095.41 335.73 1098.38 333.23C1101.38 330.71 1102.25 329.32 1103.26 325.52C1104.05 322.58 1104.28 312.40 1104.18 286.12C1104.10 264.97 1104.06 263.01 1103.65 261.64C1102.97 259.35 1102.45 258.53 1100.37 256.50C1097.61 253.79 1097.13 252.76 1097.13 249.62C1097.12 245.69 1098.16 244.02 1102.09 241.66C1103.79 240.63 1111.61 237.15 1115.44 235.72C1116.92 235.16 1119.53 234.11 1121.25 233.38C1129.80 229.74 1134.92 229.78 1137.67 233.50C1139.07 235.40 1139.31 236.56 1139.48 242.12C1139.61 246.56 1139.67 247.13 1140.05 247.20C1140.34 247.26 1140.66 246.91 1141.09 246.08C1143.98 240.38 1148.83 235.36 1153.88 232.81C1158.87 230.30 1165.28 230.06 1169.91 232.23C1177.91 235.97 1182.08 244.10 1181.22 254.25C1180.77 259.51 1179.04 263.58 1175.82 267.02C1173.44 269.54 1171.08 270.78 1167.50 271.39C1161.40 272.43 1157.45 270.40 1154.91 264.93C1153.22 261.30 1151.42 260.10 1148.82 260.88C1146.45 261.58 1144.71 263.91 1143.72 267.71C1142.94 270.67 1142.74 277.96 1142.88 297.62C1143.05 321.47 1143.30 324.74 1145.15 328.26C1146.28 330.42 1147.37 331.68 1149.35 333.13C1152.21 335.23 1153.50 337.53 1153.50 340.50C1153.50 344.18 1150.91 347.25 1147.04 348.16C1145.46 348.53 1104.84 348.61 1101.74 348.24ZM167.00 348.00C141.88 347.88 141.88 347.88 140.60 347.20C136.88 345.24 135.14 340.80 136.40 336.48C136.96 334.56 139.42 329.96 143.08 324.00C144.81 321.18 147.27 317.15 148.55 315.04C149.83 312.93 151.48 310.29 152.22 309.16C152.97 308.04 154.14 306.17 154.83 305.00C155.52 303.83 156.95 301.52 158.01 299.88C159.07 298.23 161.82 293.84 164.12 290.12C166.42 286.41 169.07 282.19 170.00 280.75C170.93 279.31 172.11 277.39 172.64 276.50C173.16 275.61 174.32 273.75 175.21 272.38C177.97 268.13 180.22 264.54 182.82 260.27C184.19 258.01 186.28 254.69 187.45 252.89C188.63 251.09 190.23 248.56 191.01 247.25C192.63 244.53 196.49 238.46 198.23 235.88C198.88 234.91 199.84 233.39 200.37 232.50C200.90 231.61 202.42 229.19 203.76 227.12C212.37 213.87 212.94 212.65 211.37 210.79C209.51 208.58 199.75 209.00 192.23 211.61C182.34 215.04 175.64 219.88 167.84 229.25C163.45 234.51 161.63 235.62 157.38 235.62C154.10 235.62 152.54 235.05 150.62 233.14C147.70 230.21 147.30 227.34 148.51 218.00C148.79 215.85 149.87 206.77 150.26 203.25C151.24 194.43 151.90 192.30 154.36 190.04C155.73 188.78 157.05 188.10 159.05 187.63C161.44 187.07 264.17 187.06 266.33 187.62C272.07 189.12 274.56 193.38 273.13 199.23C272.69 201.01 272.53 201.30 267.42 209.30C266.57 210.63 265.09 212.99 264.12 214.53C263.16 216.08 260.98 219.49 259.28 222.11C257.57 224.73 255.48 228.00 254.63 229.38C251.88 233.83 240.74 251.55 239.00 254.25C238.07 255.69 235.48 259.86 233.25 263.50C231.02 267.14 228.92 270.49 228.59 270.93C228.25 271.38 226.89 273.53 225.55 275.70C224.22 277.88 222.13 281.23 220.92 283.15C219.71 285.06 217.26 288.99 215.47 291.88C213.68 294.76 211.62 298.02 210.88 299.12C210.15 300.23 208.52 302.81 207.25 304.88C204.68 309.04 203.36 311.14 200.42 315.75C195.56 323.36 195.29 324.09 196.80 325.60C198.31 327.11 201.28 327.47 207.62 326.90C217.75 325.99 224.35 323.66 232.94 317.97C237.91 314.67 241.46 311.46 247.24 305.02C251.02 300.80 251.81 300.11 254.14 298.93C258.73 296.61 264.03 298.15 266.23 302.45C267.46 304.87 267.44 308.63 266.11 318.93C265.77 321.65 265.09 327.02 264.62 330.88C264.14 334.73 263.57 338.66 263.35 339.62C262.23 344.42 258.98 347.47 254.54 347.90C252.59 348.09 197.56 348.15 167.00 348.00ZM472.88 348.01C467.76 347.88 467.30 347.83 466.30 347.30C463.52 345.82 462.25 343.70 462.25 340.55C462.25 338.15 463.20 336.26 465.72 333.65C468.91 330.33 469.74 328.64 470.25 324.41C470.68 320.75 470.74 266.29 470.31 263.82C469.74 260.52 469.18 259.45 466.61 256.73C463.84 253.80 463.07 252.04 463.32 249.16C463.61 245.65 465.10 243.39 468.18 241.82C473.28 239.20 491.61 231.99 495.43 231.10C497.87 230.53 501.24 230.70 502.86 231.49C506.46 233.24 507.75 236.25 507.75 242.92C507.75 247.73 508.06 248.03 510.18 245.30C515.43 238.53 523.47 233.30 531.48 231.47C534.26 230.83 540.34 230.58 543.32 230.98C551.04 232.01 558.71 237.12 563.51 244.44C564.52 245.98 565.48 247.25 565.64 247.25C565.80 247.25 567.61 245.59 569.65 243.56C575.23 238.02 578.58 235.72 584.81 233.14C589.43 231.23 591.61 230.87 598.38 230.90C604.02 230.91 604.52 230.95 606.81 231.57C613.45 233.35 619.56 237.66 623.46 243.33C628.19 250.20 629.25 256.17 629.75 278.75C630.66 319.47 630.84 321.68 633.76 327.67C634.83 329.89 635.34 330.58 637.64 332.99C640.90 336.41 641.37 337.32 641.37 340.25C641.38 342.77 640.66 344.38 638.80 346.02C636.39 348.14 637.64 348.03 613.62 348.12C591.27 348.20 588.96 348.12 587.25 347.25C584.26 345.73 582.87 343.46 582.88 340.12C582.88 337.32 583.29 336.46 585.99 333.58C589.93 329.36 590.00 329.02 590.00 313.76C589.99 289.86 589.38 270.89 588.51 267.90C587.48 264.34 585.60 261.83 583.00 260.55C580.99 259.56 577.75 259.57 575.72 260.56C572.59 262.10 570.53 265.34 569.84 269.83C569.46 272.27 569.55 289.79 570.10 321.12C570.22 327.99 570.83 329.74 574.43 333.58C577.18 336.52 577.88 337.92 577.87 340.51C577.86 343.75 576.35 346.03 573.26 347.47C571.88 348.12 571.88 348.12 550.62 348.05C538.94 348.02 529.04 347.92 528.62 347.84C527.35 347.58 525.63 346.58 524.69 345.53C523.13 343.81 522.88 343.13 522.88 340.62C522.87 337.70 523.53 336.24 526.00 333.62C528.02 331.49 528.78 330.02 529.37 327.16C529.72 325.40 529.75 322.76 529.62 303.03C529.38 267.49 529.21 265.85 525.47 262.39C520.69 257.97 514.08 259.83 511.65 266.29C510.25 270.02 510.22 270.74 510.32 299.51C510.42 328.31 510.38 327.55 511.87 330.50C512.26 331.27 513.40 332.66 514.62 333.86C515.87 335.09 516.97 336.45 517.39 337.27C519.27 340.97 517.40 345.69 513.29 347.58C512.13 348.12 512.01 348.13 495.25 348.13C485.97 348.14 475.90 348.08 472.88 348.01ZM712.68 325.36C719.63 324.34 724.52 322.51 730.51 318.68C734.99 315.80 736.44 314.52 739.87 310.38C744.00 305.39 746.13 301.61 747.96 296.09C753.09 280.57 750.59 263.16 741.63 252.12C735.09 244.07 726.30 238.77 715.83 236.59C710.98 235.58 703.63 235.58 698.63 236.58C679.71 240.39 666.71 253.26 662.72 272.12C661.93 275.83 661.85 285.11 662.58 288.50C664.67 298.29 667.42 304.21 672.84 310.53C676.52 314.83 677.12 315.36 681.30 318.13C687.44 322.19 693.12 324.39 699.62 325.25C700.86 325.41 702.04 325.58 702.25 325.62C703.51 325.87 710.36 325.70 712.68 325.36ZM713.88 298.73C707.39 298.22 702.28 295.77 697.04 290.66C693.78 287.48 692.54 285.41 690.87 280.38C688.81 274.19 689.06 267.98 691.62 261.69C693.55 256.93 695.56 254.33 699.88 251.02C702.97 248.63 703.64 248.23 706.09 247.25C715.78 243.37 726.59 245.23 734.57 252.15C740.67 257.43 744.09 266.53 743.22 275.16C742.50 282.30 738.72 288.98 732.99 293.24C727.27 297.49 721.01 299.29 713.88 298.73ZM1051.32 277.85C1056.96 275.58 1059.11 274.33 1060.19 272.69C1060.88 271.66 1060.88 271.66 1060.86 266.89C1060.85 261.35 1060.31 258.57 1058.53 254.91C1056.76 251.28 1054.93 249.72 1052.39 249.70C1050.64 249.68 1049.53 250.26 1047.87 252.05C1044.60 255.58 1042.85 261.74 1042.37 271.38C1042.14 275.93 1042.52 278.93 1043.40 279.70C1044.34 280.52 1045.13 280.33 1051.32 277.85ZM413.32 278.47C417.86 276.85 422.38 274.74 423.72 273.61C425.02 272.52 425.32 271.66 425.45 268.72C425.88 258.50 421.61 249.53 416.30 249.51C412.22 249.48 408.77 254.90 406.85 264.34C406.34 266.84 406.10 275.71 406.48 277.56C406.80 279.06 407.59 280.00 408.54 280.00C408.80 280.00 410.95 279.31 413.32 278.47ZM315.89 278.91C325.32 275.68 329.83 273.17 330.50 270.77C330.90 269.33 330.79 264.87 330.28 261.75C328.35 250.00 322.12 245.11 316.62 251.05C312.95 255.01 310.39 264.93 310.86 273.38C311.20 279.62 311.82 280.30 315.89 278.91ZM708.92 267.48C712.44 265.77 713.62 260.82 711.20 257.89C707.41 253.30 700.24 255.80 700.25 261.71C700.26 266.25 704.98 269.39 708.92 267.48ZM22.11 251.16C19.52 250.31 18.12 248.36 18.13 245.62C18.14 243.28 18.45 242.76 22.14 238.96C25.61 235.36 26.37 234.35 27.44 231.88C29.67 226.69 29.19 225.11 24.71 222.92C17.41 219.34 13.98 213.98 13.98 206.12C13.97 198.36 17.68 192.40 24.64 188.97C37.47 182.65 51.83 188.86 55.24 202.20C58.30 214.21 53.46 228.72 42.63 239.97C39.56 243.15 34.47 247.45 32.16 248.80C28.49 250.95 24.39 251.91 22.11 251.16Z"/></svg>
+  <div class="hero">
+    <p class="label">Huisgids</p>
+    <h1>Welkom<br>vierhoog.</h1>
+    <p class="lead">Welkom in ’t Zeemonster, je appartement op de vierde verdieping in Mariakerke-Bad, met het strand en de Kusttram op een paar stappen. Hier vind je alles om je snel thuis te voelen: hoe de toestellen werken, de huisregels en onze favoriete adressen in de buurt.</p>
+    <p>Adres: Meibloempjeslaan 4, 8400 Oostende (4de verdieping, met lift).</p>
+    <p>Vind je iets niet terug? Stuur gerust een bericht via WhatsApp of sms (<b>0498 84 55 45</b>) of via het platform waarop je boekte.</p>
+  </div>
+</header>
+
+<div class="band">
+  <svg class="wave" viewBox="0 0 1440 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0,30 Q180,4 360,26 T720,24 T1080,22 T1440,26 V40 H0 Z" fill="var(--band)"/></svg>
+  <div class="wrap facts">
+    <div><small>Inchecken</small>vanaf 16u</div>
+    <div><small>Uitchecken</small>tot 11u</div>
+    <div><small>Wifi</small>zeemonster</div>
+    <div><small>Host</small>0498 84 55 45</div>
+  </div>
+</div>
+<div class="tentwrap" aria-hidden="true"><svg class="tent" viewBox="559.5 26.2 148.2 220.9"><g transform="translate(0 273.3) scale(1 -1)"><path fill="#E86141" fill-rule="evenodd" d="M632.39 243.29C626.74 232.04 616.60 224.53 604.12 222.37C601.84 221.97 594.23 221.81 592.96 222.13C592.54 222.23 592.19 222.15 591.93 221.89C590.80 220.76 597.46 205.71 603.70 195.25C609.61 185.37 614.73 178.28 624.38 166.62C630.01 159.83 635.94 151.85 638.25 148.00C639.12 146.56 640.13 144.92 640.51 144.36C643.26 140.33 645.87 134.83 648.16 128.25C652.11 116.89 652.72 107.62 650.26 95.88C648.37 86.81 643.33 77.89 636.36 71.27C634.22 69.24 628.51 65.34 625.88 64.11C615.35 59.20 603.06 58.81 594.51 63.10C588.96 65.89 584.89 70.11 583.36 74.63C582.76 76.42 582.70 76.90 582.80 79.25C582.99 83.74 584.44 85.96 588.51 88.01C592.61 90.06 593.87 91.98 593.87 96.12C593.88 99.14 593.32 100.57 591.30 102.78C588.80 105.51 585.52 106.67 580.94 106.44C577.74 106.27 575.81 105.68 572.89 103.95C564.84 99.17 560.50 90.87 560.50 80.23C560.50 71.06 563.76 62.72 570.77 54.00C580.75 41.57 595.89 33.11 614.12 29.77C628.12 27.22 643.49 28.80 656.75 34.17C672.59 40.58 686.20 52.28 694.24 66.39C699.33 75.33 702.11 82.74 704.12 92.75C706.74 105.79 706.48 122.70 703.47 135.85C701.28 145.38 700.37 148.58 697.83 155.61C692.39 170.67 685.56 184.41 674.51 202.50C669.28 211.07 670.07 210.16 666.09 212.24C655.93 217.57 648.65 224.00 641.07 234.38C639.25 236.86 638.43 238.22 635.39 243.81C634.12 246.15 633.80 246.09 632.39 243.29ZM631.45 208.50C634.51 207.30 636.56 205.73 639.02 202.68C644.27 196.18 646.31 191.50 646.29 186.00C646.27 183.10 645.86 181.65 644.54 179.90C639.81 173.63 629.27 176.57 623.41 185.79C619.54 191.88 617.83 198.07 618.78 202.55C620.03 208.45 625.27 210.90 631.45 208.50ZM656.61 166.51C662.78 164.38 668.44 155.68 668.92 147.58C669.33 140.73 666.72 136.91 661.61 136.88C659.78 136.88 659.43 136.96 657.72 137.80C651.73 140.76 646.81 149.05 646.33 157.00C645.88 164.34 650.50 168.61 656.61 166.51ZM671.16 125.26C673.52 124.22 675.50 121.57 677.03 117.38C677.84 115.16 677.85 115.06 677.86 110.75C677.87 107.15 677.79 106.09 677.40 104.75C675.11 96.97 669.22 93.82 664.40 97.79C659.39 101.92 657.99 115.08 661.88 121.50C664.23 125.38 667.68 126.78 671.16 125.26ZM664.87 85.14C672.32 80.78 666.14 63.99 656.12 61.38C650.93 60.03 647.20 63.35 647.56 68.98C647.71 71.29 648.12 72.54 649.94 76.25C652.16 80.77 656.51 84.86 660.07 85.77C661.50 86.14 663.65 85.86 664.87 85.14ZM638.94 60.53C644.01 57.94 640.89 51.49 633.12 48.50C630.77 47.59 626.65 47.62 624.72 48.57C620.98 50.40 620.91 54.49 624.57 57.22C626.79 58.88 631.03 60.69 633.62 61.09C635.21 61.33 637.93 61.05 638.94 60.53Z"/></g></svg></div>
+
+<div class="wrap">
+<nav class="toc" aria-label="Inhoud">
+  <p class="label">Snel naar</p>
+  <ul>
+    <li><a class="toc-hot" href="#bediening">Bediening</a></li>
+    <li><a href="#aankomst">Aankomst en vertrek</a></li>
+    <li><a href="#wifi">Wifi en contact</a></li>
+    <li><a href="#toestellen">Toestellen</a></li>
+    <li><a href="#keuken">Keuken</a></li>
+    <li><a href="#bedden">Bedden</a></li>
+    <li><a href="#slim">Sensoren</a></li>
+    <li><a href="#veiligheid">Storingen</a></li>
+    <li><a href="#gebouw">Het gebouw</a></li>
+    <li><a href="#huisregels">Huisregels en afval</a></li>
+    <li><a href="#buurt">Buurt en strand</a></li>
+    <li><a href="#kinderen">Met kinderen</a></li>
+  </ul>
+</nav>
+
+<main>
+<section class="s" id="aankomst">
+  <p class="label">Aankomst en vertrek</p>
+  <h2>Sleutel in de bus.<br>Lift naar vier.</h2>
+  <p>Inchecken kan vanaf 16u, uitchecken ten laatste om 11u (tenzij anders afgesproken).</p>
+  <p><b>Binnenkomen:</b> de sleutel zit in een sleutelkastje in de brievenbus met “’t Zeemonster” erop. Met die sleutel open je de voordeur van het gebouw beneden en het appartement: neem de lift naar de 4de verdieping, het is de linkse deur als je uit de lift stapt.</p>
+  <p><b>Parkeren:</b> langs de grote baan met de tram is parkeren gratis. Aan de kant van de dijk is het betalend: via sms naar 4411 of een parkeerapp.</p>
+  <p><b>Fietsen en buggy’s:</b> die kun je kwijt in de berging beneden. Loop op het gelijkvloers voorbij de lift tot het einde van de gang; het is de deur recht voor je. De sleutel hangt aan de sleutelbos.</p>
+  <div class="note">
+    <b>Bij vertrek</b>
+    <ul class="check">
+      <li>Vaat in de vaatwasser en die aanzetten</li>
+      <li>Afval gesorteerd in de juiste zak of container (zie Huisregels en afval)</li>
+      <li>Gebruikte handdoeken op de grond leggen</li>
+      <li>Rolluiken dicht en lichten uit. Vergeten? Geen stress, dat kunnen wij ook op afstand.</li>
+      <li>Sleutel terug in het sleutelkastje in de brievenbus</li>
+    </ul>
+  </div>
+</section>
+
+<section class="s" id="wifi">
+  <p class="label">Wifi en contact</p>
+  <h2>Eerst de wifi.<br>Dan de zee.</h2>
+  <div class="key">
+    <div><small>Netwerk</small><strong>zeemonster</strong></div>
+    <div><small>Wachtwoord</small><strong id="pw">hetZeemonster8400</strong><button class="copy" id="copy-pw" type="button">Kopieer wachtwoord</button></div>
+  </div>
+  <p>De router staat in de rotan kast in de living.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Wie</th><th>Nummer</th></tr></thead>
+    <tbody>
+      <tr><td>Jeroen (host)</td><td>0498 84 55 45 (ook WhatsApp)</td></tr>
+      <tr><td>Noodgevallen (ambulance, brandweer)</td><td>112</td></tr>
+      <tr><td>Politie</td><td>101</td></tr>
+      <tr><td>Huisarts van wacht</td><td>1733</td></tr>
+      <tr><td>Apotheek van wacht</td><td>apotheek.be of 0903 99 000</td></tr>
+      <tr><td>Antigifcentrum</td><td>070 245 245</td></tr>
+      <tr><td>Dichtstbijzijnde ziekenhuis</td><td>AZ Oostende, Gouwelozestraat 100, 8400 Oostende</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><b>Bij een probleem in het appartement</b><p>De zekeringkast zit in de gang, boven de deur tussen de twee appartementen. De hoofdkraan van het water zit beneden, in de ruimte achter de deur links van de lift. Rookmelders hangen in elke slaapkamer en de gang.</p></div>
+</section>
+
+
+
+
+<section class="s" id="toestellen">
+  <p class="label">Toestellen</p>
+  <h2>Hoe werkt dit<br>nu weer?</h2>
+
+  <div class="sub">
+    <h3>Oven</h3>
+    <p>Samsung Dual Cook-oven: je kunt hem gebruiken als één grote oven, of in twee aparte zones verdelen met de scheidingsplaat.</p>
+    <p class="mode">Eén grote oven (scheidingsplaat eruit)</p>
+    <ol class="steps">
+      <li>Draai de linkerknop naar de functie die je wilt, bijvoorbeeld hete lucht (het ventilatoricoontje). De standaardtemperatuur verschijnt op het display.</li>
+      <li>Draai de rechterknop om de temperatuur te kiezen.</li>
+      <li>Druk op <b>OK</b>. De oven warmt op en piept als hij op temperatuur is.</li>
+    </ol>
+    <p class="mode">Twee zones (scheidingsplaat erin)</p>
+    <ol class="steps">
+      <li>Schuif de scheidingsplaat in de middelste geleider (niveau 3). De oven herkent ze vanzelf.</li>
+      <li>Kies een functie met de linkerknop. Boven kan grill, hete lucht of bovenwarmte met hete lucht; onder kan hete lucht, onderwarmte met hete lucht of onderwarmte.</li>
+      <li>Tik op het icoontje van de bovenste of onderste zone, stel met de rechterknop de temperatuur in en druk op <b>OK</b>. Doe hetzelfde voor de andere zone.</li>
+    </ol>
+    <p><b>Uitzetten:</b> draai de linkerknop terug naar <b>0</b>. De ventilator blijft nog even draaien om af te koelen; dat is normaal.</p>
+    <p><b>Knoppen reageren niet?</b> Dan staat het kinderslot aan: hou de toets met het slotje 3 seconden ingedrukt.</p>
+    <div class="warn"><b>Let op</b><ul>
+      <li>De twee zones mogen niet te ver uit elkaar liggen. Staat boven op 200 °C, dan kan onder tussen ongeveer 145 en 250 °C; bij een te groot verschil weigert de oven.</li>
+      <li>Haal de scheidingsplaat er niet uit terwijl de oven in twee zones bakt. Dan verschijnt de melding -dC-; zet de oven dan uit en weer aan.</li>
+      <li>Leg geen aluminiumfolie, bakpapier of bakplaat op de bodem van de oven.</li>
+      <li>Zet het rooster in de oven met de uitstekende randjes naar voren.</li>
+      <li>Rooster en bakplaten liggen in de schuif onder de oven.</li>
+    </ul></div>
+  </div>
+
+  <div class="sub">
+    <h3>Koffiezet</h3>
+    <p>Een klassieke filterkoffiezet.</p>
+    <ol class="steps">
+      <li>Giet koud water in het reservoir, één maatstreep per tas.</li>
+      <li>Leg een papieren filter in de filterhouder en doe er gemalen koffie in, ongeveer één afgestreken maatlepel per tas.</li>
+      <li>Zet het toestel aan met de schakelaar.</li>
+    </ol>
+    <p>Koffie en filters liggen in de schuiven van het eiland. Gooi de gebruikte filter na gebruik weg en zet de koffiezet uit.</p>
+  </div>
+
+  <div class="sub">
+    <h3>Verwarming en thermostaat</h3>
+    <p>Het appartement verwarmt deze winter met elektrische olieradiatoren. Die worden automatisch aangestuurd door de thermostaat in elke kamer, dus je hoeft ze zelf niet aan of uit te zetten. Er zijn drie thermostaten. Met de + en de − knop zet je de temperatuur hoger of lager.</p>
+    <div class="key">
+      <div><small>Woonkamer</small><p>Aan de muur bij de tafel en het keukeneiland. Is er twee uur niemand in de kamer, dan zakt de temperatuur vanzelf terug naar 18 °C. Kom je terug, dan springt hij automatisch naar 20 °C.</p></div>
+      <div><small>Slaapkamer</small><p>Op het nachtkastje. Die thermostaat stuurt de verwarming in de slaapkamer; aan het verwarmingstoestel zelf hoef je niets te doen. Blijft op de temperatuur die jij kiest.</p></div>
+      <div><small>Badkamer</small><p>Naast de spiegel. De spiegel is zelf ook verwarming en wordt dus warm; dat is normaal. Na een uur springt hij altijd terug naar 18 °C.</p></div>
+    </div>
+    <div class="warn"><b>Let op</b><p>De oude radiatoren aan de muur zijn buiten gebruik en worden niet warm; aan de knoppen draaien heeft geen zin. Leg niets over of tegen de olieradiatoren, en sluit geen extra kachels aan.</p></div>
+  </div>
+
+  <div class="sub">
+    <h3>Rolluiken</h3>
+    <p>Er zijn vijf rolluiken.</p>
+    <ul>
+      <li><b>Woonkamer:</b> de schakelaar zit achter het gordijn aan het balkon, links van de balkondeur. Die bedient de drie rolluiken aan de voorkant van het gebouw, in de living en de keuken.</li>
+      <li><b>Kinderkamer:</b> het kleine rolluik voor het raam tussen de twee kamers bedien je met de knop rechts van de deur. Eén keer drukken: is het dicht, dan gaat het open, en omgekeerd.</li>
+    </ul>
+    <div class="warn"><p>Niet forceren als een rolluik hapert. Laat het ons weten, dan bekijken we het.</p></div>
+  </div>
+
+  <div class="sub">
+    <h3>Kookplaat en dampkap</h3>
+    <p>De kookplaat heeft een kinderslot. Hou het knopje met het slotje lang ingedrukt om het slot aan of uit te zetten. De dampkap springt vanzelf aan zodra je kookt.</p>
+    <div class="warn"><p>De standaardstand is 9, en die wordt heel snel heet. Zet hem lager voor je begint, anders brandt je eten snel aan.</p></div>
+  </div>
+
+  <div class="sub">
+    <h3>Vaatwasser</h3>
+    <p>De tabletten liggen in het onderste schuifje naast de spoelbak. Als het programma klaar is, piept de vaatwasser en gaat de deur vanzelf een stukje open. Laat de vaat dan nog even drogen voor je uitlaadt.</p>
+  </div>
+
+  <div class="sub">
+    <h3>Tv en soundbar</h3>
+    <p>Zet de tv aan; je komt op het startscherm van de smart-tv. Er is geen kabelabonnement, alles loopt via streamingapps: VRT MAX, VTM GO en Play voor de gewone zenders, en Netflix, HBO Max en andere. Log in met je eigen account en vergeet niet uit te loggen bij vertrek. Vergeet je het toch, geen probleem: wij loggen alle apps uit voordat de volgende gasten komen.</p>
+    <p>Het geluid komt uit de soundbar; het volume regel je gewoon met de afstandsbediening van de tv.</p>
+  </div>
+
+  <div class="sub">
+    <h3>Licht en ventilator in de slaapkamer</h3>
+    <p>De ledstrip aan het bed bedien je met de knopjes in het hoofdbord. Lang indrukken om te dimmen. De ventilator en het licht bedien je met de witte afstandsbediening.</p>
+  </div>
+</section>
+
+<section class="s" id="keuken">
+  <p class="label">De keuken</p>
+  <h2>Pak maar.</h2>
+  <p>Olie, zout, peper en koffie met filters mag je vrij gebruiken; de koffie en filters liggen in de schuiven van het eiland. Afwasmiddel en handzeep staan aan de spoelbak, keukenrol op het aanrecht. Afvalzakjes liggen in de schuif onder de oven.</p>
+</section>
+
+<section class="s" id="bedden">
+  <p class="label">Bedden en linnen</p>
+  <h2>Opgemaakt<br>bij aankomst.</h2>
+  <p>De bedden zijn opgemaakt bij aankomst en de handdoeken liggen klaar. Er is geen extra beddengoed, en ook geen wasmachine of droogkast.</p>
+  <p>De kleine slaapkamer heeft geen raam, maar wel mechanische ventilatie die de lucht ververst. Die werkt automatisch op basis van een luchtkwaliteitsmeter.</p>
+</section>
+
+<section class="s" id="slim">
+  <p class="label">Slimme toestellen en sensoren</p>
+  <h2>Het huis let op.<br>Het kijkt niet.</h2>
+  <p>Het appartement regelt verwarming en licht deels automatisch. In de rotan kast in de living zit een sensor die merkt of er iemand in de kamer is; daarmee zakt de verwarming terug als de living een tijd leeg is. In het toilet zorgt een sensor ervoor dat het licht vanzelf aangaat.</p>
+  <div class="note"><p>De sensoren merken alleen óf er iemand is. Er zijn geen camera’s en er wordt niets opgenomen, beeld noch geluid. Alles werkt ook gewoon met de schakelaars en knoppen; je hebt geen app nodig.</p></div>
+</section>
+
+<section class="s" id="veiligheid">
+  <p class="label">Veiligheid en storingen</p>
+  <h2>Als er iets<br>stilvalt.</h2>
+  <p>De brandblusser staat in de gang. [aanvullen zodra branddeken, EHBO-kit en zaklamp er zijn]</p>
+  <div class="warn"><b>Rookmelder gaat af</b><p>Verlaat bij rook of brand meteen het appartement via de trap, niet de lift, en bel 112. De rookmelders zijn verbonden: wij krijgen ook een melding en nemen meteen contact met je op. Gaat hij af door koken, zet dan een raam open.</p></div>
+  <p><b>Geen stroom:</b> kijk in de zekeringkast (in de gang, boven de deur tussen de twee appartementen) of er een schakelaar naar beneden staat en zet hem terug omhoog. Valt hij meteen weer uit, trek dan het laatst gebruikte toestel uit het stopcontact.</p>
+  <p><b>Geen internet:</b> de router staat in de rotan kast in de living. Trek de stekker uit, wacht 30 seconden en steek hem terug in. Na een paar minuten werkt het weer.</p>
+  <p><b>Niet opgelost?</b> Bel of stuur een bericht, ook ’s avonds bij iets dringends zoals een lek of geen verwarming.</p>
+</section>
+
+<section class="s" id="gebouw">
+  <p class="label">Het gebouw</p>
+  <h2>Je hebt buren.</h2>
+  <p>Je deelt de lift, de gangen en de traphal met vaste bewoners. De sleutel uit het sleutelkastje opent de voordeur beneden, het appartement en de berging. In de berging kun je fietsen en buggy’s kwijt, en je afval zetten.</p>
+</section>
+
+<section class="s" id="huisregels">
+  <p class="label">Huisregels en afval</p>
+  <h2>Kort en duidelijk.</h2>
+  <p>We wonen in een gebouw met vaste bewoners; deze afspraken houden het voor iedereen aangenaam.</p>
+  <ul class="rules">
+    <li>Maximaal 4 gasten</li>
+    <li>Niet roken binnen; op de balkons mag het wel</li>
+    <li>Je mag beide balkons gebruiken, vooraan en achteraan</li>
+    <li>Geen huisdieren</li>
+    <li>Stilte tussen 22u en 8u, ook in de lift en de traphal</li>
+    <li>Geen feestjes of extra bezoekers die blijven slapen</li>
+  </ul>
+  <div class="note"><b>Afval</b><p>Sorteer in drie zakken: PMD, restafval en gft (groenafval met etensresten). De zakjes liggen in de schuif onder de oven. Volle zakken zet je beneden in onze privéberging. Daar staan ook bakken voor papier, glas en groenafval.</p></div>
+</section>
+
+<section class="s" id="buurt">
+  <p class="label">In de buurt · strand en kust</p>
+  <h2>De zee.<br>Om de hoek.</h2>
+  <p>Het strand van Mariakerke ligt om de hoek, en de Kusttram stopt vlak bij de deur aan halte Mariakerke Bad. Daarmee ben je in een kwartiertje in het centrum van Oostende, en rij je langs de hele kust van De Panne tot Knokke.</p>
+  <p>Strandspullen vind je in de berging beneden, waar ook de fietsen staan. Breng ze na gebruik zandvrij terug.</p>
+</section>
+
+<section class="s" id="kinderen">
+  <p class="label">Met kinderen</p>
+  <h2>Kleine gasten.</h2>
+  <p>Een kinderstoel en een reisbedje staan in de berging beneden. De gezelschapsspellen en het speelgoed liggen in de rotan kast in de living. Leg alle stukjes terug in de doos, dan kan de volgende familie ook spelen.</p>
+</section>
+</main>
+</div>
+
+
+
+<footer>
+  <div class="wrap">
+    <svg class="logo" viewBox="4 17 1188 346" role="img" aria-label="’t Zeemonster"><path fill="#E86141" fill-rule="evenodd" d="M632.39 243.29C626.74 232.04 616.60 224.53 604.12 222.37C601.84 221.97 594.23 221.81 592.96 222.13C592.54 222.23 592.19 222.15 591.93 221.89C590.80 220.76 597.46 205.71 603.70 195.25C609.61 185.37 614.73 178.28 624.38 166.62C630.01 159.83 635.94 151.85 638.25 148.00C639.12 146.56 640.13 144.92 640.51 144.36C643.26 140.33 645.87 134.83 648.16 128.25C652.11 116.89 652.72 107.62 650.26 95.88C648.37 86.81 643.33 77.89 636.36 71.27C634.22 69.24 628.51 65.34 625.88 64.11C615.35 59.20 603.06 58.81 594.51 63.10C588.96 65.89 584.89 70.11 583.36 74.63C582.76 76.42 582.70 76.90 582.80 79.25C582.99 83.74 584.44 85.96 588.51 88.01C592.61 90.06 593.87 91.98 593.87 96.12C593.88 99.14 593.32 100.57 591.30 102.78C588.80 105.51 585.52 106.67 580.94 106.44C577.74 106.27 575.81 105.68 572.89 103.95C564.84 99.17 560.50 90.87 560.50 80.23C560.50 71.06 563.76 62.72 570.77 54.00C580.75 41.57 595.89 33.11 614.12 29.77C628.12 27.22 643.49 28.80 656.75 34.17C672.59 40.58 686.20 52.28 694.24 66.39C699.33 75.33 702.11 82.74 704.12 92.75C706.74 105.79 706.48 122.70 703.47 135.85C701.28 145.38 700.37 148.58 697.83 155.61C692.39 170.67 685.56 184.41 674.51 202.50C669.28 211.07 670.07 210.16 666.09 212.24C655.93 217.57 648.65 224.00 641.07 234.38C639.25 236.86 638.43 238.22 635.39 243.81C634.12 246.15 633.80 246.09 632.39 243.29ZM823.42 241.32C823.12 240.95 822.03 239.78 821.00 238.74C815.78 233.45 807.89 232.89 798.55 237.15C796.16 238.24 795.62 238.25 795.28 237.19C792.80 229.49 791.50 210.13 792.73 199.38C793.50 192.73 793.63 191.96 794.91 186.77C796.06 182.12 798.83 173.58 799.88 171.50C800.19 170.88 800.93 169.20 801.52 167.77C804.63 160.26 812.43 148.68 819.64 140.88C821.70 138.65 823.10 137.34 829.16 131.95C832.78 128.75 839.60 124.25 845.00 121.51C862.29 112.75 881.07 110.34 897.89 114.73C912.92 118.66 925.63 129.00 929.86 140.75C932.86 149.06 932.72 155.47 929.38 163.69C928.21 166.56 926.10 169.62 923.82 171.75C918.76 176.48 915.53 178.00 910.56 178.00C904.32 178.00 900.26 174.34 900.56 168.98C900.74 165.65 902.01 163.87 905.57 161.97C909.42 159.92 911.00 157.60 911.00 154.00C911.00 145.88 900.22 139.57 888.36 140.75C881.76 141.40 871.93 144.97 867.16 148.43C855.10 157.18 848.46 165.46 843.54 177.88C839.30 188.59 838.47 199.43 841.02 210.77C842.69 218.22 844.44 222.64 848.51 229.64C849.88 232.00 851.00 234.10 851.00 234.31C851.00 234.65 850.45 234.68 846.73 234.56C840.69 234.37 836.29 235.08 832.33 236.88C830.57 237.68 825.60 240.90 824.99 241.63C824.54 242.18 824.03 242.08 823.42 241.32ZM830.33 228.10C834.85 226.56 836.32 218.64 833.60 210.52C832.75 207.98 830.60 204.78 829.06 203.75C826.73 202.20 823.51 203.05 821.76 205.69C817.53 212.08 819.82 224.56 825.80 227.65C827.59 228.58 828.63 228.68 830.33 228.10ZM631.45 208.50C634.51 207.30 636.56 205.73 639.02 202.68C644.27 196.18 646.31 191.50 646.29 186.00C646.27 183.10 645.86 181.65 644.54 179.90C639.81 173.63 629.27 176.57 623.41 185.79C619.54 191.88 617.83 198.07 618.78 202.55C620.03 208.45 625.27 210.90 631.45 208.50ZM829.86 191.15C833.79 188.85 836.59 182.73 836.57 176.50C836.55 172.65 835.61 170.58 833.40 169.51C828.24 167.02 822.35 173.88 821.82 183.00C821.43 189.76 825.38 193.77 829.86 191.15ZM656.61 166.51C662.78 164.38 668.44 155.68 668.92 147.58C669.33 140.73 666.72 136.91 661.61 136.88C659.78 136.88 659.43 136.96 657.72 137.80C651.73 140.76 646.81 149.05 646.33 157.00C645.88 164.34 650.50 168.61 656.61 166.51ZM844.71 160.98C847.70 159.52 851.99 154.74 853.42 151.26C854.09 149.63 854.20 146.87 853.65 145.80C850.52 139.81 839.83 144.94 836.74 153.91C834.67 159.91 839.02 163.76 844.71 160.98ZM869.75 141.50C873.51 140.20 876.57 138.08 878.04 135.76C880.46 131.96 876.16 128.92 870.25 130.27C866.44 131.14 861.41 135.01 860.78 137.57C860.29 139.59 861.03 141.25 862.75 141.99C863.79 142.43 867.90 142.14 869.75 141.50ZM671.16 125.26C673.52 124.22 675.50 121.57 677.03 117.38C677.84 115.16 677.85 115.06 677.86 110.75C677.87 107.15 677.79 106.09 677.40 104.75C675.11 96.97 669.22 93.82 664.40 97.79C659.39 101.92 657.99 115.08 661.88 121.50C664.23 125.38 667.68 126.78 671.16 125.26ZM664.87 85.14C672.32 80.78 666.14 63.99 656.12 61.38C650.93 60.03 647.20 63.35 647.56 68.98C647.71 71.29 648.12 72.54 649.94 76.25C652.16 80.77 656.51 84.86 660.07 85.77C661.50 86.14 663.65 85.86 664.87 85.14ZM638.94 60.53C644.01 57.94 640.89 51.49 633.12 48.50C630.77 47.59 626.65 47.62 624.72 48.57C620.98 50.40 620.91 54.49 624.57 57.22C626.79 58.88 631.03 60.69 633.62 61.09C635.21 61.33 637.93 61.05 638.94 60.53Z"/><path fill="currentColor" fill-rule="evenodd" d="M700.62 351.73C690.77 350.97 681.98 348.49 672.70 343.85C655.99 335.49 643.06 319.11 638.23 300.18C634.95 287.35 635.43 270.20 639.38 258.12C644.48 242.55 653.03 231.25 666.65 222.06C676.37 215.50 690.90 211.24 704.88 210.84C719.10 210.43 731.06 212.93 742.87 218.80C751.22 222.94 760.67 231.55 766.37 240.21C770.03 245.76 773.74 253.47 775.47 259.12C778.51 269.12 779.27 284.29 777.24 294.88C775.96 301.52 773.80 307.97 770.95 313.62C765.00 325.43 758.04 333.24 747.00 340.49C734.65 348.61 716.66 352.97 700.62 351.73ZM412.38 350.22C393.38 348.42 377.76 335.41 371.36 316.07C367.65 304.84 367.05 288.71 369.87 275.62C371.42 268.42 373.37 263.35 377.02 256.96C386.35 240.60 402.60 231.00 420.93 231.00C430.49 231.00 439.55 233.59 446.43 238.29C449.21 240.19 454.20 245.13 456.03 247.81C459.92 253.50 462.67 261.67 462.93 268.38C463.14 273.77 462.32 276.40 459.53 279.23C457.30 281.50 455.45 282.37 445.62 285.76C432.13 290.41 426.52 292.34 420.38 294.42C412.10 297.22 409.87 298.11 409.37 298.83C408.32 300.33 409.64 304.65 412.45 308.93C418.43 318.02 427.30 321.38 437.62 318.47C442.20 317.18 444.06 316.07 448.58 311.97C452.72 308.21 455.24 307.19 458.25 308.08C463.65 309.67 464.66 316.33 460.61 323.70C459.35 325.99 455.08 332.12 453.62 333.72C451.45 336.11 446.21 340.74 443.98 342.23C435.27 348.08 422.87 351.21 412.38 350.22ZM1048.00 350.22C1040.88 349.66 1032.92 346.90 1026.76 342.83C1022.72 340.18 1017.67 335.08 1014.79 330.77C1004.89 315.97 1001.78 293.65 1006.86 273.86C1009.98 261.72 1016.90 249.75 1024.36 243.62C1031.20 237.99 1036.41 235.08 1043.55 232.91C1051.68 230.43 1063.11 230.49 1070.50 233.05C1075.22 234.68 1080.09 237.32 1083.08 239.86C1091.36 246.89 1096.53 257.73 1096.93 268.88C1097.13 274.56 1096.36 277.08 1093.57 279.87C1091.46 281.99 1090.19 282.61 1082.38 285.37C1080.72 285.95 1077.80 286.99 1075.88 287.69C1073.95 288.39 1071.36 289.29 1070.12 289.71C1068.89 290.12 1065.91 291.15 1063.50 291.99C1061.09 292.84 1057.21 294.15 1054.88 294.92C1049.86 296.57 1046.43 297.99 1045.57 298.80C1043.06 301.15 1049.23 312.36 1055.20 316.28C1058.96 318.74 1062.41 319.65 1067.21 319.43C1073.89 319.12 1078.37 316.98 1084.16 311.33C1086.83 308.73 1088.38 307.91 1090.64 307.91C1093.27 307.91 1095.38 309.35 1096.60 311.99C1097.38 313.68 1097.33 317.98 1096.52 320.25C1093.59 328.36 1084.72 339.01 1077.08 343.59C1071.10 347.17 1062.90 349.76 1056.38 350.12C1054.86 350.20 1053.01 350.31 1052.25 350.36C1051.49 350.41 1049.58 350.34 1048.00 350.22ZM314.34 349.61C296.82 347.12 283.44 336.33 275.52 318.31C272.32 311.01 270.78 302.52 270.76 292.09C270.75 284.68 271.37 279.55 273.15 272.48C274.94 265.33 278.61 257.80 283.47 251.25C285.36 248.71 292.38 241.78 294.45 240.42C299.75 236.93 304.83 234.51 310.01 233.02C323.99 228.99 336.90 229.87 348.62 235.64C352.57 237.58 354.54 239.03 358.07 242.62C363.25 247.89 366.00 253.32 367.58 261.38C368.98 268.49 369.02 271.58 367.76 275.16C366.88 277.65 363.93 280.66 361.49 281.55C360.88 281.77 358.41 282.65 356.00 283.50C353.59 284.35 350.05 285.61 348.12 286.31C346.20 287.01 341.08 288.73 336.75 290.13C322.85 294.64 316.01 297.17 314.62 298.32C313.70 299.08 313.69 299.11 313.82 300.52C314.06 303.18 317.09 308.95 319.81 311.91C324.44 316.98 331.28 319.84 337.67 319.40C344.14 318.95 349.21 316.55 354.79 311.30C358.19 308.10 359.78 307.46 363.02 307.98C367.27 308.67 369.66 313.42 368.36 318.59C367.29 322.89 363.97 328.74 360.34 332.77C351.90 342.12 342.91 347.14 330.62 349.39C327.46 349.97 317.77 350.10 314.34 349.61ZM975.25 349.75C969.92 348.86 965.84 347.35 962.25 344.93C957.43 341.68 953.19 335.46 951.64 329.38C950.20 323.72 950.22 324.20 950.30 289.86C950.39 253.55 950.68 257.36 947.69 256.50C944.11 255.47 942.80 254.50 941.66 252.03C940.77 250.12 940.88 245.41 941.85 243.31C942.64 241.60 943.96 240.23 945.89 239.11C948.33 237.70 952.75 234.20 954.33 232.43C956.22 230.32 959.50 225.15 960.36 222.93C960.69 222.07 961.60 219.52 962.38 217.25C963.17 214.98 963.97 212.79 964.18 212.38C968.22 204.39 981.34 204.00 985.25 211.75C986.50 214.23 986.54 214.61 986.84 225.56C987.12 235.99 987.12 235.99 987.82 236.68C988.51 237.38 988.51 237.38 995.45 237.50C1002.39 237.62 1002.39 237.62 1004.05 238.45C1011.06 241.90 1010.93 253.22 1003.86 256.02C1002.47 256.57 1001.94 256.61 995.74 256.74C989.97 256.86 989.01 256.93 988.43 257.32C986.88 258.33 986.98 256.36 986.98 285.91C986.99 303.21 987.08 313.36 987.24 314.22C988.13 318.90 989.99 321.85 992.94 323.28C994.75 324.17 997.21 324.07 1000.12 323.00C1002.83 322.01 1004.00 321.96 1005.61 322.77C1009.08 324.50 1010.59 329.03 1009.11 333.32C1008.15 336.11 1004.54 340.56 1001.27 342.98C999.40 344.37 993.22 347.54 990.90 348.30C986.89 349.62 978.90 350.36 975.25 349.75ZM907.88 349.59C905.32 349.20 902.96 348.61 901.41 347.96C898.14 346.58 898.29 346.60 896.38 347.52C893.10 349.10 890.39 348.79 887.98 346.57C885.95 344.68 885.01 342.68 883.63 337.25C880.21 323.77 879.61 316.60 881.63 313.12C883.16 310.48 885.34 309.17 888.17 309.20C891.86 309.23 893.36 310.59 896.15 316.43C899.27 322.97 901.57 325.90 905.05 327.76C909.27 330.01 913.38 328.11 914.25 323.50C914.57 321.81 914.20 319.53 913.37 318.10C911.71 315.24 909.16 312.90 901.50 307.22C881.87 292.66 875.20 278.16 879.77 260.00C882.21 250.30 889.10 242.35 898.59 238.29C905.60 235.29 914.45 234.86 921.32 237.18C924.02 238.09 924.02 238.09 925.67 237.24C930.47 234.79 934.72 236.88 936.33 242.50C937.54 246.72 938.97 261.47 938.51 265.03C937.84 270.29 935.00 273.01 930.53 272.69C927.07 272.45 925.17 270.63 923.38 265.86C920.90 259.26 917.76 255.94 914.00 255.92C909.05 255.88 906.54 261.18 909.06 266.30C910.28 268.76 912.52 271.16 917.08 274.87C919.03 276.46 921.48 278.46 922.52 279.32C923.57 280.17 925.31 281.55 926.39 282.38C927.48 283.20 930.23 285.73 932.52 288.00C937.07 292.52 938.95 295.05 941.44 300.01C946.96 311.01 946.15 325.49 939.45 335.31C934.47 342.62 927.07 347.38 918.00 349.13C915.94 349.53 909.39 349.83 907.88 349.59ZM81.25 349.10C73.60 348.17 66.25 343.93 61.61 337.78C58.60 333.78 56.94 329.80 55.81 323.88C55.15 320.38 55.15 320.38 55.01 289.54C54.88 258.71 54.88 258.71 54.21 258.14C53.81 257.79 52.90 257.44 51.91 257.26C45.51 256.05 42.89 248.55 46.82 242.71C47.92 241.07 48.97 240.18 51.43 238.80C53.86 237.43 58.26 233.87 60.20 231.68C63.83 227.59 65.95 224.29 69.74 216.80C72.98 210.38 73.77 209.38 76.76 207.92C81.16 205.77 85.67 205.68 89.61 207.68C92.18 208.98 93.32 210.24 94.31 212.89C94.85 214.32 94.87 214.80 95.00 225.02C95.10 233.74 95.19 235.75 95.48 236.10C96.37 237.17 96.99 237.26 104.57 237.46C111.21 237.63 111.98 237.70 113.03 238.17C116.84 239.89 118.83 244.48 118.06 249.76C117.61 252.86 116.43 254.64 113.82 256.17C112.62 256.88 112.62 256.88 104.75 257.00C97.03 257.12 96.86 257.14 96.07 257.70C95.55 258.07 95.17 258.62 95.00 259.26C94.82 259.93 94.76 268.55 94.80 286.43C94.88 312.62 94.88 312.62 95.49 314.31C96.64 317.50 98.91 319.69 101.67 320.26C103.67 320.68 105.65 320.14 108.50 318.42C113.84 315.18 118.30 317.09 119.31 323.04C120.04 327.40 117.28 333.18 111.90 338.56C107.69 342.77 100.71 346.63 94.12 348.39C91.90 348.98 91.10 349.07 86.88 349.13C84.26 349.17 81.73 349.15 81.25 349.10ZM781.79 348.24C778.48 347.57 775.89 344.07 776.37 340.93C776.82 338.00 777.46 337.05 780.99 334.01C782.81 332.44 783.73 330.76 784.40 327.75C784.90 325.54 785.14 311.43 785.12 285.75C785.11 267.49 785.25 268.46 782.23 265.10C779.57 262.14 779.13 261.16 779.13 258.25C779.12 255.41 779.81 253.70 781.61 252.04C783.20 250.57 786.08 249.26 797.75 244.70C809.89 239.96 813.98 239.69 817.25 243.42C818.84 245.22 819.08 246.15 819.24 250.98C819.33 253.90 819.47 255.37 819.66 255.43C819.82 255.48 820.96 254.36 822.19 252.95C826.75 247.73 829.39 245.53 833.62 243.42C843.02 238.75 851.58 238.88 859.86 243.81C866.13 247.55 870.53 254.50 872.24 263.37C873.09 267.76 873.24 273.66 873.25 301.79C873.25 328.36 873.26 328.72 873.77 330.39C874.47 332.65 875.20 333.68 877.36 335.46C879.71 337.38 880.28 338.49 880.28 341.12C880.28 343.46 879.73 344.74 878.09 346.25C875.63 348.52 877.19 348.38 855.62 348.38C836.62 348.38 836.62 348.38 835.19 347.67C832.65 346.42 831.25 344.15 831.25 341.25C831.25 338.84 831.84 337.61 834.02 335.48C836.12 333.41 836.78 332.34 837.42 329.95C837.80 328.54 837.86 326.04 837.94 306.25C838.05 278.98 837.87 275.64 835.99 271.83C834.70 269.20 831.72 267.25 829.00 267.25C825.59 267.25 822.16 270.68 821.06 275.18C820.53 277.39 820.25 326.89 820.76 329.25C821.23 331.41 822.15 332.96 824.24 335.12C826.86 337.82 827.12 338.37 827.12 341.00C827.12 344.26 825.70 346.49 822.76 347.85C821.64 348.37 821.38 348.38 802.25 348.41C791.59 348.44 782.39 348.36 781.79 348.24ZM1101.74 348.24C1098.90 347.91 1096.96 346.66 1095.55 344.27C1094.93 343.21 1094.88 342.91 1094.88 340.38C1094.88 336.83 1095.41 335.73 1098.38 333.23C1101.38 330.71 1102.25 329.32 1103.26 325.52C1104.05 322.58 1104.28 312.40 1104.18 286.12C1104.10 264.97 1104.06 263.01 1103.65 261.64C1102.97 259.35 1102.45 258.53 1100.37 256.50C1097.61 253.79 1097.13 252.76 1097.13 249.62C1097.12 245.69 1098.16 244.02 1102.09 241.66C1103.79 240.63 1111.61 237.15 1115.44 235.72C1116.92 235.16 1119.53 234.11 1121.25 233.38C1129.80 229.74 1134.92 229.78 1137.67 233.50C1139.07 235.40 1139.31 236.56 1139.48 242.12C1139.61 246.56 1139.67 247.13 1140.05 247.20C1140.34 247.26 1140.66 246.91 1141.09 246.08C1143.98 240.38 1148.83 235.36 1153.88 232.81C1158.87 230.30 1165.28 230.06 1169.91 232.23C1177.91 235.97 1182.08 244.10 1181.22 254.25C1180.77 259.51 1179.04 263.58 1175.82 267.02C1173.44 269.54 1171.08 270.78 1167.50 271.39C1161.40 272.43 1157.45 270.40 1154.91 264.93C1153.22 261.30 1151.42 260.10 1148.82 260.88C1146.45 261.58 1144.71 263.91 1143.72 267.71C1142.94 270.67 1142.74 277.96 1142.88 297.62C1143.05 321.47 1143.30 324.74 1145.15 328.26C1146.28 330.42 1147.37 331.68 1149.35 333.13C1152.21 335.23 1153.50 337.53 1153.50 340.50C1153.50 344.18 1150.91 347.25 1147.04 348.16C1145.46 348.53 1104.84 348.61 1101.74 348.24ZM167.00 348.00C141.88 347.88 141.88 347.88 140.60 347.20C136.88 345.24 135.14 340.80 136.40 336.48C136.96 334.56 139.42 329.96 143.08 324.00C144.81 321.18 147.27 317.15 148.55 315.04C149.83 312.93 151.48 310.29 152.22 309.16C152.97 308.04 154.14 306.17 154.83 305.00C155.52 303.83 156.95 301.52 158.01 299.88C159.07 298.23 161.82 293.84 164.12 290.12C166.42 286.41 169.07 282.19 170.00 280.75C170.93 279.31 172.11 277.39 172.64 276.50C173.16 275.61 174.32 273.75 175.21 272.38C177.97 268.13 180.22 264.54 182.82 260.27C184.19 258.01 186.28 254.69 187.45 252.89C188.63 251.09 190.23 248.56 191.01 247.25C192.63 244.53 196.49 238.46 198.23 235.88C198.88 234.91 199.84 233.39 200.37 232.50C200.90 231.61 202.42 229.19 203.76 227.12C212.37 213.87 212.94 212.65 211.37 210.79C209.51 208.58 199.75 209.00 192.23 211.61C182.34 215.04 175.64 219.88 167.84 229.25C163.45 234.51 161.63 235.62 157.38 235.62C154.10 235.62 152.54 235.05 150.62 233.14C147.70 230.21 147.30 227.34 148.51 218.00C148.79 215.85 149.87 206.77 150.26 203.25C151.24 194.43 151.90 192.30 154.36 190.04C155.73 188.78 157.05 188.10 159.05 187.63C161.44 187.07 264.17 187.06 266.33 187.62C272.07 189.12 274.56 193.38 273.13 199.23C272.69 201.01 272.53 201.30 267.42 209.30C266.57 210.63 265.09 212.99 264.12 214.53C263.16 216.08 260.98 219.49 259.28 222.11C257.57 224.73 255.48 228.00 254.63 229.38C251.88 233.83 240.74 251.55 239.00 254.25C238.07 255.69 235.48 259.86 233.25 263.50C231.02 267.14 228.92 270.49 228.59 270.93C228.25 271.38 226.89 273.53 225.55 275.70C224.22 277.88 222.13 281.23 220.92 283.15C219.71 285.06 217.26 288.99 215.47 291.88C213.68 294.76 211.62 298.02 210.88 299.12C210.15 300.23 208.52 302.81 207.25 304.88C204.68 309.04 203.36 311.14 200.42 315.75C195.56 323.36 195.29 324.09 196.80 325.60C198.31 327.11 201.28 327.47 207.62 326.90C217.75 325.99 224.35 323.66 232.94 317.97C237.91 314.67 241.46 311.46 247.24 305.02C251.02 300.80 251.81 300.11 254.14 298.93C258.73 296.61 264.03 298.15 266.23 302.45C267.46 304.87 267.44 308.63 266.11 318.93C265.77 321.65 265.09 327.02 264.62 330.88C264.14 334.73 263.57 338.66 263.35 339.62C262.23 344.42 258.98 347.47 254.54 347.90C252.59 348.09 197.56 348.15 167.00 348.00ZM472.88 348.01C467.76 347.88 467.30 347.83 466.30 347.30C463.52 345.82 462.25 343.70 462.25 340.55C462.25 338.15 463.20 336.26 465.72 333.65C468.91 330.33 469.74 328.64 470.25 324.41C470.68 320.75 470.74 266.29 470.31 263.82C469.74 260.52 469.18 259.45 466.61 256.73C463.84 253.80 463.07 252.04 463.32 249.16C463.61 245.65 465.10 243.39 468.18 241.82C473.28 239.20 491.61 231.99 495.43 231.10C497.87 230.53 501.24 230.70 502.86 231.49C506.46 233.24 507.75 236.25 507.75 242.92C507.75 247.73 508.06 248.03 510.18 245.30C515.43 238.53 523.47 233.30 531.48 231.47C534.26 230.83 540.34 230.58 543.32 230.98C551.04 232.01 558.71 237.12 563.51 244.44C564.52 245.98 565.48 247.25 565.64 247.25C565.80 247.25 567.61 245.59 569.65 243.56C575.23 238.02 578.58 235.72 584.81 233.14C589.43 231.23 591.61 230.87 598.38 230.90C604.02 230.91 604.52 230.95 606.81 231.57C613.45 233.35 619.56 237.66 623.46 243.33C628.19 250.20 629.25 256.17 629.75 278.75C630.66 319.47 630.84 321.68 633.76 327.67C634.83 329.89 635.34 330.58 637.64 332.99C640.90 336.41 641.37 337.32 641.37 340.25C641.38 342.77 640.66 344.38 638.80 346.02C636.39 348.14 637.64 348.03 613.62 348.12C591.27 348.20 588.96 348.12 587.25 347.25C584.26 345.73 582.87 343.46 582.88 340.12C582.88 337.32 583.29 336.46 585.99 333.58C589.93 329.36 590.00 329.02 590.00 313.76C589.99 289.86 589.38 270.89 588.51 267.90C587.48 264.34 585.60 261.83 583.00 260.55C580.99 259.56 577.75 259.57 575.72 260.56C572.59 262.10 570.53 265.34 569.84 269.83C569.46 272.27 569.55 289.79 570.10 321.12C570.22 327.99 570.83 329.74 574.43 333.58C577.18 336.52 577.88 337.92 577.87 340.51C577.86 343.75 576.35 346.03 573.26 347.47C571.88 348.12 571.88 348.12 550.62 348.05C538.94 348.02 529.04 347.92 528.62 347.84C527.35 347.58 525.63 346.58 524.69 345.53C523.13 343.81 522.88 343.13 522.88 340.62C522.87 337.70 523.53 336.24 526.00 333.62C528.02 331.49 528.78 330.02 529.37 327.16C529.72 325.40 529.75 322.76 529.62 303.03C529.38 267.49 529.21 265.85 525.47 262.39C520.69 257.97 514.08 259.83 511.65 266.29C510.25 270.02 510.22 270.74 510.32 299.51C510.42 328.31 510.38 327.55 511.87 330.50C512.26 331.27 513.40 332.66 514.62 333.86C515.87 335.09 516.97 336.45 517.39 337.27C519.27 340.97 517.40 345.69 513.29 347.58C512.13 348.12 512.01 348.13 495.25 348.13C485.97 348.14 475.90 348.08 472.88 348.01ZM712.68 325.36C719.63 324.34 724.52 322.51 730.51 318.68C734.99 315.80 736.44 314.52 739.87 310.38C744.00 305.39 746.13 301.61 747.96 296.09C753.09 280.57 750.59 263.16 741.63 252.12C735.09 244.07 726.30 238.77 715.83 236.59C710.98 235.58 703.63 235.58 698.63 236.58C679.71 240.39 666.71 253.26 662.72 272.12C661.93 275.83 661.85 285.11 662.58 288.50C664.67 298.29 667.42 304.21 672.84 310.53C676.52 314.83 677.12 315.36 681.30 318.13C687.44 322.19 693.12 324.39 699.62 325.25C700.86 325.41 702.04 325.58 702.25 325.62C703.51 325.87 710.36 325.70 712.68 325.36ZM713.88 298.73C707.39 298.22 702.28 295.77 697.04 290.66C693.78 287.48 692.54 285.41 690.87 280.38C688.81 274.19 689.06 267.98 691.62 261.69C693.55 256.93 695.56 254.33 699.88 251.02C702.97 248.63 703.64 248.23 706.09 247.25C715.78 243.37 726.59 245.23 734.57 252.15C740.67 257.43 744.09 266.53 743.22 275.16C742.50 282.30 738.72 288.98 732.99 293.24C727.27 297.49 721.01 299.29 713.88 298.73ZM1051.32 277.85C1056.96 275.58 1059.11 274.33 1060.19 272.69C1060.88 271.66 1060.88 271.66 1060.86 266.89C1060.85 261.35 1060.31 258.57 1058.53 254.91C1056.76 251.28 1054.93 249.72 1052.39 249.70C1050.64 249.68 1049.53 250.26 1047.87 252.05C1044.60 255.58 1042.85 261.74 1042.37 271.38C1042.14 275.93 1042.52 278.93 1043.40 279.70C1044.34 280.52 1045.13 280.33 1051.32 277.85ZM413.32 278.47C417.86 276.85 422.38 274.74 423.72 273.61C425.02 272.52 425.32 271.66 425.45 268.72C425.88 258.50 421.61 249.53 416.30 249.51C412.22 249.48 408.77 254.90 406.85 264.34C406.34 266.84 406.10 275.71 406.48 277.56C406.80 279.06 407.59 280.00 408.54 280.00C408.80 280.00 410.95 279.31 413.32 278.47ZM315.89 278.91C325.32 275.68 329.83 273.17 330.50 270.77C330.90 269.33 330.79 264.87 330.28 261.75C328.35 250.00 322.12 245.11 316.62 251.05C312.95 255.01 310.39 264.93 310.86 273.38C311.20 279.62 311.82 280.30 315.89 278.91ZM708.92 267.48C712.44 265.77 713.62 260.82 711.20 257.89C707.41 253.30 700.24 255.80 700.25 261.71C700.26 266.25 704.98 269.39 708.92 267.48ZM22.11 251.16C19.52 250.31 18.12 248.36 18.13 245.62C18.14 243.28 18.45 242.76 22.14 238.96C25.61 235.36 26.37 234.35 27.44 231.88C29.67 226.69 29.19 225.11 24.71 222.92C17.41 219.34 13.98 213.98 13.98 206.12C13.97 198.36 17.68 192.40 24.64 188.97C37.47 182.65 51.83 188.86 55.24 202.20C58.30 214.21 53.46 228.72 42.63 239.97C39.56 243.15 34.47 247.45 32.16 248.80C28.49 250.95 24.39 251.91 22.11 251.16Z"/></svg>
+    <h2>Tot ziens.</h2>
+    <p>We hopen dat je een fijn verblijf had. Was er iets niet in orde? Laat het ons eerst weten, dan lossen we het op. Beviel het je? Dan helpt een review ons enorm.</p>
+    <p class="dry" style="color:inherit;opacity:.8">Zin in ’t zeetje.</p>
+  </div>
+</footer>
+</div>
+
+<div id="view-bediening" hidden>
+  <header class="ctl-top wrap"><svg class="logo logo-sm" viewBox="4 17 1188 346" role="img" aria-label="’t Zeemonster"><path fill="#E86141" fill-rule="evenodd" d="M632.39 243.29C626.74 232.04 616.60 224.53 604.12 222.37C601.84 221.97 594.23 221.81 592.96 222.13C592.54 222.23 592.19 222.15 591.93 221.89C590.80 220.76 597.46 205.71 603.70 195.25C609.61 185.37 614.73 178.28 624.38 166.62C630.01 159.83 635.94 151.85 638.25 148.00C639.12 146.56 640.13 144.92 640.51 144.36C643.26 140.33 645.87 134.83 648.16 128.25C652.11 116.89 652.72 107.62 650.26 95.88C648.37 86.81 643.33 77.89 636.36 71.27C634.22 69.24 628.51 65.34 625.88 64.11C615.35 59.20 603.06 58.81 594.51 63.10C588.96 65.89 584.89 70.11 583.36 74.63C582.76 76.42 582.70 76.90 582.80 79.25C582.99 83.74 584.44 85.96 588.51 88.01C592.61 90.06 593.87 91.98 593.87 96.12C593.88 99.14 593.32 100.57 591.30 102.78C588.80 105.51 585.52 106.67 580.94 106.44C577.74 106.27 575.81 105.68 572.89 103.95C564.84 99.17 560.50 90.87 560.50 80.23C560.50 71.06 563.76 62.72 570.77 54.00C580.75 41.57 595.89 33.11 614.12 29.77C628.12 27.22 643.49 28.80 656.75 34.17C672.59 40.58 686.20 52.28 694.24 66.39C699.33 75.33 702.11 82.74 704.12 92.75C706.74 105.79 706.48 122.70 703.47 135.85C701.28 145.38 700.37 148.58 697.83 155.61C692.39 170.67 685.56 184.41 674.51 202.50C669.28 211.07 670.07 210.16 666.09 212.24C655.93 217.57 648.65 224.00 641.07 234.38C639.25 236.86 638.43 238.22 635.39 243.81C634.12 246.15 633.80 246.09 632.39 243.29ZM823.42 241.32C823.12 240.95 822.03 239.78 821.00 238.74C815.78 233.45 807.89 232.89 798.55 237.15C796.16 238.24 795.62 238.25 795.28 237.19C792.80 229.49 791.50 210.13 792.73 199.38C793.50 192.73 793.63 191.96 794.91 186.77C796.06 182.12 798.83 173.58 799.88 171.50C800.19 170.88 800.93 169.20 801.52 167.77C804.63 160.26 812.43 148.68 819.64 140.88C821.70 138.65 823.10 137.34 829.16 131.95C832.78 128.75 839.60 124.25 845.00 121.51C862.29 112.75 881.07 110.34 897.89 114.73C912.92 118.66 925.63 129.00 929.86 140.75C932.86 149.06 932.72 155.47 929.38 163.69C928.21 166.56 926.10 169.62 923.82 171.75C918.76 176.48 915.53 178.00 910.56 178.00C904.32 178.00 900.26 174.34 900.56 168.98C900.74 165.65 902.01 163.87 905.57 161.97C909.42 159.92 911.00 157.60 911.00 154.00C911.00 145.88 900.22 139.57 888.36 140.75C881.76 141.40 871.93 144.97 867.16 148.43C855.10 157.18 848.46 165.46 843.54 177.88C839.30 188.59 838.47 199.43 841.02 210.77C842.69 218.22 844.44 222.64 848.51 229.64C849.88 232.00 851.00 234.10 851.00 234.31C851.00 234.65 850.45 234.68 846.73 234.56C840.69 234.37 836.29 235.08 832.33 236.88C830.57 237.68 825.60 240.90 824.99 241.63C824.54 242.18 824.03 242.08 823.42 241.32ZM830.33 228.10C834.85 226.56 836.32 218.64 833.60 210.52C832.75 207.98 830.60 204.78 829.06 203.75C826.73 202.20 823.51 203.05 821.76 205.69C817.53 212.08 819.82 224.56 825.80 227.65C827.59 228.58 828.63 228.68 830.33 228.10ZM631.45 208.50C634.51 207.30 636.56 205.73 639.02 202.68C644.27 196.18 646.31 191.50 646.29 186.00C646.27 183.10 645.86 181.65 644.54 179.90C639.81 173.63 629.27 176.57 623.41 185.79C619.54 191.88 617.83 198.07 618.78 202.55C620.03 208.45 625.27 210.90 631.45 208.50ZM829.86 191.15C833.79 188.85 836.59 182.73 836.57 176.50C836.55 172.65 835.61 170.58 833.40 169.51C828.24 167.02 822.35 173.88 821.82 183.00C821.43 189.76 825.38 193.77 829.86 191.15ZM656.61 166.51C662.78 164.38 668.44 155.68 668.92 147.58C669.33 140.73 666.72 136.91 661.61 136.88C659.78 136.88 659.43 136.96 657.72 137.80C651.73 140.76 646.81 149.05 646.33 157.00C645.88 164.34 650.50 168.61 656.61 166.51ZM844.71 160.98C847.70 159.52 851.99 154.74 853.42 151.26C854.09 149.63 854.20 146.87 853.65 145.80C850.52 139.81 839.83 144.94 836.74 153.91C834.67 159.91 839.02 163.76 844.71 160.98ZM869.75 141.50C873.51 140.20 876.57 138.08 878.04 135.76C880.46 131.96 876.16 128.92 870.25 130.27C866.44 131.14 861.41 135.01 860.78 137.57C860.29 139.59 861.03 141.25 862.75 141.99C863.79 142.43 867.90 142.14 869.75 141.50ZM671.16 125.26C673.52 124.22 675.50 121.57 677.03 117.38C677.84 115.16 677.85 115.06 677.86 110.75C677.87 107.15 677.79 106.09 677.40 104.75C675.11 96.97 669.22 93.82 664.40 97.79C659.39 101.92 657.99 115.08 661.88 121.50C664.23 125.38 667.68 126.78 671.16 125.26ZM664.87 85.14C672.32 80.78 666.14 63.99 656.12 61.38C650.93 60.03 647.20 63.35 647.56 68.98C647.71 71.29 648.12 72.54 649.94 76.25C652.16 80.77 656.51 84.86 660.07 85.77C661.50 86.14 663.65 85.86 664.87 85.14ZM638.94 60.53C644.01 57.94 640.89 51.49 633.12 48.50C630.77 47.59 626.65 47.62 624.72 48.57C620.98 50.40 620.91 54.49 624.57 57.22C626.79 58.88 631.03 60.69 633.62 61.09C635.21 61.33 637.93 61.05 638.94 60.53Z"/><path fill="currentColor" fill-rule="evenodd" d="M700.62 351.73C690.77 350.97 681.98 348.49 672.70 343.85C655.99 335.49 643.06 319.11 638.23 300.18C634.95 287.35 635.43 270.20 639.38 258.12C644.48 242.55 653.03 231.25 666.65 222.06C676.37 215.50 690.90 211.24 704.88 210.84C719.10 210.43 731.06 212.93 742.87 218.80C751.22 222.94 760.67 231.55 766.37 240.21C770.03 245.76 773.74 253.47 775.47 259.12C778.51 269.12 779.27 284.29 777.24 294.88C775.96 301.52 773.80 307.97 770.95 313.62C765.00 325.43 758.04 333.24 747.00 340.49C734.65 348.61 716.66 352.97 700.62 351.73ZM412.38 350.22C393.38 348.42 377.76 335.41 371.36 316.07C367.65 304.84 367.05 288.71 369.87 275.62C371.42 268.42 373.37 263.35 377.02 256.96C386.35 240.60 402.60 231.00 420.93 231.00C430.49 231.00 439.55 233.59 446.43 238.29C449.21 240.19 454.20 245.13 456.03 247.81C459.92 253.50 462.67 261.67 462.93 268.38C463.14 273.77 462.32 276.40 459.53 279.23C457.30 281.50 455.45 282.37 445.62 285.76C432.13 290.41 426.52 292.34 420.38 294.42C412.10 297.22 409.87 298.11 409.37 298.83C408.32 300.33 409.64 304.65 412.45 308.93C418.43 318.02 427.30 321.38 437.62 318.47C442.20 317.18 444.06 316.07 448.58 311.97C452.72 308.21 455.24 307.19 458.25 308.08C463.65 309.67 464.66 316.33 460.61 323.70C459.35 325.99 455.08 332.12 453.62 333.72C451.45 336.11 446.21 340.74 443.98 342.23C435.27 348.08 422.87 351.21 412.38 350.22ZM1048.00 350.22C1040.88 349.66 1032.92 346.90 1026.76 342.83C1022.72 340.18 1017.67 335.08 1014.79 330.77C1004.89 315.97 1001.78 293.65 1006.86 273.86C1009.98 261.72 1016.90 249.75 1024.36 243.62C1031.20 237.99 1036.41 235.08 1043.55 232.91C1051.68 230.43 1063.11 230.49 1070.50 233.05C1075.22 234.68 1080.09 237.32 1083.08 239.86C1091.36 246.89 1096.53 257.73 1096.93 268.88C1097.13 274.56 1096.36 277.08 1093.57 279.87C1091.46 281.99 1090.19 282.61 1082.38 285.37C1080.72 285.95 1077.80 286.99 1075.88 287.69C1073.95 288.39 1071.36 289.29 1070.12 289.71C1068.89 290.12 1065.91 291.15 1063.50 291.99C1061.09 292.84 1057.21 294.15 1054.88 294.92C1049.86 296.57 1046.43 297.99 1045.57 298.80C1043.06 301.15 1049.23 312.36 1055.20 316.28C1058.96 318.74 1062.41 319.65 1067.21 319.43C1073.89 319.12 1078.37 316.98 1084.16 311.33C1086.83 308.73 1088.38 307.91 1090.64 307.91C1093.27 307.91 1095.38 309.35 1096.60 311.99C1097.38 313.68 1097.33 317.98 1096.52 320.25C1093.59 328.36 1084.72 339.01 1077.08 343.59C1071.10 347.17 1062.90 349.76 1056.38 350.12C1054.86 350.20 1053.01 350.31 1052.25 350.36C1051.49 350.41 1049.58 350.34 1048.00 350.22ZM314.34 349.61C296.82 347.12 283.44 336.33 275.52 318.31C272.32 311.01 270.78 302.52 270.76 292.09C270.75 284.68 271.37 279.55 273.15 272.48C274.94 265.33 278.61 257.80 283.47 251.25C285.36 248.71 292.38 241.78 294.45 240.42C299.75 236.93 304.83 234.51 310.01 233.02C323.99 228.99 336.90 229.87 348.62 235.64C352.57 237.58 354.54 239.03 358.07 242.62C363.25 247.89 366.00 253.32 367.58 261.38C368.98 268.49 369.02 271.58 367.76 275.16C366.88 277.65 363.93 280.66 361.49 281.55C360.88 281.77 358.41 282.65 356.00 283.50C353.59 284.35 350.05 285.61 348.12 286.31C346.20 287.01 341.08 288.73 336.75 290.13C322.85 294.64 316.01 297.17 314.62 298.32C313.70 299.08 313.69 299.11 313.82 300.52C314.06 303.18 317.09 308.95 319.81 311.91C324.44 316.98 331.28 319.84 337.67 319.40C344.14 318.95 349.21 316.55 354.79 311.30C358.19 308.10 359.78 307.46 363.02 307.98C367.27 308.67 369.66 313.42 368.36 318.59C367.29 322.89 363.97 328.74 360.34 332.77C351.90 342.12 342.91 347.14 330.62 349.39C327.46 349.97 317.77 350.10 314.34 349.61ZM975.25 349.75C969.92 348.86 965.84 347.35 962.25 344.93C957.43 341.68 953.19 335.46 951.64 329.38C950.20 323.72 950.22 324.20 950.30 289.86C950.39 253.55 950.68 257.36 947.69 256.50C944.11 255.47 942.80 254.50 941.66 252.03C940.77 250.12 940.88 245.41 941.85 243.31C942.64 241.60 943.96 240.23 945.89 239.11C948.33 237.70 952.75 234.20 954.33 232.43C956.22 230.32 959.50 225.15 960.36 222.93C960.69 222.07 961.60 219.52 962.38 217.25C963.17 214.98 963.97 212.79 964.18 212.38C968.22 204.39 981.34 204.00 985.25 211.75C986.50 214.23 986.54 214.61 986.84 225.56C987.12 235.99 987.12 235.99 987.82 236.68C988.51 237.38 988.51 237.38 995.45 237.50C1002.39 237.62 1002.39 237.62 1004.05 238.45C1011.06 241.90 1010.93 253.22 1003.86 256.02C1002.47 256.57 1001.94 256.61 995.74 256.74C989.97 256.86 989.01 256.93 988.43 257.32C986.88 258.33 986.98 256.36 986.98 285.91C986.99 303.21 987.08 313.36 987.24 314.22C988.13 318.90 989.99 321.85 992.94 323.28C994.75 324.17 997.21 324.07 1000.12 323.00C1002.83 322.01 1004.00 321.96 1005.61 322.77C1009.08 324.50 1010.59 329.03 1009.11 333.32C1008.15 336.11 1004.54 340.56 1001.27 342.98C999.40 344.37 993.22 347.54 990.90 348.30C986.89 349.62 978.90 350.36 975.25 349.75ZM907.88 349.59C905.32 349.20 902.96 348.61 901.41 347.96C898.14 346.58 898.29 346.60 896.38 347.52C893.10 349.10 890.39 348.79 887.98 346.57C885.95 344.68 885.01 342.68 883.63 337.25C880.21 323.77 879.61 316.60 881.63 313.12C883.16 310.48 885.34 309.17 888.17 309.20C891.86 309.23 893.36 310.59 896.15 316.43C899.27 322.97 901.57 325.90 905.05 327.76C909.27 330.01 913.38 328.11 914.25 323.50C914.57 321.81 914.20 319.53 913.37 318.10C911.71 315.24 909.16 312.90 901.50 307.22C881.87 292.66 875.20 278.16 879.77 260.00C882.21 250.30 889.10 242.35 898.59 238.29C905.60 235.29 914.45 234.86 921.32 237.18C924.02 238.09 924.02 238.09 925.67 237.24C930.47 234.79 934.72 236.88 936.33 242.50C937.54 246.72 938.97 261.47 938.51 265.03C937.84 270.29 935.00 273.01 930.53 272.69C927.07 272.45 925.17 270.63 923.38 265.86C920.90 259.26 917.76 255.94 914.00 255.92C909.05 255.88 906.54 261.18 909.06 266.30C910.28 268.76 912.52 271.16 917.08 274.87C919.03 276.46 921.48 278.46 922.52 279.32C923.57 280.17 925.31 281.55 926.39 282.38C927.48 283.20 930.23 285.73 932.52 288.00C937.07 292.52 938.95 295.05 941.44 300.01C946.96 311.01 946.15 325.49 939.45 335.31C934.47 342.62 927.07 347.38 918.00 349.13C915.94 349.53 909.39 349.83 907.88 349.59ZM81.25 349.10C73.60 348.17 66.25 343.93 61.61 337.78C58.60 333.78 56.94 329.80 55.81 323.88C55.15 320.38 55.15 320.38 55.01 289.54C54.88 258.71 54.88 258.71 54.21 258.14C53.81 257.79 52.90 257.44 51.91 257.26C45.51 256.05 42.89 248.55 46.82 242.71C47.92 241.07 48.97 240.18 51.43 238.80C53.86 237.43 58.26 233.87 60.20 231.68C63.83 227.59 65.95 224.29 69.74 216.80C72.98 210.38 73.77 209.38 76.76 207.92C81.16 205.77 85.67 205.68 89.61 207.68C92.18 208.98 93.32 210.24 94.31 212.89C94.85 214.32 94.87 214.80 95.00 225.02C95.10 233.74 95.19 235.75 95.48 236.10C96.37 237.17 96.99 237.26 104.57 237.46C111.21 237.63 111.98 237.70 113.03 238.17C116.84 239.89 118.83 244.48 118.06 249.76C117.61 252.86 116.43 254.64 113.82 256.17C112.62 256.88 112.62 256.88 104.75 257.00C97.03 257.12 96.86 257.14 96.07 257.70C95.55 258.07 95.17 258.62 95.00 259.26C94.82 259.93 94.76 268.55 94.80 286.43C94.88 312.62 94.88 312.62 95.49 314.31C96.64 317.50 98.91 319.69 101.67 320.26C103.67 320.68 105.65 320.14 108.50 318.42C113.84 315.18 118.30 317.09 119.31 323.04C120.04 327.40 117.28 333.18 111.90 338.56C107.69 342.77 100.71 346.63 94.12 348.39C91.90 348.98 91.10 349.07 86.88 349.13C84.26 349.17 81.73 349.15 81.25 349.10ZM781.79 348.24C778.48 347.57 775.89 344.07 776.37 340.93C776.82 338.00 777.46 337.05 780.99 334.01C782.81 332.44 783.73 330.76 784.40 327.75C784.90 325.54 785.14 311.43 785.12 285.75C785.11 267.49 785.25 268.46 782.23 265.10C779.57 262.14 779.13 261.16 779.13 258.25C779.12 255.41 779.81 253.70 781.61 252.04C783.20 250.57 786.08 249.26 797.75 244.70C809.89 239.96 813.98 239.69 817.25 243.42C818.84 245.22 819.08 246.15 819.24 250.98C819.33 253.90 819.47 255.37 819.66 255.43C819.82 255.48 820.96 254.36 822.19 252.95C826.75 247.73 829.39 245.53 833.62 243.42C843.02 238.75 851.58 238.88 859.86 243.81C866.13 247.55 870.53 254.50 872.24 263.37C873.09 267.76 873.24 273.66 873.25 301.79C873.25 328.36 873.26 328.72 873.77 330.39C874.47 332.65 875.20 333.68 877.36 335.46C879.71 337.38 880.28 338.49 880.28 341.12C880.28 343.46 879.73 344.74 878.09 346.25C875.63 348.52 877.19 348.38 855.62 348.38C836.62 348.38 836.62 348.38 835.19 347.67C832.65 346.42 831.25 344.15 831.25 341.25C831.25 338.84 831.84 337.61 834.02 335.48C836.12 333.41 836.78 332.34 837.42 329.95C837.80 328.54 837.86 326.04 837.94 306.25C838.05 278.98 837.87 275.64 835.99 271.83C834.70 269.20 831.72 267.25 829.00 267.25C825.59 267.25 822.16 270.68 821.06 275.18C820.53 277.39 820.25 326.89 820.76 329.25C821.23 331.41 822.15 332.96 824.24 335.12C826.86 337.82 827.12 338.37 827.12 341.00C827.12 344.26 825.70 346.49 822.76 347.85C821.64 348.37 821.38 348.38 802.25 348.41C791.59 348.44 782.39 348.36 781.79 348.24ZM1101.74 348.24C1098.90 347.91 1096.96 346.66 1095.55 344.27C1094.93 343.21 1094.88 342.91 1094.88 340.38C1094.88 336.83 1095.41 335.73 1098.38 333.23C1101.38 330.71 1102.25 329.32 1103.26 325.52C1104.05 322.58 1104.28 312.40 1104.18 286.12C1104.10 264.97 1104.06 263.01 1103.65 261.64C1102.97 259.35 1102.45 258.53 1100.37 256.50C1097.61 253.79 1097.13 252.76 1097.13 249.62C1097.12 245.69 1098.16 244.02 1102.09 241.66C1103.79 240.63 1111.61 237.15 1115.44 235.72C1116.92 235.16 1119.53 234.11 1121.25 233.38C1129.80 229.74 1134.92 229.78 1137.67 233.50C1139.07 235.40 1139.31 236.56 1139.48 242.12C1139.61 246.56 1139.67 247.13 1140.05 247.20C1140.34 247.26 1140.66 246.91 1141.09 246.08C1143.98 240.38 1148.83 235.36 1153.88 232.81C1158.87 230.30 1165.28 230.06 1169.91 232.23C1177.91 235.97 1182.08 244.10 1181.22 254.25C1180.77 259.51 1179.04 263.58 1175.82 267.02C1173.44 269.54 1171.08 270.78 1167.50 271.39C1161.40 272.43 1157.45 270.40 1154.91 264.93C1153.22 261.30 1151.42 260.10 1148.82 260.88C1146.45 261.58 1144.71 263.91 1143.72 267.71C1142.94 270.67 1142.74 277.96 1142.88 297.62C1143.05 321.47 1143.30 324.74 1145.15 328.26C1146.28 330.42 1147.37 331.68 1149.35 333.13C1152.21 335.23 1153.50 337.53 1153.50 340.50C1153.50 344.18 1150.91 347.25 1147.04 348.16C1145.46 348.53 1104.84 348.61 1101.74 348.24ZM167.00 348.00C141.88 347.88 141.88 347.88 140.60 347.20C136.88 345.24 135.14 340.80 136.40 336.48C136.96 334.56 139.42 329.96 143.08 324.00C144.81 321.18 147.27 317.15 148.55 315.04C149.83 312.93 151.48 310.29 152.22 309.16C152.97 308.04 154.14 306.17 154.83 305.00C155.52 303.83 156.95 301.52 158.01 299.88C159.07 298.23 161.82 293.84 164.12 290.12C166.42 286.41 169.07 282.19 170.00 280.75C170.93 279.31 172.11 277.39 172.64 276.50C173.16 275.61 174.32 273.75 175.21 272.38C177.97 268.13 180.22 264.54 182.82 260.27C184.19 258.01 186.28 254.69 187.45 252.89C188.63 251.09 190.23 248.56 191.01 247.25C192.63 244.53 196.49 238.46 198.23 235.88C198.88 234.91 199.84 233.39 200.37 232.50C200.90 231.61 202.42 229.19 203.76 227.12C212.37 213.87 212.94 212.65 211.37 210.79C209.51 208.58 199.75 209.00 192.23 211.61C182.34 215.04 175.64 219.88 167.84 229.25C163.45 234.51 161.63 235.62 157.38 235.62C154.10 235.62 152.54 235.05 150.62 233.14C147.70 230.21 147.30 227.34 148.51 218.00C148.79 215.85 149.87 206.77 150.26 203.25C151.24 194.43 151.90 192.30 154.36 190.04C155.73 188.78 157.05 188.10 159.05 187.63C161.44 187.07 264.17 187.06 266.33 187.62C272.07 189.12 274.56 193.38 273.13 199.23C272.69 201.01 272.53 201.30 267.42 209.30C266.57 210.63 265.09 212.99 264.12 214.53C263.16 216.08 260.98 219.49 259.28 222.11C257.57 224.73 255.48 228.00 254.63 229.38C251.88 233.83 240.74 251.55 239.00 254.25C238.07 255.69 235.48 259.86 233.25 263.50C231.02 267.14 228.92 270.49 228.59 270.93C228.25 271.38 226.89 273.53 225.55 275.70C224.22 277.88 222.13 281.23 220.92 283.15C219.71 285.06 217.26 288.99 215.47 291.88C213.68 294.76 211.62 298.02 210.88 299.12C210.15 300.23 208.52 302.81 207.25 304.88C204.68 309.04 203.36 311.14 200.42 315.75C195.56 323.36 195.29 324.09 196.80 325.60C198.31 327.11 201.28 327.47 207.62 326.90C217.75 325.99 224.35 323.66 232.94 317.97C237.91 314.67 241.46 311.46 247.24 305.02C251.02 300.80 251.81 300.11 254.14 298.93C258.73 296.61 264.03 298.15 266.23 302.45C267.46 304.87 267.44 308.63 266.11 318.93C265.77 321.65 265.09 327.02 264.62 330.88C264.14 334.73 263.57 338.66 263.35 339.62C262.23 344.42 258.98 347.47 254.54 347.90C252.59 348.09 197.56 348.15 167.00 348.00ZM472.88 348.01C467.76 347.88 467.30 347.83 466.30 347.30C463.52 345.82 462.25 343.70 462.25 340.55C462.25 338.15 463.20 336.26 465.72 333.65C468.91 330.33 469.74 328.64 470.25 324.41C470.68 320.75 470.74 266.29 470.31 263.82C469.74 260.52 469.18 259.45 466.61 256.73C463.84 253.80 463.07 252.04 463.32 249.16C463.61 245.65 465.10 243.39 468.18 241.82C473.28 239.20 491.61 231.99 495.43 231.10C497.87 230.53 501.24 230.70 502.86 231.49C506.46 233.24 507.75 236.25 507.75 242.92C507.75 247.73 508.06 248.03 510.18 245.30C515.43 238.53 523.47 233.30 531.48 231.47C534.26 230.83 540.34 230.58 543.32 230.98C551.04 232.01 558.71 237.12 563.51 244.44C564.52 245.98 565.48 247.25 565.64 247.25C565.80 247.25 567.61 245.59 569.65 243.56C575.23 238.02 578.58 235.72 584.81 233.14C589.43 231.23 591.61 230.87 598.38 230.90C604.02 230.91 604.52 230.95 606.81 231.57C613.45 233.35 619.56 237.66 623.46 243.33C628.19 250.20 629.25 256.17 629.75 278.75C630.66 319.47 630.84 321.68 633.76 327.67C634.83 329.89 635.34 330.58 637.64 332.99C640.90 336.41 641.37 337.32 641.37 340.25C641.38 342.77 640.66 344.38 638.80 346.02C636.39 348.14 637.64 348.03 613.62 348.12C591.27 348.20 588.96 348.12 587.25 347.25C584.26 345.73 582.87 343.46 582.88 340.12C582.88 337.32 583.29 336.46 585.99 333.58C589.93 329.36 590.00 329.02 590.00 313.76C589.99 289.86 589.38 270.89 588.51 267.90C587.48 264.34 585.60 261.83 583.00 260.55C580.99 259.56 577.75 259.57 575.72 260.56C572.59 262.10 570.53 265.34 569.84 269.83C569.46 272.27 569.55 289.79 570.10 321.12C570.22 327.99 570.83 329.74 574.43 333.58C577.18 336.52 577.88 337.92 577.87 340.51C577.86 343.75 576.35 346.03 573.26 347.47C571.88 348.12 571.88 348.12 550.62 348.05C538.94 348.02 529.04 347.92 528.62 347.84C527.35 347.58 525.63 346.58 524.69 345.53C523.13 343.81 522.88 343.13 522.88 340.62C522.87 337.70 523.53 336.24 526.00 333.62C528.02 331.49 528.78 330.02 529.37 327.16C529.72 325.40 529.75 322.76 529.62 303.03C529.38 267.49 529.21 265.85 525.47 262.39C520.69 257.97 514.08 259.83 511.65 266.29C510.25 270.02 510.22 270.74 510.32 299.51C510.42 328.31 510.38 327.55 511.87 330.50C512.26 331.27 513.40 332.66 514.62 333.86C515.87 335.09 516.97 336.45 517.39 337.27C519.27 340.97 517.40 345.69 513.29 347.58C512.13 348.12 512.01 348.13 495.25 348.13C485.97 348.14 475.90 348.08 472.88 348.01ZM712.68 325.36C719.63 324.34 724.52 322.51 730.51 318.68C734.99 315.80 736.44 314.52 739.87 310.38C744.00 305.39 746.13 301.61 747.96 296.09C753.09 280.57 750.59 263.16 741.63 252.12C735.09 244.07 726.30 238.77 715.83 236.59C710.98 235.58 703.63 235.58 698.63 236.58C679.71 240.39 666.71 253.26 662.72 272.12C661.93 275.83 661.85 285.11 662.58 288.50C664.67 298.29 667.42 304.21 672.84 310.53C676.52 314.83 677.12 315.36 681.30 318.13C687.44 322.19 693.12 324.39 699.62 325.25C700.86 325.41 702.04 325.58 702.25 325.62C703.51 325.87 710.36 325.70 712.68 325.36ZM713.88 298.73C707.39 298.22 702.28 295.77 697.04 290.66C693.78 287.48 692.54 285.41 690.87 280.38C688.81 274.19 689.06 267.98 691.62 261.69C693.55 256.93 695.56 254.33 699.88 251.02C702.97 248.63 703.64 248.23 706.09 247.25C715.78 243.37 726.59 245.23 734.57 252.15C740.67 257.43 744.09 266.53 743.22 275.16C742.50 282.30 738.72 288.98 732.99 293.24C727.27 297.49 721.01 299.29 713.88 298.73ZM1051.32 277.85C1056.96 275.58 1059.11 274.33 1060.19 272.69C1060.88 271.66 1060.88 271.66 1060.86 266.89C1060.85 261.35 1060.31 258.57 1058.53 254.91C1056.76 251.28 1054.93 249.72 1052.39 249.70C1050.64 249.68 1049.53 250.26 1047.87 252.05C1044.60 255.58 1042.85 261.74 1042.37 271.38C1042.14 275.93 1042.52 278.93 1043.40 279.70C1044.34 280.52 1045.13 280.33 1051.32 277.85ZM413.32 278.47C417.86 276.85 422.38 274.74 423.72 273.61C425.02 272.52 425.32 271.66 425.45 268.72C425.88 258.50 421.61 249.53 416.30 249.51C412.22 249.48 408.77 254.90 406.85 264.34C406.34 266.84 406.10 275.71 406.48 277.56C406.80 279.06 407.59 280.00 408.54 280.00C408.80 280.00 410.95 279.31 413.32 278.47ZM315.89 278.91C325.32 275.68 329.83 273.17 330.50 270.77C330.90 269.33 330.79 264.87 330.28 261.75C328.35 250.00 322.12 245.11 316.62 251.05C312.95 255.01 310.39 264.93 310.86 273.38C311.20 279.62 311.82 280.30 315.89 278.91ZM708.92 267.48C712.44 265.77 713.62 260.82 711.20 257.89C707.41 253.30 700.24 255.80 700.25 261.71C700.26 266.25 704.98 269.39 708.92 267.48ZM22.11 251.16C19.52 250.31 18.12 248.36 18.13 245.62C18.14 243.28 18.45 242.76 22.14 238.96C25.61 235.36 26.37 234.35 27.44 231.88C29.67 226.69 29.19 225.11 24.71 222.92C17.41 219.34 13.98 213.98 13.98 206.12C13.97 198.36 17.68 192.40 24.64 188.97C37.47 182.65 51.83 188.86 55.24 202.20C58.30 214.21 53.46 228.72 42.63 239.97C39.56 243.15 34.47 247.45 32.16 248.80C28.49 250.95 24.39 251.91 22.11 251.16Z"/></svg></header>
+  <div class="wrap"><section class="s ctl-sec" id="bediening-sectie" aria-labelledby="bediening-title">
+  <p class="label">Bediening</p>
+  <h2 id="bediening-title">Alles bij de hand.<br>Ook vanuit bed.</h2>
+  <p>Licht, rolluiken, warmte en radio vanaf je telefoon. De gewone schakelaars werken ook gewoon.</p>
+  <div id="ctl-body" aria-live="polite"></div>
+  <div class="demo" id="ctl-demo">
+    <span>Voorbeeld (alleen met ?demo of buiten Home Assistant): toon toestand</span>
+    <div>
+      <button type="button" data-demo="connected" aria-pressed="true">Verbonden</button>
+      <button type="button" data-demo="loading" aria-pressed="false">Laden</button>
+      <button type="button" data-demo="offline" aria-pressed="false">Geen verbinding</button>
+      <button type="button" data-demo="unavailable" aria-pressed="false">Toestel onbereikbaar</button>
+      <button type="button" data-demo="fail" aria-pressed="false">Commando mislukt</button>
+      <button type="button" data-demo="code" aria-pressed="false">Codescherm</button>
+      <button type="button" data-demo="ended" aria-pressed="false">Verblijf afgelopen</button>
+      <button type="button" data-demo="uit" aria-pressed="false">Toegang uit</button>
+    </div>
+  </div>
+</section></div>
+</div>
+
+<nav class="tabbar" aria-label="Weergave">
+  <a href="#gids" id="tab-gids" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5zM4 21.5V5.5M8 7h8M8 11h6"/></svg>Huisgids</a>
+  <a href="#bediening" id="tab-bediening"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/></svg>Bediening</a>
+</nav>
+
+<script>
+document.getElementById('copy-pw').addEventListener('click',function(){
+  var b=this,t=document.getElementById('pw').textContent;
+  function sel(){var r=document.createRange();r.selectNodeContents(document.getElementById('pw'));var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Geselecteerd, kopieer met je toestel';}
+  try{navigator.clipboard.writeText(t).then(function(){b.textContent='Gekopieerd';setTimeout(function(){b.textContent='Kopieer wachtwoord'},2000)},sel)}catch(e){sel()}
+});
+</script>
+<script>
+/* ================= Teksten — de toestellen zelf komen van /api/gastpagina/config ================= */
+const TEXT = {
+  scenes: {
+    slaapwel: { title: "Slaapwel", detail: "Lichten uit, rolluiken dicht, warmte op nacht, radio stil.", done: "Slaapwel. Alles staat uit.", icon: "moon" },
+    alles_uit: { title: "Alles uit", detail: "Lichten uit en radio stil. Rolluiken en warmte blijven.", done: "Alles uit.", icon: "power" }
+  },
+  undoSeconds: 8
+};
+
+/* Voorbeeldconfiguratie voor ?demo of buiten Home Assistant: zelfde vorm als /api/gastpagina/config */
+const DEMO_CONFIG = (() => {
+  const L = (room, key, label, dimmable = false) => ({ id: `${room}.${key}`, key, label, dimmable });
+  const P = (room, key, label) => ({ id: `${room}.${key}`, key, label });
+  return {
+    rooms: [
+      { key: "living", name: "Living", lights: [L("living", "plafond", "Plafond", true), L("living", "bollen", "Bollen")],
+        covers: [P("living", "keukenkant", "Keukenkant"), P("living", "zeekant", "Zeekant")], climate: P("living", "warmte", "Warmte living") },
+      { key: "keuken", name: "Keuken", lights: [L("keuken", "spots", "Spots", true), L("keuken", "ledstrip", "Ledstrip", true), L("keuken", "aanrecht", "Aanrecht")],
+        covers: [P("keuken", "rolluik", "Rolluik keuken")], climate: null },
+      { key: "slaapkamer", name: "Slaapkamer", lights: [L("slaapkamer", "led_bed", "Led bed", true), L("slaapkamer", "led_muur", "Led muur", true), L("slaapkamer", "led_raam", "Led raam", true), L("slaapkamer", "lamp_raam", "Lamp raam", true)],
+        covers: [], climate: P("slaapkamer", "warmte", "Warmte slaapkamer") },
+      { key: "slaapkamer2", name: "Slaapkamer 2", lights: [L("slaapkamer2", "licht", "Licht", true)], covers: [P("slaapkamer2", "rolluik", "Rolluik")], climate: null },
+      { key: "badkamer", name: "Badkamer", lights: [L("badkamer", "plafond", "Plafond"), L("badkamer", "spiegel", "Spiegel")], covers: [], climate: P("badkamer", "warmte", "Warmte badkamer") },
+      { key: "gang", name: "Gang", lights: [L("gang", "licht", "Licht", true)], covers: [], climate: null },
+      { key: "wc", name: "Wc", lights: [L("wc", "licht", "Licht")], covers: [], climate: null }
+    ],
+    radio: { id: "radio", key: "radio", label: "Radio living", max_volume: 0.6,
+      stations: [["ra2wvl", "Radio 2 West-Vlaanderen"], ["mnm", "MNM"], ["stubru", "Studio Brussel"], ["radio1", "Radio 1"], ["qmusic", "Qmusic"], ["joe", "Joe"]].map(([key, label]) => ({ key, label })) },
+    climate_limits: { min: 16, max: 22, step: 0.5 },
+    scenes: {
+      slaapwel: { lights_off: true, covers_close: true, climate_night: 17, radio_stop: true },
+      alles_uit: { lights_off: true, covers_close: false, climate_night: null, radio_stop: true }
+    }
+  };
+})();
+
+/* ================= Datalaag ================= */
+/* Beide lagen bieden hetzelfde: subscribe(cb) met { status, states, config, retryAfter },
+   call(device, action, value) → Promise, login(code) → Promise<{ ok } | { error }>, newCode().
+   status: loading | code | ended | uit | offline | connected */
+
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* privé-venster: dan maar zonder onthouden */ } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) { /* idem */ } }
+};
+
+function makeGastApi(base = "/api/gastpagina") {
+  const TOKEN = "gastpagina.token", UNTIL = "gastpagina.tot";
+  const subs = [];
+  let status = "loading", states = {}, config = null, token = store.get(TOKEN);
+  let es = null, poll = null, revive = null, retry = null;
+  const emit = () => subs.forEach(cb => cb({ status, states: JSON.parse(JSON.stringify(states)), config }));
+  const set = s => { status = s; emit(); };
+  const ended = () => { const t = store.get(UNTIL); return !!t && Date.parse(t) <= Date.now(); };
+
+  async function req(method, path, body) {
+    const headers = { Accept: "application/json" };
+    if (token) headers["X-Gast-Token"] = token; /* nooit Authorization: die leest Home Assistant zelf */
+    if (body !== undefined) headers["Content-Type"] = "application/json";
+    const r = await fetch(base + path, { method, headers, cache: "no-store", credentials: "omit",
+      body: body === undefined ? undefined : JSON.stringify(body) });
+    let data = null; try { data = await r.json(); } catch (e) { /* 204 of geen json */ }
+    return { status: r.status, data };
+  }
+
+  function stopLive() {
+    if (es) { es.close(); es = null; }
+    clearInterval(poll); poll = null; clearTimeout(revive); revive = null;
+  }
+  function signedOut() {
+    stopLive(); token = null; store.del(TOKEN);
+    set(ended() ? "ended" : "code");
+  }
+  function later(ms) { clearTimeout(retry); retry = setTimeout(refresh, ms); }
+
+  /* antwoord op /state verwerken; true als de toestand binnen is */
+  function handleState(r) {
+    if (r.status === 401) { signedOut(); return false; }
+    if (r.status === 503) { stopLive(); set("uit"); later(15000); return false; }
+    if (r.status !== 200) { set("offline"); later(5000); return false; }
+    states = r.data; set("connected"); return true;
+  }
+
+  async function refresh() {
+    clearTimeout(retry);
+    if (!token) return set(ended() ? "ended" : "code");
+    let r; try { r = await req("GET", "/state"); } catch (e) { stopLive(); set("offline"); return later(5000); }
+    if (handleState(r)) startLive();
+  }
+
+  async function start() {
+    stopLive(); clearTimeout(retry);
+    let r; try { r = await req("GET", "/config"); } catch (e) { set("offline"); return later(5000); }
+    if (r.status === 503) { set("uit"); return later(15000); }
+    if (r.status !== 200) { set("offline"); return later(5000); }
+    config = r.data;
+    refresh();
+  }
+
+  /* live: EventSource kan geen headers sturen, dus eerst een kort ticket; anders elke 5 s pollen */
+  async function startLive() {
+    if (es || poll) return;
+    try {
+      if (!("EventSource" in window)) throw new Error("geen EventSource");
+      const t = await req("POST", "/stream-ticket");
+      if (t.status === 401) return signedOut();
+      if (t.status !== 200) throw new Error("geen ticket");
+      if (es || poll) return;
+      es = new EventSource(`${base}/stream?ticket=${encodeURIComponent(t.data.ticket)}`);
+      es.addEventListener("snapshot", e => { states = JSON.parse(e.data); set("connected"); });
+      es.onmessage = e => { const m = JSON.parse(e.data); states[m.device] = m.state; emit(); };
+      es.addEventListener("sessie", () => { stopLive(); refresh(); });
+      es.addEventListener("uit", () => { stopLive(); set("uit"); later(15000); });
+      es.addEventListener("config", () => { stopLive(); start(); });
+      es.onerror = () => fallback(); /* een ticket werkt maar één keer: zelf opnieuw verbinden */
+    } catch (e) { fallback(); }
+  }
+  function fallback() {
+    stopLive();
+    poll = setInterval(async () => {
+      try { handleState(await req("GET", "/state")); } catch (e) { set("offline"); }
+      if (status !== "connected") { stopLive(); later(5000); }
+    }, 5000);
+    revive = setTimeout(() => { stopLive(); refresh(); }, 60000);
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && token) { stopLive(); refresh(); }
+  });
+  window.addEventListener("online", () => { if (status === "offline") start(); });
+
+  start();
+  return {
+    subscribe(cb) { subs.push(cb); cb({ status, states: JSON.parse(JSON.stringify(states)), config }); },
+    async call(device, action, value) {
+      const body = { device, action }; if (value !== undefined) body.value = value;
+      let r; try { r = await req("POST", "/action", body); } catch (e) { throw new Error("offline"); }
+      if (r.status === 401) { signedOut(); throw new Error("sessie"); }
+      if (r.status === 503) { stopLive(); set("uit"); later(15000); throw new Error("uit"); }
+      if (r.status !== 200) throw new Error((r.data && r.data.error) || "mislukt");
+      return r.data;
+    },
+    async login(code) {
+      let r; try { r = await req("POST", "/login", { code }); } catch (e) { return { error: "offline" }; }
+      if (r.status === 200) {
+        token = r.data.token; store.set(TOKEN, token); store.set(UNTIL, r.data.expires_at);
+        await refresh(); return { ok: true };
+      }
+      if (r.status === 429) return { error: "blocked", retryAfter: r.data && r.data.retry_after };
+      if (r.status === 503) { set("uit"); return { error: "uit" }; }
+      return { error: "code" };
+    },
+    newCode() { store.del(UNTIL); set("code"); }
+  };
+}
+
+/* Gesimuleerd, voor het ontwerp (?demo of buiten Home Assistant) */
+function makeDemo(config) {
+  const subs = []; let status = "loading"; let failNext = false; const S = {};
+  const rooms = config.rooms;
+  rooms.flatMap(r => r.lights).forEach((l, i) => S[l.id] = { available: true, state: i % 3 === 0 ? "on" : "off", brightness: l.dimmable ? 180 : 255 });
+  rooms.flatMap(r => r.covers).forEach((c, i) => S[c.id] = { available: true, position: i === 1 ? 50 : 100, moving: null, state: "open" });
+  rooms.map(r => r.climate).filter(Boolean).forEach((c, i) => S[c.id] = { available: true, state: "heat", current: [19.5, 18, 21][i] ?? 19, target: [20, 18.5, 21][i] ?? 20, action: "idle" });
+  if (config.radio) S[config.radio.id] = { available: true, state: "idle", volume: 0.25, station: null };
+  const L = config.climate_limits;
+  const emit = () => subs.forEach(cb => cb({ status, states: JSON.parse(JSON.stringify(S)), config }));
+  const tick = () => {
+    Object.values(S).forEach(e => {
+      if (e.target !== undefined) {
+        const on = e.state === "heat";
+        if (on && e.current < e.target) { e.current = Math.min(e.target, Math.round((e.current + .1) * 10) / 10); e.action = "heating"; }
+        else { if (!on || e.current > e.target) e.current = Math.max(15, Math.round((e.current - .05) * 100) / 100); e.action = "idle"; }
+      }
+      if (e.moving) { const d = e.moving === "open" ? 10 : -10; e.position = Math.max(0, Math.min(100, e.position + d));
+        if (e.position === 0 || e.position === 100) { e.state = e.position ? "open" : "closed"; e.moving = null; } }
+    });
+    if (status === "connected") emit();
+  };
+  setInterval(tick, 900);
+  setTimeout(() => { if (status === "loading") { status = "connected"; emit(); } }, 1600);
+  const apply = (id, action, value) => {
+    const e = S[id];
+    if (!e) throw new Error("toestel");
+    if (!e.available) throw new Error("niet_beschikbaar");
+    if (action === "on" || action === "off") e.state = action;
+    if (action === "toggle") e.state = e.state === "on" ? "off" : "on";
+    if (action === "brightness") { e.state = "on"; e.brightness = Math.round(value * 2.55); }
+    if (action === "open" || action === "close") { e.moving = action; e.state = "moving"; }
+    if (action === "stop") { if (e.moving !== undefined) e.moving = null; else e.state = "idle"; }
+    if (action === "target") e.target = Math.min(L.max, Math.max(L.min, Math.round(value / L.step) * L.step));
+    if (action === "power") e.state = value === "on" ? "heat" : "off";
+    if (action === "play") { e.state = "playing"; e.station = value; }
+    if (action === "volume") e.volume = Math.min(config.radio.max_volume, value);
+  };
+  return {
+    subscribe(cb) { subs.push(cb); cb({ status, states: JSON.parse(JSON.stringify(S)), config }); },
+    call(device, action, value) {
+      return new Promise((resolve, reject) => setTimeout(() => {
+        if (status !== "connected") return reject(new Error("offline"));
+        if (failNext) { failNext = false; return reject(new Error("mislukt")); }
+        if (device !== "scene") { try { apply(device, action, value); } catch (e) { return reject(e); } emit(); return resolve({ ok: true }); }
+        const sc = config.scenes[action], previous = {};
+        Object.entries(S).forEach(([id, e]) => {
+          if (!e.available) return;
+          const kind = e.brightness !== undefined ? "light" : e.position !== undefined ? "cover" : e.target !== undefined ? "climate" : "radio";
+          if (kind === "light" && sc.lights_off && e.state === "on") { previous[id] = { ...e }; e.state = "off"; }
+          if (kind === "cover" && sc.covers_close && e.state !== "closed") { previous[id] = { ...e }; e.moving = "close"; e.state = "moving"; }
+          if (kind === "climate" && sc.climate_night != null && e.state !== "off") { previous[id] = { ...e }; e.target = sc.climate_night; }
+          if (kind === "radio" && sc.radio_stop && e.state === "playing") { previous[id] = { ...e }; e.state = "idle"; }
+        });
+        emit(); resolve({ ok: true, previous, failed: 0 });
+      }, 250));
+    },
+    login(code) {
+      return new Promise(resolve => setTimeout(() => {
+        if (code.replace(/[\s-]/g, "").length < 10) return resolve({ error: "code" });
+        status = "connected"; emit(); resolve({ ok: true });
+      }, 400));
+    },
+    newCode() { status = "code"; emit(); },
+    /* alleen voor het voorbeeldpaneel */
+    _demo(kind) {
+      if (kind === "fail") { failNext = true; return; }
+      Object.values(S).forEach(e => e.available = true);
+      if (kind === "unavailable") S["slaapkamer2.licht"].available = false;
+      status = { loading: "loading", offline: "offline", code: "code", ended: "ended", uit: "uit" }[kind] || "connected";
+      if (kind === "loading") setTimeout(() => { status = "connected"; emit(); }, 2200);
+      emit();
+    }
+  };
+}
+
+const PARAMS = new URLSearchParams(location.search);
+const DEMO = PARAMS.has("demo") || !location.pathname.startsWith("/local/");
+const ha = DEMO ? makeDemo(DEMO_CONFIG) : makeGastApi();
+
+/* ================= Weergave ================= */
+(() => {
+  const body = document.getElementById("ctl-body");
+  let S = {}, server = {}, cfg = null, status = null, builtFor = null; const pending = {};
+  let gate = { error: null, busy: false };
+  const svg = p => `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+  const IC = {
+    bulb: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/>',
+    blind: '<path d="M4 4h16M5 4v16M19 4v16M5 8h14M5 12h14"/>',
+    temp: '<path d="M10 14V5a2 2 0 1 1 4 0v9a4 4 0 1 1-4 0Z"/>',
+    radio: '<rect x="3" y="8" width="18" height="12" rx="3"/><path d="m7 8 10-5M16 14h.01M8 12h4M8 16h4"/>',
+    moon: '<path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5Z"/>',
+    power: '<path d="M12 3v9M6.3 7a8 8 0 1 0 11.4 0"/>',
+    key: '<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M14 9l2 2"/>'
+  };
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const fmt = t => typeof t === "number" ? (Math.round(t * 2) / 2).toLocaleString("nl-BE", { minimumFractionDigits: 1 }) : "–";
+  const sel = id => body.querySelector(`[data-e="${CSS.escape(id)}"]`);
+  const rooms = () => (cfg ? cfg.rooms : []);
+  const allLights = () => rooms().flatMap(r => r.lights);
+  const allCovers = () => rooms().flatMap(r => r.covers);
+  const allClimates = () => rooms().map(r => r.climate).filter(Boolean);
+  const stationLabel = key => (cfg.radio.stations.find(s => s.key === key) || {}).label || "";
+
+  /* optimistisch: zet lokale toestand meteen, roep aan, val terug bij fout */
+  function act(id, action, value, optimistic) {
+    const before = JSON.parse(JSON.stringify(S[id] || {}));
+    if (optimistic && S[id]) optimistic(S[id]);
+    pending[id] = true; render();
+    return ha.call(id, action, value).then(() => settle([id]), err => {
+      S[id] = before; render();
+      if (err.message !== "sessie" && err.message !== "uit") toast(err.message === "niet_beschikbaar" ? "Dat toestel is even niet bereikbaar." : "Dat lukte niet. Probeer het nog eens.");
+    }).finally(() => { delete pending[id]; });
+  }
+  /* de echte toestand kan binnengekomen zijn terwijl de actie liep: die wint */
+  function settle(ids) {
+    ids.forEach(id => { delete pending[id]; if (server[id]) S[id] = JSON.parse(JSON.stringify(server[id])); });
+    render();
+  }
+
+  /* toast met ongedaan maken */
+  let toastEl = null, toastTimer = null;
+  function toast(msg, undo) {
+    if (toastEl) toastEl.remove(); clearTimeout(toastTimer);
+    toastEl = document.createElement("div"); toastEl.className = "toast"; toastEl.setAttribute("role", "status");
+    toastEl.innerHTML = `<span>${esc(msg)}</span>` + (undo ? '<button type="button" class="ctl-btn" id="ctl-undo">Ongedaan maken</button>' : "");
+    document.body.appendChild(toastEl);
+    if (undo) toastEl.querySelector("button").onclick = () => { undo(); toastEl.remove(); toastEl = null; };
+    toastTimer = setTimeout(() => { if (toastEl) { toastEl.remove(); toastEl = null; } }, (undo ? TEXT.undoSeconds : 3) * 1000);
+  }
+
+  /* scène loopt op de server; het antwoord bevat de vorige toestand voor "ongedaan maken" */
+  function runScene(key) {
+    const sc = cfg.scenes[key], txt = TEXT.scenes[key] || { done: "Klaar." };
+    const snap = JSON.parse(JSON.stringify(S)), touched = [];
+    const mark = (id, fn) => { if (S[id] && S[id].available) { fn(S[id]); pending[id] = true; touched.push(id); } };
+    if (sc.lights_off) allLights().forEach(l => S[l.id]?.state === "on" && mark(l.id, e => e.state = "off"));
+    if (sc.covers_close) allCovers().forEach(c => S[c.id]?.state !== "closed" && mark(c.id, e => { e.moving = "close"; e.state = "moving"; }));
+    if (sc.climate_night != null) allClimates().forEach(c => S[c.id]?.state !== "off" && mark(c.id, e => e.target = sc.climate_night));
+    if (sc.radio_stop && cfg.radio && S[cfg.radio.id]?.state === "playing") mark(cfg.radio.id, e => e.state = "idle");
+    render();
+    ha.call("scene", key).then(res => {
+      const prev = (res && res.previous) || {};
+      settle(touched);
+      toast(res && res.failed ? "Niet alles lukte. Kijk de toestellen even na." : txt.done, Object.keys(prev).length ? () => undoScene(prev) : null);
+    }).catch(err => {
+      touched.forEach(id => S[id] = snap[id]); render();
+      if (err.message !== "sessie" && err.message !== "uit") toast("Dat lukte niet. Probeer het nog eens.");
+    }).finally(() => touched.forEach(id => delete pending[id]));
+  }
+  function undoScene(prev) {
+    const dimmable = new Set(allLights().filter(l => l.dimmable).map(l => l.id));
+    Object.entries(prev).forEach(([id, p]) => {
+      if (p.brightness !== undefined) {
+        if (p.state !== "on") return;
+        if (dimmable.has(id)) { const pct = Math.max(1, Math.round(p.brightness / 2.55)); act(id, "brightness", pct, e => { e.state = "on"; e.brightness = p.brightness; }); }
+        else act(id, "on", undefined, e => e.state = "on");
+      } else if (p.position !== undefined) {
+        if (p.position > 0) act(id, "open", undefined, e => { e.moving = "open"; e.state = "moving"; });
+      } else if (p.target !== undefined) {
+        if (typeof p.target === "number") act(id, "target", p.target, e => e.target = p.target);
+      } else if (p.station) {
+        act(id, "play", p.station, e => { e.state = "playing"; e.station = p.station; });
+      }
+    });
+  }
+
+  function roomOff(room) {
+    const on = room.lights.filter(l => S[l.id]?.state === "on").map(l => l.id);
+    if (!on.length) { toast(`In ${room.name.toLowerCase()} brandt al niets.`); return; }
+    on.forEach(id => act(id, "off", undefined, e => e.state = "off"));
+    toast(`Lichten uit in ${room.name.toLowerCase()}.`, () => on.forEach(id => act(id, "on", undefined, e => e.state = "on")));
+  }
+
+  function build() {
+    const sc = cfg.scenes;
+    const quick = Object.keys(sc).filter(k => TEXT.scenes[k]);
+    let h = quick.length ? `<div class="quick">${quick.map(k => { const t = TEXT.scenes[k];
+      return `<button type="button" class="ctl-btn" data-scene="${esc(k)}" aria-label="${esc(t.title)}: ${esc(t.detail)}">${svg(IC[t.icon] || IC.power)}<span><span class="t">${esc(t.title)}</span><br><span class="d">${esc(t.detail)}</span></span></button>`; }).join("")}</div>` : "";
+    h += `<div class="rooms">`;
+    rooms().forEach((r, ri) => {
+      h += `<div class="room"><div class="room-head"><h3>${esc(r.name)}</h3>${r.lights.length ? `<button type="button" class="ctl-btn room-off" data-roomoff="${ri}">Alles uit hier</button>` : ""}</div><div class="grid">`;
+      r.lights.forEach(l => {
+        h += `<div class="tile light" data-e="${esc(l.id)}"><button type="button" class="ctl-btn main" data-light="${esc(l.id)}" aria-pressed="false"><span class="dot"></span>${svg(IC.bulb)}<span><span class="lbl">${esc(l.label)}</span><br><span class="st">Uit</span></span></button>`
+          + (l.dimmable ? `<div class="dimrow"><input type="range" min="10" max="100" step="5" data-dim="${esc(l.id)}" aria-label="Helderheid ${esc(r.name)} ${esc(l.label)}"><output></output></div>` : "") + `</div>`;
+      });
+      r.covers.forEach(c => {
+        h += `<div class="tile cover" data-e="${esc(c.id)}"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span class="lbl">${esc(c.label)}</span>${svg(IC.blind)}</div><span class="st"></span><div class="bar"><i></i></div>
+          <div class="seg" role="group" aria-label="Rolluik ${esc(r.name)} ${esc(c.label)}"><button type="button" class="ctl-btn" data-cover="open" data-id="${esc(c.id)}">Open</button><button type="button" class="ctl-btn" data-cover="stop" data-id="${esc(c.id)}">Stop</button><button type="button" class="ctl-btn" data-cover="close" data-id="${esc(c.id)}">Dicht</button></div></div>`;
+      });
+      if (r.climate) {
+        const c = r.climate;
+        h += `<div class="tile climate" data-e="${esc(c.id)}"><div class="clim"><div><span class="st">${esc(c.label)} · nu</span><div class="now"><span class="nv"></span><small> °C</small></div></div>
+          <div class="set"><button type="button" class="ctl-btn" data-clim="-" data-id="${esc(c.id)}" aria-label="Kouder ${esc(r.name)}">−</button><output aria-label="Ingesteld"></output><button type="button" class="ctl-btn" data-clim="+" data-id="${esc(c.id)}" aria-label="Warmer ${esc(r.name)}">+</button></div></div>
+          <div class="clim-foot"><span class="state"></span><button type="button" class="ctl-btn toggle" data-climpower="${esc(c.id)}" aria-pressed="false">Aan</button></div></div>`;
+      }
+      h += `</div>`;
+      if (ri === 0 && cfg.radio) {
+        const R = cfg.radio;
+        h += `<div class="radio" data-e="${esc(R.id)}"><div class="radio-row"><span class="lbl" style="display:inline-flex;gap:8px;align-items:center">${svg(IC.radio)} ${esc(R.label)}</span><span class="playing"></span></div>
+          <div class="stations" role="group" aria-label="Zenders">${R.stations.map(s => `<button type="button" class="ctl-btn" data-station="${esc(s.key)}" aria-pressed="false">${esc(s.label)}</button>`).join("")}</div>
+          <div class="radio-row"><button type="button" class="ctl-btn toggle" data-radiostop="1">Stop</button><div class="vol"><button type="button" class="ctl-btn" data-vol="-" aria-label="Zachter">−</button><output aria-label="Volume"></output><button type="button" class="ctl-btn" data-vol="+" aria-label="Luider">+</button></div></div></div>`;
+      }
+      h += `</div>`;
+    });
+    h += `</div>`;
+    body.innerHTML = h; builtFor = cfg;
+  }
+
+  function showGate() {
+    if (body.querySelector("#gate")) return;
+    builtFor = null;
+    body.innerHTML = `<form class="gate" id="gate" novalidate>
+      <span class="gate-ic">${svg(IC.key)}</span>
+      <b>Je code, alsjeblieft.</b>
+      <p>Je code staat in je boekingsbevestiging.</p>
+      <div class="gate-row"><label class="sr" for="gate-code">Code</label>
+        <input id="gate-code" name="code" type="text" autocomplete="one-time-code" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="go" maxlength="100" required>
+        <button type="submit" class="ctl-btn">Openen</button></div>
+      <p class="gate-err" role="alert" aria-live="assertive"></p></form>`;
+  }
+  function renderGate() {
+    const f = body.querySelector("#gate");
+    f.querySelector("button").disabled = gate.busy;
+    f.querySelector(".gate-err").textContent = gate.error === "code" ? "Die code kennen we niet. Kijk je bevestiging nog eens na."
+      : gate.error === "blocked" ? "Even wachten. Probeer het over een paar minuten opnieuw."
+      : gate.error === "offline" ? "Geen verbinding. Probeer het zo nog eens." : "";
+    f.querySelector("input").setAttribute("aria-invalid", gate.error === "code");
+  }
+
+  function render() {
+    if (status === "loading") { builtFor = null; body.innerHTML = '<div class="skel" aria-label="Bediening laadt"><i></i><i></i><i></i></div>'; return; }
+    if (status === "offline") { builtFor = null; body.innerHTML = '<div class="offline"><b>Even niet bereikbaar.</b><p>De bediening krijgt geen verbinding. Kijk of je internet hebt; het opnieuw proberen gaat vanzelf. De gewone schakelaars werken altijd, en de rest van deze gids ook.</p></div>'; return; }
+    if (status === "uit") { builtFor = null; body.innerHTML = '<div class="offline"><b>De bediening staat even uit.</b><p>De gewone schakelaars werken gewoon. Lukt iets niet, laat het ons weten.</p></div>'; return; }
+    if (status === "ended") { builtFor = null; body.innerHTML = '<div class="offline"><b>Je verblijf is afgelopen.</b><p>Tot een volgende keer.</p><button type="button" class="ctl-btn gate-again" data-newcode="1">Nieuwe code invullen</button></div>'; return; }
+    if (status === "code") { showGate(); renderGate(); return; }
+    if (!cfg) return;
+    if (builtFor !== cfg) build();
+    const L = cfg.climate_limits;
+    body.querySelectorAll("[data-e]").forEach(t => {
+      const id = t.dataset.e, e = S[id]; if (!e) return;
+      const na = !e.available; t.classList.toggle("na", na);
+      t.querySelectorAll("button,input").forEach(b => b.disabled = na);
+      if (t.classList.contains("light")) {
+        const on = e.state === "on"; t.classList.toggle("is-on", on && !na);
+        t.querySelector(".main").setAttribute("aria-pressed", on);
+        const pct = Math.round(e.brightness / 2.55);
+        t.querySelector(".st").textContent = na ? "Even niet bereikbaar" : on ? (t.querySelector("[data-dim]") ? `Aan · ${pct}%` : "Aan") : "Uit";
+        const r = t.querySelector("[data-dim]"); if (r && document.activeElement !== r && on) r.value = pct; if (r) r.nextElementSibling.textContent = on ? pct + "%" : "";
+      } else if (t.classList.contains("cover")) {
+        const p = e.position; t.querySelector(".bar i").style.width = p + "%";
+        t.querySelector(".st").textContent = na ? "Even niet bereikbaar" : e.moving ? (e.moving === "open" ? "Gaat open…" : "Gaat dicht…") : p >= 100 ? "Open" : p <= 0 ? "Dicht" : p >= 40 && p <= 60 ? `Half open · ${p}%` : `${p}% open`;
+        t.querySelectorAll("[data-cover]").forEach(b => b.setAttribute("aria-pressed", (b.dataset.cover === "open" && e.moving === "open") || (b.dataset.cover === "close" && e.moving === "close")));
+      } else if (t.classList.contains("climate")) {
+        const on = e.state === "heat", target = typeof e.target === "number" ? e.target : null;
+        t.querySelector(".nv").textContent = fmt(e.current);
+        t.querySelector(".set output").textContent = on ? fmt(target) + " °C" : "uit";
+        t.querySelector('[data-clim="-"]').disabled = na || !on || target === null || target <= L.min;
+        t.querySelector('[data-clim="+"]').disabled = na || !on || target === null || target >= L.max;
+        const st = t.querySelector(".state"); st.className = "state " + (na ? "idle" : on && e.action === "heating" ? "heat" : "idle");
+        st.textContent = na ? "Even niet bereikbaar" : !on ? "Verwarming uit" : e.action === "heating" ? "Warmt op" : "Op temperatuur";
+        const pw = t.querySelector("[data-climpower]"); pw.setAttribute("aria-pressed", on); pw.textContent = on ? "Aan" : "Uit";
+      } else if (t.classList.contains("radio")) {
+        const playing = e.state === "playing", max = cfg.radio.max_volume;
+        t.querySelectorAll("[data-station]").forEach(b => b.setAttribute("aria-pressed", playing && b.dataset.station === e.station));
+        t.querySelector(".playing").textContent = na ? "Even niet bereikbaar" : playing ? (e.station ? `Speelt: ${stationLabel(e.station)}` : "Speelt") : "Stil";
+        t.querySelector("[data-radiostop]").disabled = na || !playing;
+        t.querySelector(".vol output").textContent = Math.round(e.volume * 100) + "%";
+        t.querySelector('[data-vol="+"]').disabled = na || e.volume >= max - 0.001;
+        t.querySelector('[data-vol="-"]').disabled = na || e.volume <= 0.001;
+      }
+    });
+  }
+
+  body.addEventListener("submit", async ev => {
+    if (ev.target.id !== "gate") return;
+    ev.preventDefault();
+    const input = ev.target.querySelector("input"), code = input.value.trim();
+    if (!code || gate.busy) { input.focus(); return; }
+    gate = { error: null, busy: true }; renderGate();
+    const res = await ha.login(code);
+    gate = { error: res.ok ? null : res.error, busy: false };
+    if (body.querySelector("#gate")) { renderGate(); if (!res.ok) input.select(); }
+  });
+
+  body.addEventListener("click", ev => {
+    const b = ev.target.closest("button"); if (!b || b.disabled || !b.closest("#ctl-body")) return;
+    if (b.dataset.newcode) { gate = { error: null, busy: false }; return ha.newCode(); }
+    if (status !== "connected") return;
+    if (b.dataset.scene) return runScene(b.dataset.scene);
+    if (b.dataset.roomoff) return roomOff(rooms()[+b.dataset.roomoff]);
+    if (b.dataset.light) { const id = b.dataset.light, on = S[id].state === "on"; return act(id, on ? "off" : "on", undefined, e => { e.state = on ? "off" : "on"; if (!on && !e.brightness) e.brightness = 255; }); }
+    if (b.dataset.cover) { const a = b.dataset.cover; return act(b.dataset.id, a, undefined, e => { e.moving = a === "stop" ? null : a; if (a !== "stop") e.state = "moving"; }); }
+    if (b.dataset.clim) { const L = cfg.climate_limits, id = b.dataset.id, e = S[id]; const t = Math.min(L.max, Math.max(L.min, e.target + (b.dataset.clim === "+" ? L.step : -L.step))); return act(id, "target", t, x => x.target = t); }
+    if (b.dataset.climpower) { const id = b.dataset.climpower, on = S[id].state === "heat"; return act(id, "power", on ? "off" : "on", e => e.state = on ? "off" : "heat"); }
+    if (b.dataset.station) { const key = b.dataset.station; return act(cfg.radio.id, "play", key, e => { e.state = "playing"; e.station = key; }); }
+    if (b.dataset.radiostop) return act(cfg.radio.id, "stop", undefined, e => e.state = "idle");
+    if (b.dataset.vol) { const id = cfg.radio.id, e = S[id]; const v = Math.round(Math.min(cfg.radio.max_volume, Math.max(0, e.volume + (b.dataset.vol === "+" ? .05 : -.05))) * 100) / 100; return act(id, "volume", v, x => x.volume = v); }
+  });
+  body.addEventListener("input", ev => { const r = ev.target.closest("[data-dim]"); if (r) r.nextElementSibling.textContent = r.value + "%"; });
+  body.addEventListener("change", ev => {
+    const r = ev.target.closest("[data-dim]"); if (!r || status !== "connected") return;
+    const pct = +r.value, bri = Math.round(pct * 2.55);
+    act(r.dataset.dim, "brightness", pct, e => { e.state = "on"; e.brightness = bri; });
+  });
+
+  ha.subscribe(msg => {
+    const was = status;
+    status = msg.status;
+    if (msg.config && msg.config !== cfg) { cfg = msg.config; builtFor = null; }
+    server = msg.states;
+    Object.keys(msg.states).forEach(id => { if (!pending[id]) S[id] = msg.states[id]; });
+    if (status === "code" && was !== "code") gate = { error: null, busy: false };
+    render();
+    if (status === "code" && was !== "code" && was !== null) { const i = body.querySelector("#gate-code"); if (i && !document.getElementById("view-bediening").hidden) i.focus(); }
+  });
+
+  /* voorbeeldpaneel */
+  const demo = document.getElementById("ctl-demo");
+  if (!DEMO) demo.hidden = true;
+  demo.addEventListener("click", ev => {
+    const b = ev.target.closest("[data-demo]"); if (!b) return;
+    if (b.dataset.demo !== "fail") demo.querySelectorAll("[data-demo]").forEach(x => x.setAttribute("aria-pressed", x === b));
+    else { b.setAttribute("aria-pressed", "true"); setTimeout(() => b.setAttribute("aria-pressed", "false"), 1500); toast("Volgende tik mislukt, om de terugval te zien."); }
+    ha._demo(b.dataset.demo);
+  });
+
+  /* twee weergaves: huisgids en bediening, gestuurd via #bediening */
+  const vg = document.getElementById("view-gids"), vb = document.getElementById("view-bediening");
+  const tg = document.getElementById("tab-gids"), tb = document.getElementById("tab-bediening");
+  let last = null;
+  function route() {
+    const h = location.hash.slice(1); const ctl = h === "bediening";
+    vg.hidden = ctl; vb.hidden = !ctl;
+    tg.toggleAttribute("aria-current", !ctl); tb.toggleAttribute("aria-current", ctl);
+    if (ctl) tb.setAttribute("aria-current", "page"); else tg.setAttribute("aria-current", "page");
+    if (last !== null && last !== ctl) {
+      if (ctl || !h || h === "gids") window.scrollTo(0, 0);
+      else { const t = document.getElementById(h); if (t) t.scrollIntoView(); }
+    }
+    last = ctl;
+  }
+  window.addEventListener("hashchange", route); route();
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,111 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Guest page",
+        "description": "Guests control the property with the code from their booking. Each booking is a calendar event with a line `code: …` in its description.",
+        "data": {
+          "calendar_entity": "Bookings calendar",
+          "hours_before": "Code valid from (hours before the start)",
+          "hours_after": "Code valid until (hours after the end)",
+          "min_code_length": "Minimum code length",
+          "max_attempts": "Wrong attempts per 15 minutes per address"
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "The guest page is already set up."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Guest page",
+        "data": {
+          "calendar_entity": "Bookings calendar",
+          "hours_before": "Code valid from (hours before the start)",
+          "hours_after": "Code valid until (hours after the end)",
+          "min_code_length": "Minimum code length",
+          "max_attempts": "Wrong attempts per 15 minutes per address"
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": { "boeking_actief": { "name": "Booking active" } },
+    "sensor": {
+      "actieve_sessies": { "name": "Active sessions" },
+      "foute_pogingen": { "name": "Wrong attempts" }
+    },
+    "switch": { "toegang": { "name": "Access" } }
+  },
+  "issues": {
+    "config_missing": {
+      "title": "gastpagina.yaml is missing",
+      "description": "Create {path} with the rooms and devices, then call `gastpagina.reload`. Until then guests cannot control anything."
+    },
+    "config_invalid": {
+      "title": "gastpagina.yaml is invalid",
+      "description": "The file could not be read: {error}. The previous devices keep working until it is fixed."
+    },
+    "room_invalid": {
+      "title": "Invalid room in gastpagina.yaml",
+      "description": "Room {room} is skipped: {error}"
+    },
+    "device_invalid": {
+      "title": "Invalid device in gastpagina.yaml",
+      "description": "Device {device} is skipped: {error}"
+    },
+    "wrong_domain": {
+      "title": "Wrong kind of entity for {device}",
+      "description": "{entity} is not a {expected}. The device is skipped and unreachable for guests."
+    },
+    "duplicate_key": {
+      "title": "Duplicate key in gastpagina.yaml",
+      "description": "{device} occurs more than once (or is reserved). Only the first one counts."
+    },
+    "missing_entity": {
+      "title": "Entity for {device} does not exist",
+      "description": "{entity} does not exist in Home Assistant. The device shows as unavailable on the page."
+    },
+    "limits_invalid": {
+      "title": "Invalid temperature limits",
+      "description": "climate_limits in gastpagina.yaml is wrong ({error}). The default 16–22 °C applies."
+    },
+    "scene_invalid": {
+      "title": "Invalid scene in gastpagina.yaml",
+      "description": "Scene {scene} is skipped: {error}"
+    },
+    "code_too_short": {
+      "title": "Code too short for booking {title}",
+      "description": "The code of booking \"{title}\" is shorter than {min_length} characters and does not work. Pick a longer one."
+    },
+    "duplicate_code": {
+      "title": "Same code for two bookings",
+      "description": "\"{first}\" and \"{second}\" overlap and share a code. Neither works until one changes."
+    },
+    "calendar_missing": {
+      "title": "Guest page calendar is missing",
+      "description": "{entity} does not exist (any more). Without it no code works."
+    }
+  },
+  "services": {
+    "reload": {
+      "name": "Reload",
+      "description": "Reads gastpagina.yaml again."
+    },
+    "revoke_sessions": {
+      "name": "Revoke sessions",
+      "description": "Signs guests out. Without a booking: everyone.",
+      "fields": {
+        "booking": {
+          "name": "Booking",
+          "description": "Title or uid of the calendar event."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "not_loaded": { "message": "The guest page is not loaded." }
+  }
+}

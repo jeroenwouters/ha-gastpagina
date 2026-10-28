@@ -1,0 +1,42 @@
+"""Diagnostics: configuration (station urls redacted), counts and recent errors."""
+
+from __future__ import annotations
+
+from typing import Any
+
+from homeassistant.components.diagnostics import REDACTED
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers import issue_registry as ir
+
+from .const import DOMAIN
+from .runtime import GastConfigEntry
+
+
+async def async_get_config_entry_diagnostics(
+    hass: HomeAssistant, entry: GastConfigEntry
+) -> dict[str, Any]:
+    """No codes, tokens, guest names or stream urls."""
+    runtime = entry.runtime_data
+    config = runtime.controller.config
+    issues = sorted(
+        issue_id for (domain, issue_id) in ir.async_get(hass).issues if domain == DOMAIN
+    )
+    return {
+        "options": {**entry.data, **entry.options},
+        "devices": {
+            d.id: {"kind": d.kind, "entity_id": d.entity_id, "dimmable": d.dimmable}
+            for d in config.devices.values()
+        },
+        "stations": [
+            {"key": s.key, "label": s.label, "url": REDACTED} for s in config.stations.values()
+        ],
+        "climate_limits": config.public()["climate_limits"],
+        "scenes": sorted(config.scenes),
+        "access_enabled": runtime.access_enabled,
+        "bookings_valid_now": len(runtime.bookings.valid()),
+        "calendar_error": runtime.bookings.last_error,
+        "sessions": runtime.sessions.count,
+        "failed_logins_last_hour": runtime.limiter.failures_last_hour(),
+        "issues": issues,
+        "recent_errors": list(runtime.errors),
+    }

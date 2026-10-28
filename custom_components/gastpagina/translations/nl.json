@@ -1,0 +1,111 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Gastpagina",
+        "description": "Gasten bedienen het pand met de code uit hun boeking. Elke boeking is een afspraak in de kalender met een regel `code: …` in de beschrijving.",
+        "data": {
+          "calendar_entity": "Kalender met boekingen",
+          "hours_before": "Code geldig vanaf (uren vóór de start)",
+          "hours_after": "Code geldig tot (uren na het einde)",
+          "min_code_length": "Minimale codelengte",
+          "max_attempts": "Foute pogingen per 15 minuten per adres"
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Gastpagina is al ingesteld."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Gastpagina",
+        "data": {
+          "calendar_entity": "Kalender met boekingen",
+          "hours_before": "Code geldig vanaf (uren vóór de start)",
+          "hours_after": "Code geldig tot (uren na het einde)",
+          "min_code_length": "Minimale codelengte",
+          "max_attempts": "Foute pogingen per 15 minuten per adres"
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": { "boeking_actief": { "name": "Boeking actief" } },
+    "sensor": {
+      "actieve_sessies": { "name": "Actieve sessies" },
+      "foute_pogingen": { "name": "Foute pogingen" }
+    },
+    "switch": { "toegang": { "name": "Toegang" } }
+  },
+  "issues": {
+    "config_missing": {
+      "title": "gastpagina.yaml ontbreekt",
+      "description": "Maak {path} aan met de ruimtes en toestellen en roep daarna `gastpagina.reload` aan. Tot dan kunnen gasten niets bedienen."
+    },
+    "config_invalid": {
+      "title": "gastpagina.yaml is ongeldig",
+      "description": "Het bestand kon niet gelezen worden: {error}. De vorige toestellen blijven werken tot het bestand hersteld is."
+    },
+    "room_invalid": {
+      "title": "Ongeldige ruimte in gastpagina.yaml",
+      "description": "Ruimte {room} wordt overgeslagen: {error}"
+    },
+    "device_invalid": {
+      "title": "Ongeldig toestel in gastpagina.yaml",
+      "description": "Toestel {device} wordt overgeslagen: {error}"
+    },
+    "wrong_domain": {
+      "title": "Verkeerd soort entiteit voor {device}",
+      "description": "{entity} is geen {expected}. Het toestel wordt overgeslagen en is niet bereikbaar voor gasten."
+    },
+    "duplicate_key": {
+      "title": "Dubbele sleutel in gastpagina.yaml",
+      "description": "{device} komt meer dan eens voor (of is gereserveerd). Alleen de eerste telt."
+    },
+    "missing_entity": {
+      "title": "Entiteit voor {device} bestaat niet",
+      "description": "{entity} bestaat niet in Home Assistant. Het toestel staat op de pagina als onbereikbaar."
+    },
+    "limits_invalid": {
+      "title": "Ongeldige temperatuurgrenzen",
+      "description": "climate_limits in gastpagina.yaml klopt niet ({error}). De standaard 16–22 °C geldt."
+    },
+    "scene_invalid": {
+      "title": "Ongeldige scène in gastpagina.yaml",
+      "description": "Scène {scene} wordt overgeslagen: {error}"
+    },
+    "code_too_short": {
+      "title": "Code te kort voor boeking {title}",
+      "description": "De code van boeking \"{title}\" is korter dan {min_length} tekens en werkt niet. Kies een langere code."
+    },
+    "duplicate_code": {
+      "title": "Zelfde code voor twee boekingen",
+      "description": "\"{first}\" en \"{second}\" overlappen en hebben dezelfde code. Beide codes werken niet tot één ervan verandert."
+    },
+    "calendar_missing": {
+      "title": "Kalender voor de gastpagina ontbreekt",
+      "description": "{entity} bestaat niet (meer). Zonder kalender werkt geen enkele code."
+    }
+  },
+  "services": {
+    "reload": {
+      "name": "Herladen",
+      "description": "Leest gastpagina.yaml opnieuw in."
+    },
+    "revoke_sessions": {
+      "name": "Sessies intrekken",
+      "description": "Meldt gasten af. Zonder boeking: iedereen.",
+      "fields": {
+        "booking": {
+          "name": "Boeking",
+          "description": "Titel of uid van de kalenderafspraak."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "not_loaded": { "message": "Gastpagina is niet geladen." }
+  }
+}

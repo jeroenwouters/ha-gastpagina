@@ -1,0 +1,68 @@
+# Gastpagina — ’t Zeemonster, Oostende
+# Plaats dit bestand als /config/gastpagina.yaml en roep na een wijziging
+# de service gastpagina.reload aan (geen herstart nodig).
+# Alleen de entiteiten hieronder zijn ooit bereikbaar voor gasten.
+
+rooms:
+  - key: living
+    name: Living
+    lights:
+      - { key: plafond, label: Plafond, entity: light.living_licht_plafond, dimmable: true }
+      - { key: bollen, label: Bollen, entity: switch.living_licht_2_bollen }
+    covers:
+      - { key: keukenkant, label: Keukenkant, entity: cover.living_rolluik_keuken }
+      - { key: zeekant, label: Zeekant, entity: cover.living_rolluik_zeekant }
+    climate: { key: warmte, label: Warmte living, entity: climate.living_aqara_thermostaat_thermostaat }
+  - key: keuken
+    name: Keuken
+    lights:
+      - { key: spots, label: Spots, entity: light.keuken_spots, dimmable: true }
+      - { key: ledstrip, label: Ledstrip, entity: light.keuken_keuken_led_strip, dimmable: true }
+      - { key: aanrecht, label: Aanrecht, entity: switch.keuken_aaanrecht }
+    covers:
+      - { key: rolluik, label: Rolluik keuken, entity: cover.keuken_rolluik }
+  - key: slaapkamer
+    name: Slaapkamer
+    lights:
+      - { key: led_bed, label: Led bed, entity: light.gledopto_gl_c_009p_3, dimmable: true }
+      - { key: led_muur, label: Led muur, entity: light.gledopto_gl_c_009p_2, dimmable: true }
+      - { key: led_raam, label: Led raam, entity: light.gledopto_gl_c_009p, dimmable: true }
+      - { key: lamp_raam, label: Lamp raam, entity: light.slaapkamer_raam, dimmable: true }
+    climate: { key: warmte, label: Warmte slaapkamer, entity: climate.slaapkamer }
+  - key: slaapkamer2
+    name: Slaapkamer 2
+    lights:
+      - { key: licht, label: Licht, entity: light.slaapkamer2_licht, dimmable: true }
+    covers:
+      - { key: rolluik, label: Rolluik, entity: cover.kinderkamer_rolluik }
+  - key: badkamer
+    name: Badkamer
+    lights:
+      - { key: plafond, label: Plafond, entity: switch.badkamer_licht_schakelaar }
+      - { key: spiegel, label: Spiegel, entity: switch.badkamer_licht_schakelaar_2 }
+    climate: { key: warmte, label: Warmte badkamer, entity: climate.badkamer_thermostaat_thermostaat }
+  - key: gang
+    name: Gang
+    lights:
+      - { key: licht, label: Licht, entity: light.gang_licht, dimmable: true }
+  - key: wc
+    name: Wc
+    lights:
+      - { key: licht, label: Licht, entity: switch.wc_licht }
+radio:
+  key: radio
+  label: Radio living
+  entity: media_player.woonkamer_woonkamer
+  max_volume: 0.6
+  content_type: music
+  stations:
+    - { key: ra2wvl, label: Radio 2 West-Vlaanderen, url: "http://icecast.vrtcdn.be/ra2wvl-high.mp3" }
+    - { key: mnm, label: MNM, url: "http://icecast.vrtcdn.be/mnm-high.mp3" }
+    - { key: stubru, label: Studio Brussel, url: "http://icecast.vrtcdn.be/stubru-high.mp3" }
+    - { key: radio1, label: Radio 1, url: "http://icecast.vrtcdn.be/radio1-high.mp3" }
+    - { key: qmusic, label: Qmusic, url: "https://streams.radio.dpgmedia.cloud/redirect/qmusic_be/mp3" }
+    - { key: joe, label: Joe, url: "https://streams.radio.dpgmedia.cloud/redirect/joe_fm/mp3" }
+climate_limits: { min: 16, max: 22, step: 0.5 }
+scenes:
+  slaapwel: { lights_off: true, covers_close: true, climate_night: 17, radio_stop: true }
+  alles_uit: { lights_off: true, covers_close: false, climate_night: null, radio_stop: true }

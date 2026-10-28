@@ -1,0 +1,8 @@
+reload:
+revoke_sessions:
+  fields:
+    booking:
+      required: false
+      example: "Familie Peeters"
+      selector:
+        text:
