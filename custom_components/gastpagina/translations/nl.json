@@ -3,18 +3,25 @@
     "step": {
       "user": {
         "title": "Gastpagina",
-        "description": "Gasten bedienen het pand met de code uit hun boeking. Elke boeking is een afspraak in de kalender met een regel `code: …` in de beschrijving.",
+        "description": "Gasten bedienen het pand met de code uit hun boeking. Elke boeking is een afspraak in de kalender met aankomst- en vertrekuur; de integratie zet er zelf een regel `code: …` in. Met `code: geen` krijgt een afspraak nooit een code.",
         "data": {
           "calendar_entity": "Kalender met boekingen",
           "hours_before": "Code geldig vanaf (uren vóór de start)",
           "hours_after": "Code geldig tot (uren na het einde)",
           "min_code_length": "Minimale codelengte",
-          "max_attempts": "Foute pogingen per 15 minuten per adres"
+          "max_attempts": "Foute pogingen per 15 minuten per adres",
+          "auto_codes": "Codes automatisch aanmaken",
+          "code_prefix": "Voorvoegsel voor codes (max. 6 letters of cijfers)",
+          "notify_new_code": "Melding bij een nieuwe code",
+          "lookahead_days": "Vooruit kijken (dagen)"
         }
       }
     },
     "abort": {
       "single_instance_allowed": "Gastpagina is al ingesteld."
+    },
+    "error": {
+      "invalid_prefix": "Alleen letters en cijfers, hoogstens 6."
     }
   },
   "options": {
@@ -26,18 +33,37 @@
           "hours_before": "Code geldig vanaf (uren vóór de start)",
           "hours_after": "Code geldig tot (uren na het einde)",
           "min_code_length": "Minimale codelengte",
-          "max_attempts": "Foute pogingen per 15 minuten per adres"
+          "max_attempts": "Foute pogingen per 15 minuten per adres",
+          "auto_codes": "Codes automatisch aanmaken",
+          "code_prefix": "Voorvoegsel voor codes (max. 6 letters of cijfers)",
+          "notify_new_code": "Melding bij een nieuwe code",
+          "lookahead_days": "Vooruit kijken (dagen)"
         }
       }
+    },
+    "error": {
+      "invalid_prefix": "Alleen letters en cijfers, hoogstens 6."
     }
   },
   "entity": {
-    "binary_sensor": { "boeking_actief": { "name": "Boeking actief" } },
-    "sensor": {
-      "actieve_sessies": { "name": "Actieve sessies" },
-      "foute_pogingen": { "name": "Foute pogingen" }
+    "binary_sensor": {
+      "boeking_actief": {
+        "name": "Boeking actief"
+      }
     },
-    "switch": { "toegang": { "name": "Toegang" } }
+    "sensor": {
+      "actieve_sessies": {
+        "name": "Actieve sessies"
+      },
+      "foute_pogingen": {
+        "name": "Foute pogingen"
+      }
+    },
+    "switch": {
+      "toegang": {
+        "name": "Toegang"
+      }
+    }
   },
   "issues": {
     "config_missing": {
@@ -87,6 +113,22 @@
     "calendar_missing": {
       "title": "Kalender voor de gastpagina ontbreekt",
       "description": "{entity} bestaat niet (meer). Zonder kalender werkt geen enkele code."
+    },
+    "calendar_read_only": {
+      "title": "Kalender kan niet beschreven worden",
+      "description": "{entity} kan geen afspraken wijzigen, dus codes worden niet automatisch aangemaakt. Zet zelf een regel `code: …` in de afspraken, of zet *Codes automatisch aanmaken* uit."
+    },
+    "all_day_booking": {
+      "title": "Boeking {title} is een hele-dag-afspraak",
+      "description": "Geef aankomst- en vertrekuur, dan krijgt de boeking vanzelf een code. Is het geen boeking, zet dan `code: geen` in de beschrijving."
+    },
+    "recurring_booking": {
+      "title": "Boeking {title} is een herhalende afspraak",
+      "description": "Herhalende afspraken krijgen geen code. Maak er losse afspraken van, of zet `code: geen` in de beschrijving."
+    },
+    "code_write_failed": {
+      "title": "Code voor {title} kon niet bewaard worden",
+      "description": "Het schrijven naar de kalender mislukte drie keer. Het wordt elke minuut opnieuw geprobeerd; zie het logboek voor de fout."
     }
   },
   "services": {
@@ -103,9 +145,40 @@
           "description": "Titel of uid van de kalenderafspraak."
         }
       }
+    },
+    "generate_code": {
+      "name": "Nieuwe code",
+      "description": "Maakt een nieuwe code voor een boeking (bv. als de oude gelekt is), vervangt de regel `code: …` en meldt de gasten van die boeking af.",
+      "fields": {
+        "booking": {
+          "name": "Boeking",
+          "description": "Titel of uid van de kalenderafspraak."
+        }
+      }
+    },
+    "fill_codes": {
+      "name": "Codes aanvullen",
+      "description": "Geeft nu meteen een code aan elke komende boeking zonder code."
     }
   },
   "exceptions": {
-    "not_loaded": { "message": "Gastpagina is niet geladen." }
+    "not_loaded": {
+      "message": "Gastpagina is niet geladen."
+    },
+    "calendar_read_only": {
+      "message": "De kalender kan niet beschreven worden."
+    },
+    "booking_not_found": {
+      "message": "Geen komende boeking gevonden met titel of uid \"{booking}\"."
+    },
+    "booking_ambiguous": {
+      "message": "Meerdere boekingen heten \"{booking}\"; geef de uid."
+    },
+    "booking_not_eligible": {
+      "message": "\"{booking}\" is een hele-dag- of herhalende afspraak en kan geen code krijgen."
+    },
+    "code_write_failed": {
+      "message": "De nieuwe code voor \"{booking}\" kon niet bewaard worden."
+    }
   }
 }

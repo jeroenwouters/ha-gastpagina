@@ -6,3 +6,11 @@ revoke_sessions:
       example: "Familie Peeters"
       selector:
         text:
+generate_code:
+  fields:
+    booking:
+      required: true
+      example: "Familie Peeters"
+      selector:
+        text:
+fill_codes:

@@ -10,8 +10,9 @@ Vereist Home Assistant 2026.9 of nieuwer. Geen externe Python-pakketten.
 
 ## Hoe het werkt
 
-- Een boeking is een afspraak in een HA-kalender (bv. de Local Calendar "Gasten")
-  met in de beschrijving een regel `code: <code>`.
+- Een boeking is een afspraak in een HA-kalender (bv. de Local Calendar "Gasten").
+  De integratie zet er zelf een code in, als regel `code: <code>` onderaan de
+  beschrijving.
 - De pagina (`/local/huisgids.html`) praat met `/api/gastpagina/...` op dezelfde
   HA-server. Na een geldige code krijgt de gast een eigen sessietoken, dat
   meegaat in de header `X-Gast-Token`. Er komt nooit een HA-token in de browser.
@@ -34,23 +35,51 @@ Vereist Home Assistant 2026.9 of nieuwer. Geen externe Python-pakketten.
    - code geldig vanaf X uur vóór de start (standaard 24);
    - code geldig tot Y uur na het einde (standaard 0);
    - minimale codelengte (standaard 10);
-   - foute pogingen per 15 minuten per adres (standaard 5).
+   - foute pogingen per 15 minuten per adres (standaard 5);
+   - codes automatisch aanmaken (standaard aan);
+   - voorvoegsel voor codes, max. 6 letters/cijfers (standaard leeg; met `ZM`
+     wordt een code `ZM-DUIN-0937-KREEFT`);
+   - melding bij een nieuwe code (standaard aan);
+   - vooruit kijken: hoeveel dagen vooraf een boeking een code krijgt
+     (standaard 90).
 
    Deze instellingen kun je later wijzigen via *Configureren*.
 
-## Een boeking met code toevoegen
+## Een boeking toevoegen
 
-Maak in de kalender "Gasten" een afspraak van check-in tot check-out. Zet in
-de beschrijving een regel met de code, bv.:
+Maak in de kalender "Gasten" een afspraak **met aankomst- en vertrekuur** (geen
+hele-dag-afspraak). Binnen een minuut zet de integratie er een code in, onderaan
+de beschrijving:
 
 ```
 Familie Peeters, 2 volwassenen
 code: ZEE-4821-MONSTER
 ```
 
+De rest van de afspraak blijft zoals ze was. Bij een nieuwe code komt er een
+melding in HA ("Code aangemaakt voor Familie Peeters (03-11-2026)"); de code
+zelf staat alleen in de afspraak, en in het event `gastpagina_code_created`
+(zie verder) om ze door te sturen.
+
+- **Geen code nodig** (poetsdag, eigen gebruik): zet `code: geen` (of `code: -`)
+  in de beschrijving. Die afspraak krijgt nooit een code en geeft geen toegang.
+- **Hele-dag- of herhalende afspraken** krijgen geen code; je krijgt een
+  repair-melding. Geef aankomst- en vertrekuur, of zet `code: geen`.
+- **Eigen code**: staat er al een regel `code: …`, dan blijft die. Ze moet
+  minstens 10 tekens hebben (zonder spaties en streepjes), anders
+  repair-melding "Code te kort voor boeking …" en werkt ze niet.
+- **Code gelekt**: service `gastpagina.generate_code` met `booking` (titel of
+  uid). De oude code werkt meteen niet meer, gasten van die boeking zijn
+  afgemeld, en het antwoord bevat de nieuwe code.
+- **Niet wachten**: `gastpagina.fill_codes` vult nu meteen alle ontbrekende
+  codes aan (anders gebeurt dat elke minuut).
+- Een kalender die niet beschreven kan worden (bv. een iCal-feed) krijgt geen
+  automatische codes; je krijgt één repair-melding en eigen codes blijven
+  werken.
 - Hoofdletters, spaties en streepjes tellen niet: `zee 4821 monster` werkt ook.
-- Minstens 10 tekens (zonder spaties en streepjes). Te kort → repair-melding
-  "Code te kort voor boeking …" en de code werkt niet.
+- Local Calendar bewaart een gewijzigde afspraak in lokale tijd zonder
+  tijdzone-label; het uur blijft hetzelfde. Dat doet ze ook bij elke wijziging
+  in de HA-interface.
 - Twee overlappende boekingen met dezelfde code werken allebei niet (en geven
   een repair-melding).
 - Wijzigingen in de kalender gelden binnen een minuut. Verwijder je de afspraak
@@ -82,17 +111,58 @@ Onder het apparaat **Gastpagina**:
 | `sensor.gastpagina_foute_pogingen` | foute codes in het laatste uur |
 | `switch.gastpagina_toegang` | hoofdschakelaar: uit = gasten kunnen niets (de pagina toont nog de labels) |
 
-Services: `gastpagina.reload` en `gastpagina.revoke_sessions` (zonder veld:
-iedereen afmelden; met `booking`: de titel of uid van één afspraak).
+Services: `gastpagina.reload`, `gastpagina.revoke_sessions` (zonder veld:
+iedereen afmelden; met `booking`: de titel of uid van één afspraak),
+`gastpagina.generate_code` (`booking`) en `gastpagina.fill_codes`.
 
-Events voor automatiseringen: `gastpagina_login` (zonder gegevens) en
-`gastpagina_action` (`device`, `action`). Het logboek toont acties als
+Events voor automatiseringen: `gastpagina_login` (zonder gegevens),
+`gastpagina_action` (`device`, `action`) en `gastpagina_code_created`
+(`booking`, `start`, `end`, `code`). Het logboek toont acties als
 "Gastpagina", nooit als een gebruiker.
 
 Bij een blokkade (te veel foute codes vanaf één adres, of 50 in een uur in
 totaal: dan is aanmelden 15 minuten dicht) komt er een melding. Diagnostics
 (Gastpagina → ⋮ → Diagnostiek downloaden) tonen instellingen, aantallen en de
 laatste fouten, zonder codes, tokens, namen of stream-url's.
+
+## De code doorsturen
+
+`gastpagina_code_created` is de enige plek buiten de kalender waar de code
+staat. Deze automatisering stuurt elke nieuwe code naar de app van de eigenaar
+(vervang `mobile_app_mijn_telefoon` door je eigen notify-dienst):
+
+```yaml
+alias: Gastpagina – nieuwe code naar mijn telefoon
+mode: queued
+triggers:
+  - trigger: event
+    event_type: gastpagina_code_created
+actions:
+  - action: notify.mobile_app_mijn_telefoon
+    data:
+      title: "Code voor {{ trigger.event.data.booking }}"
+      message: >-
+        {{ trigger.event.data.code }}
+        ({{ as_timestamp(trigger.event.data.start) | timestamp_custom('%d-%m %H:%M') }}
+        tot {{ as_timestamp(trigger.event.data.end) | timestamp_custom('%d-%m %H:%M') }})
+```
+
+Let op:
+
+- HA bewaart events in zijn database, ook dit event met de code. Wil je dat
+  niet, sluit het uit (de automatisering werkt gewoon verder):
+
+  ```yaml
+  recorder:
+    exclude:
+      event_types:
+        - gastpagina_code_created
+  ```
+
+- Een pushmelding gaat via de diensten van Apple of Google; een e-mail via je
+  mailprovider. Kies wat voor jou veilig genoeg is.
+- Zet debug-logging van `homeassistant.core` niet aan: die schrijft alle events
+  in het log, ook dit.
 
 ## De pagina
 
@@ -119,7 +189,9 @@ uv pip install --python .venv/bin/python pytest-homeassistant-custom-component r
 
 Testen op het pand na installatie:
 
-1. Maak een testafspraak "Test" van nu tot over een uur met `code: TEST-123456`.
+1. Maak een testafspraak "Test" van nu tot over een uur, zonder code. Binnen
+   een minuut staat er een code in de beschrijving (of roep
+   `gastpagina.fill_codes` aan).
 2. Open `/local/huisgids.html#bediening` op een telefoon (wifi én 4G), vul de
    code in en bedien een lamp. Het logboek toont "Gastpagina".
 3. Probeer zes keer een foute code: de zesde geeft "Even wachten".

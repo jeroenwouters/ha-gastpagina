@@ -16,18 +16,27 @@ from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.util import dt as dt_util
 from homeassistant.util.yaml import load_yaml
 
+from .autocodes import CodeFiller, CodeSettings
 from .bookings import Booking, BookingIndex
 from .const import (
+    CONF_AUTO_CODES,
     CONF_CALENDAR,
+    CONF_CODE_PREFIX,
     CONF_HOURS_AFTER,
     CONF_HOURS_BEFORE,
+    CONF_LOOKAHEAD_DAYS,
     CONF_MAX_ATTEMPTS,
     CONF_MIN_CODE_LENGTH,
+    CONF_NOTIFY_NEW_CODE,
     CONFIG_FILE,
+    DEFAULT_AUTO_CODES,
+    DEFAULT_CODE_PREFIX,
     DEFAULT_HOURS_AFTER,
     DEFAULT_HOURS_BEFORE,
+    DEFAULT_LOOKAHEAD_DAYS,
     DEFAULT_MAX_ATTEMPTS,
     DEFAULT_MIN_CODE_LENGTH,
+    DEFAULT_NOTIFY_NEW_CODE,
     DOMAIN,
     EVENT_ACTION,
     EVENT_LOGIN,
@@ -61,6 +70,20 @@ class GastRuntime:
             before=timedelta(hours=int(options.get(CONF_HOURS_BEFORE, DEFAULT_HOURS_BEFORE))),
             after=timedelta(hours=int(options.get(CONF_HOURS_AFTER, DEFAULT_HOURS_AFTER))),
             min_length=int(options.get(CONF_MIN_CODE_LENGTH, DEFAULT_MIN_CODE_LENGTH)),
+        )
+        self.codes = CodeFiller(
+            hass,
+            options[CONF_CALENDAR],
+            CodeSettings(
+                enabled=bool(options.get(CONF_AUTO_CODES, DEFAULT_AUTO_CODES)),
+                prefix=str(options.get(CONF_CODE_PREFIX, DEFAULT_CODE_PREFIX)).upper(),
+                notify=bool(options.get(CONF_NOTIFY_NEW_CODE, DEFAULT_NOTIFY_NEW_CODE)),
+                lookahead=timedelta(
+                    days=int(options.get(CONF_LOOKAHEAD_DAYS, DEFAULT_LOOKAHEAD_DAYS))
+                ),
+                min_length=self.bookings.min_length,
+                after=self.bookings.after,
+            ),
         )
         self.sessions = SessionManager(hass)
         self.limiter = LoginLimiter(int(options.get(CONF_MAX_ATTEMPTS, DEFAULT_MAX_ATTEMPTS)))
@@ -136,8 +159,9 @@ class GastRuntime:
     # --- periodic ------------------------------------------------------------
 
     async def async_tick(self, _now: datetime | None = None) -> None:
-        """Every minute: reread the calendar and drop sessions that lost their booking."""
+        """Every minute: reread the calendar, fill in missing codes, drop stale sessions."""
         await self.bookings.async_refresh()
+        await self.async_fill_codes()
         self.prune_sessions()
         self.notify()
         async_dispatcher_send(self.hass, SIGNAL_RECHECK)
@@ -146,6 +170,22 @@ class GastRuntime:
         """Once HA runs, every integration has had a chance to add its entities."""
         self.check_entities()
         await self.async_tick()
+
+    async def async_fill_codes(self) -> int:
+        """Write codes into bookings without one; reread so they work at once."""
+        created = await self.codes.async_fill()
+        if created:
+            await self.bookings.async_refresh()
+        return created
+
+    async def async_generate_code(self, query: str) -> str:
+        """Replace a booking's code (it leaked) and sign out its guests."""
+        key, code = await self.codes.async_replace(query)
+        self.sessions.remove_where(lambda s: s.booking == key)
+        await self.bookings.async_refresh()
+        self.notify()
+        async_dispatcher_send(self.hass, SIGNAL_RECHECK)
+        return code
 
     @callback
     def prune_sessions(self) -> int:
@@ -163,6 +203,7 @@ class GastRuntime:
         self.closed = True
         async_dispatcher_send(self.hass, SIGNAL_RECHECK)
         self.bookings.clear_issues()
+        self.codes.clear_issues()
         for issue_id in self._config_issues:
             ir.async_delete_issue(self.hass, DOMAIN, issue_id)
         self._config_issues = set()

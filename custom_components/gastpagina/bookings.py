@@ -43,15 +43,35 @@ def normalize_code(raw: str) -> str:
     return _SEPARATORS.sub("", raw).casefold()
 
 
+def code_value(description: str | None) -> str | None:
+    """The text after `code:` as written, or None when there is no code line."""
+    match = _CODE_LINE.search(description or "")
+    return match.group(1) if match else None
+
+
+def is_opt_out(value: str) -> bool:
+    """`code: geen` or `code: -`: this event never gets a code."""
+    return normalize_code(value) in ("", "geen")
+
+
 def extract_code(description: str | None) -> str | None:
     """Return the normalized code from a `code: ...` line, if any."""
-    if not description:
+    value = code_value(description)
+    if value is None or is_opt_out(value):
         return None
-    match = _CODE_LINE.search(description)
-    return normalize_code(match.group(1)) if match else None
+    return normalize_code(value)
 
 
-def _booking_key(event: CalendarEvent) -> str:
+def with_code(description: str | None, code: str) -> str:
+    """Replace the code line, or add one at the bottom; the rest stays as it is."""
+    text = description or ""
+    if _CODE_LINE.search(text):
+        return _CODE_LINE.sub(lambda _m: f"code: {code}", text, count=1)
+    text = text.rstrip("\n")
+    return f"{text}\ncode: {code}" if text else f"code: {code}"
+
+
+def booking_key(event: CalendarEvent) -> str:
     """Opaque, stable id for a booking (the calendar uid, hashed)."""
     source = f"{event.uid or ''}|{event.recurrence_id or ''}"
     if not event.uid:
@@ -164,7 +184,7 @@ class BookingIndex:
             code = extract_code(event.description)
             if code is None:
                 continue
-            key = _booking_key(event)
+            key = booking_key(event)
             if len(code) < self.min_length:
                 issues[f"{ISSUE_PREFIX}short_{key}"] = (
                     "code_too_short",

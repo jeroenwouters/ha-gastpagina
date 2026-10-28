@@ -25,6 +25,8 @@ from .const import (
     ATTR_BOOKING,
     CALENDAR_REFRESH,
     DOMAIN,
+    SERVICE_FILL_CODES,
+    SERVICE_GENERATE_CODE,
     SERVICE_RELOAD,
     SERVICE_REVOKE_SESSIONS,
 )
@@ -36,6 +38,7 @@ PLATFORMS = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.SWITCH]
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 _REVOKE_SCHEMA = vol.Schema({vol.Optional(ATTR_BOOKING): cv.string})
+_GENERATE_SCHEMA = vol.Schema({vol.Required(ATTR_BOOKING): cv.string})
 
 
 def _runtime(hass: HomeAssistant) -> GastRuntime:
@@ -54,7 +57,23 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     async def revoke(call: ServiceCall) -> ServiceResponse:
         return {"revoked": _runtime(hass).revoke(call.data.get(ATTR_BOOKING))}
 
+    async def generate(call: ServiceCall) -> ServiceResponse:
+        return {"code": await _runtime(hass).async_generate_code(call.data[ATTR_BOOKING])}
+
+    async def fill(call: ServiceCall) -> ServiceResponse:
+        return {"created": await _runtime(hass).async_fill_codes()}
+
     hass.services.async_register(DOMAIN, SERVICE_RELOAD, reload)
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_GENERATE_CODE,
+        generate,
+        schema=_GENERATE_SCHEMA,
+        supports_response=SupportsResponse.OPTIONAL,
+    )
+    hass.services.async_register(
+        DOMAIN, SERVICE_FILL_CODES, fill, supports_response=SupportsResponse.OPTIONAL
+    )
     hass.services.async_register(
         DOMAIN,
         SERVICE_REVOKE_SESSIONS,

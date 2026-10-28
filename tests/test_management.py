@@ -172,6 +172,19 @@ async def test_issues_clear_when_fixed(harness: Harness) -> None:
     assert not _issues(harness.hass)
 
 
+@pytest.mark.parametrize(
+    "entry_data",
+    [
+        {
+            CONF_CALENDAR: "calendar.gasten",
+            CONF_HOURS_BEFORE: 24,
+            CONF_HOURS_AFTER: 0,
+            CONF_MIN_CODE_LENGTH: 10,
+            CONF_MAX_ATTEMPTS: 5,
+            "auto_codes": False,
+        }
+    ],
+)
 async def test_event_without_code_is_no_booking(harness: Harness) -> None:
     harness.calendar.events.clear()
     harness.calendar.add(code=None)

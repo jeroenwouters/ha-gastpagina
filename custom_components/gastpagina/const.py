@@ -12,12 +12,23 @@ CONF_HOURS_BEFORE: Final = "hours_before"
 CONF_HOURS_AFTER: Final = "hours_after"
 CONF_MIN_CODE_LENGTH: Final = "min_code_length"
 CONF_MAX_ATTEMPTS: Final = "max_attempts"
+CONF_AUTO_CODES: Final = "auto_codes"
+CONF_CODE_PREFIX: Final = "code_prefix"
+CONF_NOTIFY_NEW_CODE: Final = "notify_new_code"
+CONF_LOOKAHEAD_DAYS: Final = "lookahead_days"
 
 DEFAULT_CALENDAR: Final = "calendar.gasten"
 DEFAULT_HOURS_BEFORE: Final = 24
 DEFAULT_HOURS_AFTER: Final = 0
 DEFAULT_MIN_CODE_LENGTH: Final = 10
 DEFAULT_MAX_ATTEMPTS: Final = 5
+DEFAULT_AUTO_CODES: Final = True
+DEFAULT_CODE_PREFIX: Final = ""
+DEFAULT_NOTIFY_NEW_CODE: Final = True
+DEFAULT_LOOKAHEAD_DAYS: Final = 90
+
+# Failed writes of a generated code before the owner gets a repair issue.
+CODE_WRITE_ATTEMPTS: Final = 3
 
 CONFIG_FILE: Final = "gastpagina.yaml"
 
@@ -45,6 +56,8 @@ TOKEN_HEADER: Final = "X-Gast-Token"  # noqa: S105 (a header name, not a secret)
 
 EVENT_LOGIN: Final = "gastpagina_login"
 EVENT_ACTION: Final = "gastpagina_action"
+# Carries the code itself: the only place outside the calendar where it appears.
+EVENT_CODE_CREATED: Final = "gastpagina_code_created"
 
 SIGNAL_UPDATE: Final = f"{DOMAIN}_update"
 SIGNAL_RECHECK: Final = f"{DOMAIN}_recheck"
@@ -55,6 +68,8 @@ STORAGE_VERSION: Final = 1
 
 SERVICE_RELOAD: Final = "reload"
 SERVICE_REVOKE_SESSIONS: Final = "revoke_sessions"
+SERVICE_GENERATE_CODE: Final = "generate_code"
+SERVICE_FILL_CODES: Final = "fill_codes"
 ATTR_BOOKING: Final = "booking"
 
 SCENE_DEVICE: Final = "scene"

@@ -3,18 +3,25 @@
     "step": {
       "user": {
         "title": "Guest page",
-        "description": "Guests control the property with the code from their booking. Each booking is a calendar event with a line `code: …` in its description.",
+        "description": "Guests control the property with the code from their booking. Each booking is a calendar event with arrival and departure times; the integration adds a `code: …` line itself. With `code: geen` an event never gets a code.",
         "data": {
           "calendar_entity": "Bookings calendar",
           "hours_before": "Code valid from (hours before the start)",
           "hours_after": "Code valid until (hours after the end)",
           "min_code_length": "Minimum code length",
-          "max_attempts": "Wrong attempts per 15 minutes per address"
+          "max_attempts": "Wrong attempts per 15 minutes per address",
+          "auto_codes": "Create codes automatically",
+          "code_prefix": "Code prefix (max. 6 letters or digits)",
+          "notify_new_code": "Notify on a new code",
+          "lookahead_days": "Look ahead (days)"
         }
       }
     },
     "abort": {
       "single_instance_allowed": "The guest page is already set up."
+    },
+    "error": {
+      "invalid_prefix": "Letters and digits only, at most 6."
     }
   },
   "options": {
@@ -26,18 +33,37 @@
           "hours_before": "Code valid from (hours before the start)",
           "hours_after": "Code valid until (hours after the end)",
           "min_code_length": "Minimum code length",
-          "max_attempts": "Wrong attempts per 15 minutes per address"
+          "max_attempts": "Wrong attempts per 15 minutes per address",
+          "auto_codes": "Create codes automatically",
+          "code_prefix": "Code prefix (max. 6 letters or digits)",
+          "notify_new_code": "Notify on a new code",
+          "lookahead_days": "Look ahead (days)"
         }
       }
+    },
+    "error": {
+      "invalid_prefix": "Letters and digits only, at most 6."
     }
   },
   "entity": {
-    "binary_sensor": { "boeking_actief": { "name": "Booking active" } },
-    "sensor": {
-      "actieve_sessies": { "name": "Active sessions" },
-      "foute_pogingen": { "name": "Wrong attempts" }
+    "binary_sensor": {
+      "boeking_actief": {
+        "name": "Booking active"
+      }
     },
-    "switch": { "toegang": { "name": "Access" } }
+    "sensor": {
+      "actieve_sessies": {
+        "name": "Active sessions"
+      },
+      "foute_pogingen": {
+        "name": "Wrong attempts"
+      }
+    },
+    "switch": {
+      "toegang": {
+        "name": "Access"
+      }
+    }
   },
   "issues": {
     "config_missing": {
@@ -87,6 +113,22 @@
     "calendar_missing": {
       "title": "Guest page calendar is missing",
       "description": "{entity} does not exist (any more). Without it no code works."
+    },
+    "calendar_read_only": {
+      "title": "The calendar cannot be written to",
+      "description": "{entity} cannot update events, so codes are not created automatically. Add a `code: …` line yourself, or turn off *Create codes automatically*."
+    },
+    "all_day_booking": {
+      "title": "Booking {title} is an all-day event",
+      "description": "Give arrival and departure times and the booking gets a code by itself. If it is not a booking, put `code: geen` in the description."
+    },
+    "recurring_booking": {
+      "title": "Booking {title} is a recurring event",
+      "description": "Recurring events get no code. Make separate events, or put `code: geen` in the description."
+    },
+    "code_write_failed": {
+      "title": "Could not save the code for {title}",
+      "description": "Writing to the calendar failed three times. It is retried every minute; see the log for the error."
     }
   },
   "services": {
@@ -103,9 +145,40 @@
           "description": "Title or uid of the calendar event."
         }
       }
+    },
+    "generate_code": {
+      "name": "New code",
+      "description": "Makes a new code for one booking (e.g. when the old one leaked), replaces the `code: …` line and signs that booking's guests out.",
+      "fields": {
+        "booking": {
+          "name": "Booking",
+          "description": "Title or uid of the calendar event."
+        }
+      }
+    },
+    "fill_codes": {
+      "name": "Fill in codes",
+      "description": "Gives every upcoming booking without a code one right now."
     }
   },
   "exceptions": {
-    "not_loaded": { "message": "The guest page is not loaded." }
+    "not_loaded": {
+      "message": "The guest page is not loaded."
+    },
+    "calendar_read_only": {
+      "message": "The calendar cannot be written to."
+    },
+    "booking_not_found": {
+      "message": "No upcoming booking with title or uid \"{booking}\"."
+    },
+    "booking_ambiguous": {
+      "message": "Several bookings are called \"{booking}\"; give the uid."
+    },
+    "booking_not_eligible": {
+      "message": "\"{booking}\" is an all-day or recurring event and cannot get a code."
+    },
+    "code_write_failed": {
+      "message": "The new code for \"{booking}\" could not be saved."
+    }
   }
 }

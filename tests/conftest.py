@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 import json
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -12,9 +12,14 @@ from zoneinfo import ZoneInfo
 from aiohttp import ClientResponse
 from aiohttp.test_utils import TestClient
 from freezegun.api import FrozenDateTimeFactory
-from homeassistant.components.calendar import CalendarEntity, CalendarEvent
+from homeassistant.components.calendar import (
+    CalendarEntity,
+    CalendarEntityFeature,
+    CalendarEvent,
+)
 from homeassistant.components.calendar.const import DATA_COMPONENT
 from homeassistant.core import HomeAssistant, ServiceCall, callback
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.setup import async_setup_component
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry, async_fire_time_changed
@@ -84,10 +89,14 @@ class FakeCalendar(CalendarEntity):
 
     _attr_name = "Gasten"
 
-    def __init__(self) -> None:
-        """Start empty."""
+    def __init__(self, writable: bool = True) -> None:
+        """Start empty; writable like Local Calendar unless told otherwise."""
         self.entity_id = "calendar.gasten"
         self.events: list[CalendarEvent] = []
+        self.updates: list[tuple[str, dict[str, Any]]] = []
+        self.fail_updates = 0
+        if writable:
+            self._attr_supported_features = CalendarEntityFeature.UPDATE_EVENT
 
     @property
     def event(self) -> CalendarEvent | None:
@@ -104,24 +113,58 @@ class FakeCalendar(CalendarEntity):
             if e.end_datetime_local > start_date and e.start_datetime_local < end_date
         ]
 
+    async def async_update_event(
+        self,
+        uid: str,
+        event: dict[str, Any],
+        recurrence_id: str | None = None,
+        recurrence_range: str | None = None,
+    ) -> None:
+        """Replace an event the way Local Calendar does: by uid, with the given fields."""
+        if self.fail_updates:
+            self.fail_updates -= 1
+            raise HomeAssistantError("disk full")
+        self.updates.append((uid, dict(event)))
+        index = next(i for i, e in enumerate(self.events) if e.uid == uid)
+        self.events[index] = CalendarEvent(
+            start=event["dtstart"],
+            end=event["dtend"],
+            summary=event["summary"],
+            description=event.get("description"),
+            location=event.get("location"),
+            uid=uid,
+        )
+
     def add(
         self,
         *,
         uid: str = "booking-1",
         summary: str = TITLE,
-        start: datetime = CHECK_IN,
-        end: datetime = CHECK_OUT,
+        start: datetime | date = CHECK_IN,
+        end: datetime | date = CHECK_OUT,
         code: str | None = CODE,
+        description: str = "Twee volwassenen, een kind",
+        location: str | None = None,
+        rrule: str | None = None,
     ) -> CalendarEvent:
         """Add a booking with the code on its own line in the description."""
-        description = "Twee volwassenen, een kind"
         if code is not None:
             description += f"\ncode: {code}\n"
         event = CalendarEvent(
-            start=start, end=end, summary=summary, uid=uid, description=description
+            start=start,
+            end=end,
+            summary=summary,
+            uid=uid,
+            description=description,
+            location=location,
+            rrule=rrule,
         )
         self.events.append(event)
         return event
+
+    def get(self, uid: str) -> CalendarEvent:
+        """The event with this uid."""
+        return next(e for e in self.events if e.uid == uid)
 
 
 def set_device_states(hass: HomeAssistant) -> None:
@@ -208,6 +251,12 @@ def devices_yaml() -> str:
 
 
 @pytest.fixture
+def calendar_writable() -> bool:
+    """Whether the bookings calendar accepts updates; parametrize to change it."""
+    return True
+
+
+@pytest.fixture
 def entry_data() -> dict[str, Any]:
     """Config entry data; parametrize to change it."""
     return {
@@ -228,6 +277,7 @@ async def harness(  # noqa: PLR0917 (pytest fixtures)
     http_config: dict[str, Any],
     devices_yaml: str,
     entry_data: dict[str, Any],
+    calendar_writable: bool,
 ) -> Harness:
     """Set up the integration with one booking, mid-stay."""
     freezer.move_to(NOW)
@@ -238,7 +288,7 @@ async def harness(  # noqa: PLR0917 (pytest fixtures)
 
     assert await async_setup_component(hass, "http", {"http": http_config})
     assert await async_setup_component(hass, "calendar", {})
-    calendar = FakeCalendar()
+    calendar = FakeCalendar(writable=calendar_writable)
     calendar.add()
     await hass.data[DATA_COMPONENT].async_add_entities([calendar])
 
