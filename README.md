@@ -94,6 +94,8 @@ lichten), rolluiken (`cover.*`), één thermostaat per ruimte (`climate.*`), é�
 radio (`media_player.*`) met zenders, temperatuurgrenzen en scènes. Zie
 `config/gastpagina.yaml` voor ’t Zeemonster.
 
+- Per ruimte kan een korte uitleg (`note`, max. 200 tekens), bv. voor iets dat
+  niet via de pagina gaat; die staat als kadertje boven de toestellen.
 - Na een wijziging: service `gastpagina.reload` (geen herstart nodig).
 - Fouten per toestel (verkeerd soort entiteit, dubbele sleutel, ongeldige
   regel) geven een repair-melding; de rest blijft werken. Een entiteit die niet

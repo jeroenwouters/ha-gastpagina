@@ -111,6 +111,8 @@ nav.toc a.toc-hot:hover{background:var(--coral);filter:brightness(1.05)}
 .room{background:var(--surface);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px}
 .room-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .room-head h3{font-size:21px}
+.room-note{display:flex;align-items:center;gap:10px;margin:0;padding:10px 14px;border:1px dashed var(--rule);border-radius:14px;background:var(--tile);font-size:14px;line-height:1.4;color:var(--ink-soft)}
+.room-note .ic{width:22px;height:22px;flex-shrink:0;color:var(--ink-soft)}
 .room-off{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--rule);background:transparent;font-size:14px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(150px,100%),1fr));gap:10px}
 .tile{position:relative;background:var(--tile);border:1px solid var(--rule);border-radius:16px;min-width:0;display:flex;flex-direction:column}
@@ -231,7 +233,7 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
   <div class="wrap facts">
     <div><small>Inchecken</small>vanaf 16u</div>
     <div><small>Uitchecken</small>tot 11u</div>
-    <div><small>Wifi</small>zeemonster</div>
+    <div><small>Wifi</small>oostende</div>
     <div><small>Host</small>0498 84 55 45</div>
   </div>
 </div>
@@ -261,7 +263,7 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
   <p class="label">Aankomst en vertrek</p>
   <h2>Sleutel in de bus.<br>Lift naar vier.</h2>
   <p>Inchecken kan vanaf 16u, uitchecken ten laatste om 11u (tenzij anders afgesproken).</p>
-  <p><b>Binnenkomen:</b> de sleutel zit in een sleutelkastje in de brievenbus met “’t Zeemonster” erop. Met die sleutel open je de voordeur van het gebouw beneden en het appartement: neem de lift naar de 4de verdieping, het is de linkse deur als je uit de lift stapt.</p>
+  <p><b>Binnenkomen:</b> de sleutel zit in een sleutelkastje in de brievenbus met de naam “Wouters-Verbelen” erop; dezelfde naam staat op de bel. Met die sleutel open je de voordeur van het gebouw beneden en het appartement: neem de lift naar de 4de verdieping, het is de linkse deur als je uit de lift stapt.</p>
   <p><b>Parkeren:</b> langs de grote baan met de tram is parkeren gratis. Aan de kant van de dijk is het betalend: via sms naar 4411 of een parkeerapp.</p>
   <p><b>Fietsen en buggy’s:</b> die kun je kwijt in de berging beneden. Loop op het gelijkvloers voorbij de lift tot het einde van de gang; het is de deur recht voor je. De sleutel hangt aan de sleutelbos.</p>
   <div class="note">
@@ -280,8 +282,8 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
   <p class="label">Wifi en contact</p>
   <h2>Eerst de wifi.<br>Dan de zee.</h2>
   <div class="key">
-    <div><small>Netwerk</small><strong>zeemonster</strong></div>
-    <div><small>Wachtwoord</small><strong>Op de wifi-kaart in de living</strong></div>
+    <div><small>Netwerk</small><strong>oostende</strong></div>
+    <div><small>Wachtwoord</small><strong id="pw">wouters382930</strong><button class="copy" id="copy-pw" type="button">Kopieer wachtwoord</button></div>
   </div>
   <p>De router staat in de rotan kast in de living.</p>
   <div class="tablewrap"><table>
@@ -296,7 +298,7 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
       <tr><td>Dichtstbijzijnde ziekenhuis</td><td>AZ Oostende, Gouwelozestraat 100, 8400 Oostende</td></tr>
     </tbody>
   </table></div>
-  <div class="note"><b>Bij een probleem in het appartement</b><p>De zekeringkast zit in de gang, boven de deur tussen de twee appartementen. De hoofdkraan van het water zit beneden, in de ruimte achter de deur links van de lift. Rookmelders hangen in elke slaapkamer en de gang.</p></div>
+  <div class="note"><b>Bij een probleem in het appartement</b><p>De zekeringkast zit in de gang op de 4de verdieping, achter de deur tussen de twee appartementen. De hoofdkraan van het water zit beneden, in de ruimte achter de deur links van de lift. Rookmelders hangen in elke slaapkamer en de gang.</p></div>
 </section>
 
 
@@ -345,7 +347,7 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 
   <div class="sub">
     <h3>Verwarming en thermostaat</h3>
-    <p>Het appartement verwarmt deze winter met elektrische olieradiatoren. Die worden automatisch aangestuurd door de thermostaat in elke kamer, dus je hoeft ze zelf niet aan of uit te zetten. Er zijn drie thermostaten. Met de + en de − knop zet je de temperatuur hoger of lager.</p>
+    <p>Het appartement verwarmt deze winter met elektrische olieradiatoren. Die worden automatisch aangestuurd door de thermostaat in elke kamer, dus je hoeft ze zelf niet aan of uit te zetten. Er zijn drie thermostaten. Met de + en de − knop zet je de temperatuur hoger of lager. De middelste knop hoef je normaal niet te gebruiken.</p>
     <div class="key">
       <div><small>Woonkamer</small><p>Aan de muur bij de tafel en het keukeneiland. Is er twee uur niemand in de kamer, dan zakt de temperatuur vanzelf terug naar 18 °C. Kom je terug, dan springt hij automatisch naar 20 °C.</p></div>
       <div><small>Slaapkamer</small><p>Op het nachtkastje. Die thermostaat stuurt de verwarming in de slaapkamer; aan het verwarmingstoestel zelf hoef je niets te doen. Blijft op de temperatuur die jij kiest.</p></div>
@@ -372,7 +374,7 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 
   <div class="sub">
     <h3>Vaatwasser</h3>
-    <p>De tabletten liggen in het onderste schuifje naast de spoelbak. Als het programma klaar is, piept de vaatwasser en gaat de deur vanzelf een stukje open. Laat de vaat dan nog even drogen voor je uitlaadt.</p>
+    <p>De tabletten liggen in het onderste schuifje onder de oven. Als het programma klaar is, piept de vaatwasser en gaat de deur vanzelf een stukje open. Laat de vaat dan nog even drogen voor je uitlaadt.</p>
   </div>
 
   <div class="sub">
@@ -389,7 +391,7 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 
 <section class="s" id="keuken">
   <p class="label">De keuken</p>
-  <h2>Pak maar.</h2>
+  <h2>Wat er al<br>klaarstaat.</h2>
   <p>Olie, zout, peper en koffie met filters mag je vrij gebruiken; de koffie en filters liggen in de schuiven van het eiland. Afwasmiddel en handzeep staan aan de spoelbak, keukenrol op het aanrecht. Afvalzakjes liggen in de schuif onder de oven.</p>
 </section>
 
@@ -403,16 +405,16 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 <section class="s" id="slim">
   <p class="label">Slimme toestellen en sensoren</p>
   <h2>Het huis let op.<br>Het kijkt niet.</h2>
-  <p>Het appartement regelt verwarming en licht deels automatisch. In de rotan kast in de living zit een sensor die merkt of er iemand in de kamer is; daarmee zakt de verwarming terug als de living een tijd leeg is. In het toilet zorgt een sensor ervoor dat het licht vanzelf aangaat.</p>
+  <p>Het appartement regelt verwarming en licht deels automatisch. Op de rotan kast in de living staat een sensor die merkt of er iemand in de kamer is; daarmee zakt de verwarming terug als de living een tijd leeg is. In het toilet zorgt een sensor ervoor dat het licht vanzelf aangaat.</p>
   <div class="note"><p>De sensoren merken alleen óf er iemand is. Er zijn geen camera’s en er wordt niets opgenomen, beeld noch geluid. Alles werkt ook gewoon met de schakelaars en knoppen; je hebt geen app nodig.</p></div>
 </section>
 
 <section class="s" id="veiligheid">
   <p class="label">Veiligheid en storingen</p>
-  <h2>Als er iets<br>stilvalt.</h2>
+  <h2>Als er iets<br>misgaat.</h2>
   <p>De brandblusser staat in de gang. [aanvullen zodra branddeken, EHBO-kit en zaklamp er zijn]</p>
   <div class="warn"><b>Rookmelder gaat af</b><p>Verlaat bij rook of brand meteen het appartement via de trap, niet de lift, en bel 112. De rookmelders zijn verbonden: wij krijgen ook een melding en nemen meteen contact met je op. Gaat hij af door koken, zet dan een raam open.</p></div>
-  <p><b>Geen stroom:</b> kijk in de zekeringkast (in de gang, boven de deur tussen de twee appartementen) of er een schakelaar naar beneden staat en zet hem terug omhoog. Valt hij meteen weer uit, trek dan het laatst gebruikte toestel uit het stopcontact.</p>
+  <p><b>Geen stroom:</b> kijk in de zekeringkast (in de gang op de 4de verdieping, achter de deur tussen de twee appartementen) of er een schakelaar naar beneden staat en zet hem terug omhoog. Valt hij meteen weer uit, trek dan het laatst gebruikte toestel uit het stopcontact.</p>
   <p><b>Geen internet:</b> de router staat in de rotan kast in de living. Trek de stekker uit, wacht 30 seconden en steek hem terug in. Na een paar minuten werkt het weer.</p>
   <p><b>Niet opgelost?</b> Bel of stuur een bericht, ook ’s avonds bij iets dringends zoals een lek of geen verwarming.</p>
 </section>
@@ -435,7 +437,7 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
     <li>Stilte tussen 22u en 8u, ook in de lift en de traphal</li>
     <li>Geen feestjes of extra bezoekers die blijven slapen</li>
   </ul>
-  <div class="note"><b>Afval</b><p>Sorteer in drie zakken: PMD, restafval en gft (groenafval met etensresten). De zakjes liggen in de schuif onder de oven. Volle zakken zet je beneden in onze privéberging. Daar staan ook bakken voor papier, glas en groenafval.</p></div>
+  <div class="note"><b>Afval</b><p>Sorteer in drie zakken: PMD, restafval en gft (groenafval met etensresten). De zakjes liggen in de schuif onder de oven. Volle zakken zet je beneden in onze privéberging. Karton, glas en groenafval mag je daar ook achterlaten, in het bruine bakje.</p></div>
 </section>
 
 <section class="s" id="buurt">
@@ -494,6 +496,13 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 </nav>
 
 <script>
+document.getElementById('copy-pw').addEventListener('click',function(){
+  var b=this,t=document.getElementById('pw').textContent;
+  function sel(){var r=document.createRange();r.selectNodeContents(document.getElementById('pw'));var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Geselecteerd, kopieer met je toestel';}
+  try{navigator.clipboard.writeText(t).then(function(){b.textContent='Gekopieerd';setTimeout(function(){b.textContent='Kopieer wachtwoord'},2000)},sel)}catch(e){sel()}
+});
+</script>
+<script>
 /* ================= Teksten — de toestellen zelf komen van /api/gastpagina/config ================= */
 const TEXT = {
   scenes: {
@@ -513,7 +522,7 @@ const DEMO_CONFIG = (() => {
         covers: [P("living", "keukenkant", "Keukenkant"), P("living", "zeekant", "Zeekant")], climate: P("living", "warmte", "Warmte living") },
       { key: "keuken", name: "Keuken", lights: [L("keuken", "spots", "Spots", true), L("keuken", "ledstrip", "Ledstrip", true), L("keuken", "aanrecht", "Aanrecht")],
         covers: [P("keuken", "rolluik", "Rolluik keuken")], climate: null },
-      { key: "slaapkamer", name: "Slaapkamer", lights: [L("slaapkamer", "led_bed", "Led bed", true), L("slaapkamer", "led_muur", "Led muur", true), L("slaapkamer", "led_raam", "Led raam", true), L("slaapkamer", "lamp_raam", "Lamp raam", true)],
+      { key: "slaapkamer", name: "Slaapkamer", note: "De ventilator en het licht aan het plafond bedien je met de witte afstandsbediening.", lights: [L("slaapkamer", "led_bed", "Led bed", true), L("slaapkamer", "led_muur", "Nachtkastje muurkant", true), L("slaapkamer", "led_raam", "Nachtkastje raamkant", true), L("slaapkamer", "lamp_raam", "Licht gangtje", true)],
         covers: [], climate: P("slaapkamer", "warmte", "Warmte slaapkamer") },
       { key: "slaapkamer2", name: "Slaapkamer 2", lights: [L("slaapkamer2", "licht", "Licht", true)], covers: [P("slaapkamer2", "rolluik", "Rolluik")], climate: null },
       { key: "badkamer", name: "Badkamer", lights: [L("badkamer", "plafond", "Plafond"), L("badkamer", "spiegel", "Spiegel")], covers: [], climate: P("badkamer", "warmte", "Warmte badkamer") },
@@ -744,7 +753,8 @@ const ha = DEMO ? makeDemo(DEMO_CONFIG) : makeGastApi();
     radio: '<rect x="3" y="8" width="18" height="12" rx="3"/><path d="m7 8 10-5M16 14h.01M8 12h4M8 16h4"/>',
     moon: '<path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5Z"/>',
     power: '<path d="M12 3v9M6.3 7a8 8 0 1 0 11.4 0"/>',
-    key: '<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M14 9l2 2"/>'
+    key: '<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M14 9l2 2"/>',
+    remote: '<rect x="8" y="2" width="8" height="20" rx="3"/><path d="M12 6.5h.01M10.5 11h3M10.5 14h3M10.5 17h3"/>'
   };
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const fmt = t => typeof t === "number" ? (Math.round(t * 2) / 2).toLocaleString("nl-BE", { minimumFractionDigits: 1 }) : "–";
@@ -832,7 +842,7 @@ const ha = DEMO ? makeDemo(DEMO_CONFIG) : makeGastApi();
       return `<button type="button" class="ctl-btn" data-scene="${esc(k)}" aria-label="${esc(t.title)}: ${esc(t.detail)}">${svg(IC[t.icon] || IC.power)}<span><span class="t">${esc(t.title)}</span><br><span class="d">${esc(t.detail)}</span></span></button>`; }).join("")}</div>` : "";
     h += `<div class="rooms">`;
     rooms().forEach((r, ri) => {
-      h += `<div class="room"><div class="room-head"><h3>${esc(r.name)}</h3>${r.lights.length ? `<button type="button" class="ctl-btn room-off" data-roomoff="${ri}">Alles uit hier</button>` : ""}</div><div class="grid">`;
+      h += `<div class="room"><div class="room-head"><h3>${esc(r.name)}</h3>${r.lights.length ? `<button type="button" class="ctl-btn room-off" data-roomoff="${ri}">Alles uit hier</button>` : ""}</div>${r.note ? `<p class="room-note">${svg(IC.remote)}<span>${esc(r.note)}</span></p>` : ""}<div class="grid">`;
       r.lights.forEach(l => {
         h += `<div class="tile light" data-e="${esc(l.id)}"><button type="button" class="ctl-btn main" data-light="${esc(l.id)}" aria-pressed="false"><span class="dot"></span>${svg(IC.bulb)}<span><span class="lbl">${esc(l.label)}</span><br><span class="st">Uit</span></span></button>`
           + (l.dimmable ? `<div class="dimrow"><input type="range" min="10" max="100" step="5" data-dim="${esc(l.id)}" aria-label="Helderheid ${esc(r.name)} ${esc(l.label)}"><output></output></div>` : "") + `</div>`;

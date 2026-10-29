@@ -74,6 +74,7 @@ _ROOM = vol.Schema(
         vol.Optional("lights", default=list): [dict],
         vol.Optional("covers", default=list): [dict],
         vol.Optional("climate"): dict,
+        vol.Optional("note"): vol.All(cv.string, vol.Length(min=1, max=200)),
     }
 )
 _FILE = vol.Schema(
@@ -121,6 +122,7 @@ class Room:
     lights: tuple[str, ...]
     covers: tuple[str, ...]
     climate: str | None
+    note: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -196,6 +198,7 @@ class DeviceConfig:
                 {
                     "key": room.key,
                     "name": room.name,
+                    "note": room.note,
                     "lights": [light(i) for i in room.lights],
                     "covers": [plain(i) for i in room.covers],
                     "climate": plain(room.climate) if room.climate else None,
@@ -303,6 +306,7 @@ class _Parser:
                 lights=tuple(d.id for d in lights if d),
                 covers=tuple(d.id for d in covers if d),
                 climate=climate.id if climate else None,
+                note=room.get("note"),
             )
         )
 

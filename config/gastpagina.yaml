@@ -23,11 +23,12 @@ rooms:
       - { key: rolluik, label: Rolluik keuken, entity: cover.keuken_rolluik }
   - key: slaapkamer
     name: Slaapkamer
+    note: De ventilator en het licht aan het plafond bedien je met de witte afstandsbediening.
     lights:
       - { key: led_bed, label: Led bed, entity: light.gledopto_gl_c_009p_3, dimmable: true }
-      - { key: led_muur, label: Led muur, entity: light.gledopto_gl_c_009p_2, dimmable: true }
-      - { key: led_raam, label: Led raam, entity: light.gledopto_gl_c_009p, dimmable: true }
-      - { key: lamp_raam, label: Lamp raam, entity: light.slaapkamer_raam, dimmable: true }
+      - { key: led_muur, label: Nachtkastje muurkant, entity: light.gledopto_gl_c_009p_2, dimmable: true }
+      - { key: led_raam, label: Nachtkastje raamkant, entity: light.gledopto_gl_c_009p, dimmable: true }
+      - { key: lamp_raam, label: Licht gangtje, entity: light.slaapkamer_raam, dimmable: true }
     climate: { key: warmte, label: Warmte slaapkamer, entity: climate.slaapkamer }
   - key: slaapkamer2
     name: Slaapkamer 2

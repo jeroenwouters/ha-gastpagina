@@ -99,6 +99,7 @@ async def test_public_config_shape(harness: Harness) -> None:
             {
                 "key": "living",
                 "name": "Living",
+                "note": None,
                 "lights": [
                     {
                         "id": "living.plafond",
@@ -419,3 +420,26 @@ async def test_new_booking_works_at_once(harness: Harness) -> None:
     assert (await harness.login("NIEUWE-GAST-777"))[0] == 401  # cache is seconds old
     harness.freezer.tick(timedelta(seconds=11))
     assert (await harness.login("NIEUWE-GAST-777"))[0] == 200
+
+
+NOTE_YAML = DEVICES_YAML.replace(
+    "    name: Living\n",
+    "    name: Living\n    note: Ventilator en plafondlicht met de witte afstandsbediening.\n",
+)
+
+
+@pytest.mark.parametrize("devices_yaml", [NOTE_YAML])
+async def test_room_note(harness: Harness) -> None:
+    config = await (await harness.get("config")).json()
+    assert (
+        config["rooms"][0]["note"] == "Ventilator en plafondlicht met de witte afstandsbediening."
+    )
+
+
+@pytest.mark.parametrize(
+    "devices_yaml", [NOTE_YAML.replace("note: Ventilator", "note: " + "x" * 300)]
+)
+async def test_room_note_too_long(harness: Harness) -> None:
+    assert "room_invalid" in _issues(harness.hass) or any(
+        i.translation_key == "room_invalid" for i in _issues(harness.hass).values()
+    )
