@@ -16,17 +16,18 @@ async def async_setup_entry(
     entry: GastConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
-    """Add both counters."""
+    """Add the counters."""
     async_add_entities(
         [
             ActiveSessions(entry, "actieve_sessies", Platform.SENSOR),
             FailedLogins(entry, "foute_pogingen", Platform.SENSOR),
+            OwnerSessions(entry, "eigenaarssessies", Platform.SENSOR),
         ]
     )
 
 
 class ActiveSessions(GastEntity, SensorEntity):
-    """Number of guest sessions."""
+    """Number of guest sessions (owners are counted apart)."""
 
     _attr_state_class = SensorStateClass.MEASUREMENT
 
@@ -45,3 +46,14 @@ class FailedLogins(GastEntity, SensorEntity):
     def native_value(self) -> int:
         """Rolling one-hour count."""
         return self.runtime.limiter.failures_last_hour()
+
+
+class OwnerSessions(GastEntity, SensorEntity):
+    """Number of owner sessions."""
+
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    @property
+    def native_value(self) -> int:
+        """Current count."""
+        return self.runtime.sessions.owner_count

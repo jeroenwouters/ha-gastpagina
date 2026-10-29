@@ -38,7 +38,8 @@
           "code_prefix": "Code prefix (max. 6 letters or digits)",
           "notify_new_code": "Notify on a new code",
           "lookahead_days": "Look ahead (days)"
-        }
+        },
+        "description": "Owner codes: {owners}. Manage them with the actions gastpagina.add_owner_code, remove_owner_code and list_owner_codes (Developer tools → Actions); the codes themselves can never be read back."
       }
     },
     "error": {
@@ -57,6 +58,9 @@
       },
       "foute_pogingen": {
         "name": "Wrong attempts"
+      },
+      "eigenaarssessies": {
+        "name": "Owner sessions"
       }
     },
     "switch": {
@@ -129,6 +133,10 @@
     "code_write_failed": {
       "title": "Could not save the code for {title}",
       "description": "Writing to the calendar failed three times. It is retried every minute; see the log for the error."
+    },
+    "owner_code_clash": {
+      "title": "Code of booking {title} is an owner code",
+      "description": "This booking does not work while its code equals an owner code. Give the booking another code (or call gastpagina.generate_code); the owner code keeps working."
     }
   },
   "services": {
@@ -138,11 +146,15 @@
     },
     "revoke_sessions": {
       "name": "Revoke sessions",
-      "description": "Signs guests out. Without a booking: everyone.",
+      "description": "Signs guests out: without a booking, all of them. Owners only with 'Owners too'.",
       "fields": {
         "booking": {
           "name": "Booking",
           "description": "Title or uid of the calendar event."
+        },
+        "owner": {
+          "name": "Owners too",
+          "description": "Also signs out all owners."
         }
       }
     },
@@ -159,6 +171,34 @@
     "fill_codes": {
       "name": "Fill in codes",
       "description": "Gives every upcoming booking without a code one right now."
+    },
+    "add_owner_code": {
+      "name": "Add owner code",
+      "description": "A code for an owner that always works, also outside bookings and with access off. Without a code the integration makes one and returns it once: keep it in your password manager. An existing name gets a new code and is signed out.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "E.g. Jeroen."
+        },
+        "code": {
+          "name": "Code",
+          "description": "Optional; otherwise one is made."
+        }
+      }
+    },
+    "remove_owner_code": {
+      "name": "Remove owner code",
+      "description": "Removes the code and signs that owner out at once.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "Name of the owner code."
+        }
+      }
+    },
+    "list_owner_codes": {
+      "name": "List owner codes",
+      "description": "Names, creation date and last use; never the codes."
     }
   },
   "exceptions": {
@@ -179,6 +219,18 @@
     },
     "code_write_failed": {
       "message": "The new code for \"{booking}\" could not be saved."
+    },
+    "owner_name_invalid": {
+      "message": "Give a name of 1 to 40 characters."
+    },
+    "owner_code_too_short": {
+      "message": "An owner code needs at least {min_length} characters (without spaces and dashes)."
+    },
+    "owner_code_in_use": {
+      "message": "That code is already used by a booking or another owner."
+    },
+    "owner_not_found": {
+      "message": "No owner code named \"{name}\"."
     }
   }
 }

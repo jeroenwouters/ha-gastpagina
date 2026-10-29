@@ -137,4 +137,11 @@ class GastpaginaOptionsFlow(OptionsFlow):
             if not errors:
                 return self.async_create_entry(data=data)
         current = user_input or {**self.config_entry.data, **self.config_entry.options}
-        return self.async_show_form(step_id="init", data_schema=_schema(current), errors=errors)
+        runtime = getattr(self.config_entry, "runtime_data", None)
+        names = runtime.owners.names() if runtime is not None else []
+        return self.async_show_form(
+            step_id="init",
+            data_schema=_schema(current),
+            errors=errors,
+            description_placeholders={"owners": ", ".join(names) or "geen"},
+        )

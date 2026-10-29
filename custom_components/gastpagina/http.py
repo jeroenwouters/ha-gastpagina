@@ -83,14 +83,19 @@ class _GastView(HomeAssistantView):
         return runtime if runtime is not None and not runtime.closed else None
 
     async def _guard(self, request: web.Request) -> tuple[GastRuntime, Session] | web.Response:
-        """Runtime and session, or the response that refuses the request."""
+        """Runtime and session, or the response that refuses the request.
+
+        With the access switch off only owner sessions get through.
+        """
         runtime = self._runtime(request)
-        if runtime is None or not runtime.access_enabled:
+        if runtime is None:
             return self._reply({"error": "uit"}, HTTPStatus.SERVICE_UNAVAILABLE)
         session = await runtime.async_authenticate(request.headers.get(TOKEN_HEADER))
-        if session is None:
-            return self._reply({"error": "sessie"}, HTTPStatus.UNAUTHORIZED)
-        return runtime, session
+        if session is not None and runtime.allowed(session):
+            return runtime, session
+        if not runtime.access_enabled:
+            return self._reply({"error": "uit"}, HTTPStatus.SERVICE_UNAVAILABLE)
+        return self._reply({"error": "sessie"}, HTTPStatus.UNAUTHORIZED)
 
 
 async def _body(request: web.Request, schema: vol.Schema) -> dict[str, Any] | None:
@@ -111,9 +116,9 @@ class LoginView(_GastView):
     name = "api:gastpagina:login"
 
     async def post(self, request: web.Request) -> web.Response:
-        """Check the code."""
+        """Check the code; with the access switch off only owner codes work."""
         runtime = self._runtime(request)
-        if runtime is None or not runtime.access_enabled:
+        if runtime is None:
             return self._reply({"error": "uit"}, HTTPStatus.SERVICE_UNAVAILABLE)
         body = await _body(request, _LOGIN_SCHEMA)
         if body is None:
@@ -180,12 +185,14 @@ class ActionView(_GastView):
         guarded = await self._guard(request)
         if isinstance(guarded, web.Response):
             return guarded
-        runtime, _session = guarded
+        runtime, session = guarded
         body = await _body(request, _ACTION_SCHEMA)
         if body is None:
             return self._reply({"error": "ongeldig"}, HTTPStatus.BAD_REQUEST)
         try:
-            result = await runtime.async_action(body["device"], body["action"], body.get("value"))
+            result = await runtime.async_action(
+                body["device"], body["action"], body.get("value"), session
+            )
         except ActionError as err:
             return self._reply({"error": err.error}, err.status)
         return self._reply({"ok": True, **result})
@@ -225,13 +232,15 @@ class StreamView(_GastView):
     async def get(self, request: web.Request) -> web.StreamResponse:
         """Authenticate with the header (fetch streaming) or a ticket (EventSource)."""
         runtime = self._runtime(request)
-        if runtime is None or not runtime.access_enabled:
+        if runtime is None:
             return self._reply({"error": "uit"}, HTTPStatus.SERVICE_UNAVAILABLE)
         if TOKEN_HEADER in request.headers:
             session = await runtime.async_authenticate(request.headers[TOKEN_HEADER])
         else:
             session = await runtime.async_authenticate_ticket(request.query.get("ticket"))
-        if session is None:
+        if session is None or not runtime.allowed(session):
+            if not runtime.access_enabled:
+                return self._reply({"error": "uit"}, HTTPStatus.SERVICE_UNAVAILABLE)
             return self._reply({"error": "sessie"}, HTTPStatus.UNAUTHORIZED)
         return await _stream(runtime, request, session)
 
@@ -284,7 +293,7 @@ async def _stream(
                 item = None
             if item is _CLOSE or runtime.closed:
                 break
-            if not runtime.access_enabled:
+            if not runtime.allowed(session):
                 await response.write(_sse("uit", {}))
                 break
             if not runtime.session_valid(session):

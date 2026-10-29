@@ -10,14 +10,14 @@ from typing import Any
 from homeassistant.components import persistent_notification
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import Context, HomeAssistant, callback
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import entity_registry as er, issue_registry as ir
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.util import dt as dt_util
 from homeassistant.util.yaml import load_yaml
 
 from .autocodes import CodeFiller, CodeSettings
-from .bookings import Booking, BookingIndex
+from .bookings import Booking, BookingIndex, normalize_code
 from .const import (
     CONF_AUTO_CODES,
     CONF_CALENDAR,
@@ -41,12 +41,16 @@ from .const import (
     EVENT_ACTION,
     EVENT_LOGIN,
     GLOBAL_FAILURE_LIMIT,
+    OWNER_SESSION_TTL,
+    ROLE_GUEST,
+    ROLE_OWNER,
     SIGNAL_CONFIG,
     SIGNAL_RECHECK,
     SIGNAL_UPDATE,
 )
 from .controller import Controller
 from .devices import DeviceConfig, Problem, parse_config
+from .owners import OwnerCodes
 from .ratelimit import LoginLimiter
 from .sessions import Session, SessionManager
 
@@ -64,12 +68,14 @@ class GastRuntime:
         """Build the parts from the entry's options."""
         options = {**entry.data, **entry.options}
         self.hass = hass
+        self.owners = OwnerCodes(hass)
         self.bookings = BookingIndex(
             hass,
             options[CONF_CALENDAR],
             before=timedelta(hours=int(options.get(CONF_HOURS_BEFORE, DEFAULT_HOURS_BEFORE))),
             after=timedelta(hours=int(options.get(CONF_HOURS_AFTER, DEFAULT_HOURS_AFTER))),
             min_length=int(options.get(CONF_MIN_CODE_LENGTH, DEFAULT_MIN_CODE_LENGTH)),
+            owner_taken=self.owners.async_taken,
         )
         self.codes = CodeFiller(
             hass,
@@ -84,6 +90,7 @@ class GastRuntime:
                 min_length=self.bookings.min_length,
                 after=self.bookings.after,
             ),
+            owner_taken=self.owners.async_taken,
         )
         self.sessions = SessionManager(hass)
         self.limiter = LoginLimiter(int(options.get(CONF_MAX_ATTEMPTS, DEFAULT_MAX_ATTEMPTS)))
@@ -189,8 +196,8 @@ class GastRuntime:
 
     @callback
     def prune_sessions(self) -> int:
-        """Remove sessions whose booking is gone, expired or has a new code."""
-        return self.sessions.remove_where(lambda s: not self._session_ok(s))
+        """Remove sessions whose booking or owner code is gone, changed or expired."""
+        return self.sessions.remove_where(lambda s: not self._session_ok(s, touch=False))
 
     @callback
     def notify(self) -> None:
@@ -210,16 +217,37 @@ class GastRuntime:
 
     # --- sessions ------------------------------------------------------------
 
-    def _session_ok(self, session: Session) -> bool:
+    def _session_ok(self, session: Session, *, touch: bool = True) -> bool:
+        """Whether the booking or owner code behind a session still holds.
+
+        `touch` marks the session as used: an owner session then slides another
+        30 days ahead. The periodic clean-up checks without touching.
+        """
+        now = dt_util.utcnow()
+        if session.is_owner:
+            owner = self.owners.by_id(session.booking)
+            if owner is None or session.expires_at <= now:
+                return False
+            if touch:
+                self.sessions.extend(session, now + OWNER_SESSION_TTL)
+                self.owners.touch(owner)
+            return True
         booking = self.bookings.get(session.booking)
         if booking is None or booking.fingerprint != session.fingerprint:
             return False
         self.sessions.extend(session, booking.valid_until)
         return True
 
+    def allowed(self, session: Session) -> bool:
+        """Owners may use the page even with the access switch off."""
+        return self.access_enabled or session.is_owner
+
     async def async_authenticate(self, token: str | None) -> Session | None:
-        """The session for a token, if access is on and its booking still holds."""
-        if self.closed or not self.access_enabled or not token:
+        """The session for a token, if its booking or owner code still holds.
+
+        The access switch is not checked here; see `allowed`.
+        """
+        if self.closed or not token:
             return None
         await self.bookings.async_ensure_fresh()
         session = self.sessions.get(token)
@@ -233,7 +261,7 @@ class GastRuntime:
 
     async def async_authenticate_ticket(self, ticket: str | None) -> Session | None:
         """Like async_authenticate, for a single-use stream ticket."""
-        if self.closed or not self.access_enabled:
+        if self.closed:
             return None
         await self.bookings.async_ensure_fresh()
         session = self.sessions.redeem_ticket(ticket)
@@ -243,18 +271,24 @@ class GastRuntime:
         """Re-check a session held by an open stream."""
         return (
             not self.closed
-            and self.access_enabled
+            and self.allowed(session)
             and self.sessions.is_live(session)
             and self._session_ok(session)
         )
 
-    def revoke(self, query: str | None) -> int:
-        """End all sessions, or those of bookings matching a title or uid."""
-        if query is None:
-            count = self.sessions.remove_where(lambda _s: True)
-        else:
-            keys = {b.key for b in self.bookings.find(query)}
-            count = self.sessions.remove_where(lambda s: s.booking in keys)
+    def revoke(self, query: str | None, owners: bool = False) -> int:
+        """End guest sessions (all, or of bookings matching a title or uid).
+
+        Owner sessions end only with `owners`.
+        """
+        keys = {b.key for b in self.bookings.find(query)} if query is not None else None
+
+        def doomed(session: Session) -> bool:
+            if session.is_owner:
+                return owners
+            return keys is None or session.booking in keys
+
+        count = self.sessions.remove_where(doomed)
         self.notify()
         async_dispatcher_send(self.hass, SIGNAL_RECHECK)
         return count
@@ -269,11 +303,25 @@ class GastRuntime:
     # --- login and actions -------------------------------------------------------
 
     async def async_login(self, code: str, ip: str | None) -> tuple[int, dict[str, Any]]:
-        """Check a code; returns HTTP status and body."""
+        """Check a code, owner codes first; returns HTTP status and body."""
         ip = ip or "unknown"
         if (wait := self.limiter.retry_after(ip)) is not None:
             return 429, {"error": "te_veel_pogingen", "retry_after": wait}
+
+        if (owner := await self.owners.async_match(code)) is not None:
+            self.limiter.record_success(ip)
+            token, session = self.sessions.create_owner(owner)
+            self.owners.touch(owner)
+            self.hass.bus.async_fire(
+                EVENT_LOGIN, {"role": ROLE_OWNER, "owner": owner.name}, context=Context()
+            )
+            self.notify()
+            expires = dt_util.as_local(session.expires_at).isoformat()
+            return 200, {"token": token, "expires_at": expires, "role": ROLE_OWNER}
+
         booking = await self.bookings.async_match_fresh(code)
+        if booking is not None and not self.access_enabled:
+            return 503, {"error": "uit"}
         if booking is None:
             blocked = self.limiter.record_failure(ip)
             if blocked is not None:
@@ -282,25 +330,84 @@ class GastRuntime:
             return 401, {"error": "code"}
         self.limiter.record_success(ip)
         token = self.sessions.create(booking)
-        self.hass.bus.async_fire(EVENT_LOGIN, {}, context=Context())
+        self.hass.bus.async_fire(EVENT_LOGIN, {"role": ROLE_GUEST}, context=Context())
         self.notify()
         return 200, {"token": token, "expires_at": _iso(booking)}
 
-    async def async_action(self, device: str, action: str, value: Any) -> dict[str, Any]:
+    async def async_action(
+        self, device: str, action: str, value: Any, session: Session
+    ) -> dict[str, Any]:
         """Run an action under a context of its own, announced by an event first.
 
         The logbook attributes the resulting state changes to that event, so it
-        shows "Gastpagina" rather than a user. Raises ActionError.
+        shows "Gastpagina" (or "Gastpagina (eigenaar …)") rather than a user.
+        Raises ActionError.
         """
         context = Context()
+        data: dict[str, Any] = {"device": device, "action": action, "role": session.role}
+        if session.is_owner:
+            data["owner"] = session.owner
 
         @callback
         def announce() -> None:
-            self.hass.bus.async_fire(
-                EVENT_ACTION, {"device": device, "action": action}, context=context
-            )
+            self.hass.bus.async_fire(EVENT_ACTION, data, context=context)
 
         return await self.controller.async_act(device, action, value, context, announce)
+
+    # --- owner codes -------------------------------------------------------------
+
+    async def async_add_owner(self, name: str, code: str | None) -> dict[str, Any]:
+        """Add an owner code (or replace one's code); a generated code is returned once."""
+        name = name.strip()
+        if not 1 <= len(name) <= 40:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN, translation_key="owner_name_invalid"
+            )
+        in_use = await self.codes.async_codes_in_use()
+        in_use |= {b.code for b in self.bookings.valid()}
+        generated = code is None
+        if code is None:
+            code = await self.codes.async_new_code(in_use)
+        normalized = normalize_code(code)
+        if len(normalized) < self.bookings.min_length:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="owner_code_too_short",
+                translation_placeholders={"min_length": str(self.bookings.min_length)},
+            )
+        if normalized in in_use:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN, translation_key="owner_code_in_use"
+            )
+        other = await self.owners.async_match(normalized)
+        if other is not None and other.name.casefold() != name.casefold():
+            raise ServiceValidationError(
+                translation_domain=DOMAIN, translation_key="owner_code_in_use"
+            )
+        _owner, replaced = await self.owners.async_set(name, normalized)
+        if replaced is not None:
+            self.sessions.remove_where(lambda s: s.is_owner and s.booking == replaced.id)
+        await self._owners_changed()
+        return {"name": name, "code": code} if generated else {"name": name}
+
+    async def async_remove_owner(self, name: str) -> None:
+        """Remove an owner code and end its sessions."""
+        owner = await self.owners.async_remove(name)
+        if owner is None:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="owner_not_found",
+                translation_placeholders={"name": name},
+            )
+        self.sessions.remove_where(lambda s: s.is_owner and s.booking == owner.id)
+        await self._owners_changed()
+
+    async def _owners_changed(self) -> None:
+        # A booking code may now clash with an owner code, or no longer.
+        await self.bookings.async_refresh()
+        self.prune_sessions()
+        self.notify()
+        async_dispatcher_send(self.hass, SIGNAL_RECHECK)
 
     def _notify_block(self, kind: str, ip: str) -> None:
         if kind == "global":

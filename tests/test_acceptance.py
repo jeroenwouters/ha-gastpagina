@@ -453,9 +453,9 @@ async def test_context_and_logs(harness: Harness, caplog: pytest.LogCaptureFixtu
     (event,) = actions
     assert call.context.user_id is None
     assert call.context.id == event.context.id  # logbook attributes the change to the event
-    assert event.data == {"device": "living.plafond", "action": "off"}
+    assert event.data == {"device": "living.plafond", "action": "off", "role": "guest"}
     assert len(logins) == 1
-    assert logins[0].data == {}
+    assert logins[0].data == {"role": "guest"}
 
     for secret in (CODE, "zeemonster2026", "FOUTE-CODE-0000", TITLE, token):
         assert secret not in caplog.text

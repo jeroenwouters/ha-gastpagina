@@ -38,7 +38,8 @@
           "code_prefix": "Voorvoegsel voor codes (max. 6 letters of cijfers)",
           "notify_new_code": "Melding bij een nieuwe code",
           "lookahead_days": "Vooruit kijken (dagen)"
-        }
+        },
+        "description": "Eigenaarscodes: {owners}. Beheer ze via de acties gastpagina.add_owner_code, remove_owner_code en list_owner_codes (Ontwikkelhulpmiddelen → Acties); de codes zelf zijn nergens op te vragen."
       }
     },
     "error": {
@@ -57,6 +58,9 @@
       },
       "foute_pogingen": {
         "name": "Foute pogingen"
+      },
+      "eigenaarssessies": {
+        "name": "Eigenaarssessies"
       }
     },
     "switch": {
@@ -129,6 +133,10 @@
     "code_write_failed": {
       "title": "Code voor {title} kon niet bewaard worden",
       "description": "Het schrijven naar de kalender mislukte drie keer. Het wordt elke minuut opnieuw geprobeerd; zie het logboek voor de fout."
+    },
+    "owner_code_clash": {
+      "title": "Code van boeking {title} is een eigenaarscode",
+      "description": "Deze boeking werkt niet zolang haar code gelijk is aan een eigenaarscode. Geef de boeking een andere code (of roep gastpagina.generate_code aan); de eigenaarscode blijft werken."
     }
   },
   "services": {
@@ -138,11 +146,15 @@
     },
     "revoke_sessions": {
       "name": "Sessies intrekken",
-      "description": "Meldt gasten af. Zonder boeking: iedereen.",
+      "description": "Meldt gasten af: zonder boeking iedereen. Eigenaars alleen met 'Ook eigenaars'.",
       "fields": {
         "booking": {
           "name": "Boeking",
           "description": "Titel of uid van de kalenderafspraak."
+        },
+        "owner": {
+          "name": "Ook eigenaars",
+          "description": "Meldt ook alle eigenaars af."
         }
       }
     },
@@ -159,6 +171,34 @@
     "fill_codes": {
       "name": "Codes aanvullen",
       "description": "Geeft nu meteen een code aan elke komende boeking zonder code."
+    },
+    "add_owner_code": {
+      "name": "Eigenaarscode toevoegen",
+      "description": "Een code voor een eigenaar die altijd werkt, ook buiten boekingen en met de toegang uit. Zonder code maakt de integratie er een en geeft ze die één keer terug: bewaar ze in je wachtwoordbeheerder. Een bestaande naam krijgt een nieuwe code en wordt afgemeld.",
+      "fields": {
+        "name": {
+          "name": "Naam",
+          "description": "Bv. Jeroen."
+        },
+        "code": {
+          "name": "Code",
+          "description": "Optioneel; anders wordt er een gemaakt."
+        }
+      }
+    },
+    "remove_owner_code": {
+      "name": "Eigenaarscode verwijderen",
+      "description": "Verwijdert de code en meldt die eigenaar meteen af.",
+      "fields": {
+        "name": {
+          "name": "Naam",
+          "description": "Naam van de eigenaarscode."
+        }
+      }
+    },
+    "list_owner_codes": {
+      "name": "Eigenaarscodes tonen",
+      "description": "Namen, aanmaakdatum en laatst gebruikt; nooit de codes."
     }
   },
   "exceptions": {
@@ -179,6 +219,18 @@
     },
     "code_write_failed": {
       "message": "De nieuwe code voor \"{booking}\" kon niet bewaard worden."
+    },
+    "owner_name_invalid": {
+      "message": "Geef een naam van 1 tot 40 tekens."
+    },
+    "owner_code_too_short": {
+      "message": "Een eigenaarscode moet minstens {min_length} tekens hebben (zonder spaties en streepjes)."
+    },
+    "owner_code_in_use": {
+      "message": "Die code is al in gebruik door een boeking of een andere eigenaar."
+    },
+    "owner_not_found": {
+      "message": "Geen eigenaarscode met de naam \"{name}\"."
     }
   }
 }

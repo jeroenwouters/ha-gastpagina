@@ -8,6 +8,7 @@ the event stays as it was. The code is never logged: the calendar and the
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Awaitable, Callable, Iterable
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 import logging
@@ -68,9 +69,16 @@ def _ineligible(event: CalendarEvent) -> str | None:
 class CodeFiller:
     """Fills in and replaces codes in the bookings calendar."""
 
-    def __init__(self, hass: HomeAssistant, calendar_entity: str, settings: CodeSettings) -> None:
-        """Remember the calendar and the options."""
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        calendar_entity: str,
+        settings: CodeSettings,
+        owner_taken: Callable[[Iterable[str]], Awaitable[set[str]]] | None = None,
+    ) -> None:
+        """Remember the calendar and the options; `owner_taken` keeps codes off owner codes."""
         self.hass = hass
+        self._owner_taken = owner_taken
         self.calendar_entity = calendar_entity
         self.settings = settings
         self._issues: set[str] = set()
@@ -95,6 +103,27 @@ class CodeFiller:
             if value is not None and not is_opt_out(value) and event.uid != skip:
                 taken.add(normalize_code(value))
         return taken
+
+    async def async_codes_in_use(self) -> set[str]:
+        """Normalized codes of current and upcoming bookings (for owner-code checks)."""
+        entity = self._entity()
+        if entity is None:
+            return set()
+        try:
+            return self._codes_in_use(await self._events(entity))
+        except Exception:  # calendar platforms raise all kinds of errors
+            return set()
+
+    async def async_new_code(self, taken: set[str]) -> str:
+        """A fresh code, not in `taken` and not equal to any owner code."""
+        while True:
+            code = codegen.generate(
+                taken=taken, min_length=self.settings.min_length, prefix=self.settings.prefix
+            )
+            normalized = normalize_code(code)
+            if self._owner_taken is None or not await self._owner_taken([normalized]):
+                return code
+            taken = taken | {normalized}
 
     async def async_fill(self) -> int:
         """Give every upcoming booking without a code line a code; returns how many."""
@@ -129,9 +158,7 @@ class CodeFiller:
                 if reason := _ineligible(event):
                     issues[f"{ISSUE_PREFIX}{reason}_{key}"] = (reason, {"title": event.summary})
                     continue
-                code = codegen.generate(
-                    taken=taken, min_length=self.settings.min_length, prefix=self.settings.prefix
-                )
+                code = await self.async_new_code(taken)
                 if not await self._async_write(entity, event, code, key):
                     if self._failures[key] >= CODE_WRITE_ATTEMPTS:
                         issues[f"{ISSUE_PREFIX}write_{key}"] = (
@@ -182,9 +209,7 @@ class CodeFiller:
                 )
             key = booking_key(event)
             taken = self._codes_in_use(events)  # includes the old code, so the new one differs
-            code = codegen.generate(
-                taken=taken, min_length=self.settings.min_length, prefix=self.settings.prefix
-            )
+            code = await self.async_new_code(taken)
             if not await self._async_write(entity, event, code, key):
                 raise ServiceValidationError(
                     translation_domain=DOMAIN,

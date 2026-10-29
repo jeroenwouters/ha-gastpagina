@@ -109,18 +109,51 @@ Onder het apparaat **Gastpagina**:
 | Entiteit | Betekenis |
 |---|---|
 | `binary_sensor.gastpagina_boeking_actief` | aan als er nu een geldige boeking is |
-| `sensor.gastpagina_actieve_sessies` | aantal ingelogde toestellen |
+| `sensor.gastpagina_actieve_sessies` | aantal ingelogde toestellen van gasten |
+| `sensor.gastpagina_eigenaarssessies` | aantal ingelogde toestellen met een eigenaarscode |
 | `sensor.gastpagina_foute_pogingen` | foute codes in het laatste uur |
-| `switch.gastpagina_toegang` | hoofdschakelaar: uit = gasten kunnen niets (de pagina toont nog de labels) |
+| `switch.gastpagina_toegang` | hoofdschakelaar: uit = gasten kunnen niets (de pagina toont nog de labels); eigenaarscodes blijven werken |
 
 Services: `gastpagina.reload`, `gastpagina.revoke_sessions` (zonder veld:
-iedereen afmelden; met `booking`: de titel of uid van één afspraak),
-`gastpagina.generate_code` (`booking`) en `gastpagina.fill_codes`.
+alle gasten afmelden; met `booking`: de titel of uid van één afspraak; met
+`owner: true` ook alle eigenaars), `gastpagina.generate_code` (`booking`),
+`gastpagina.fill_codes`, en voor eigenaarscodes `add_owner_code`,
+`remove_owner_code` en `list_owner_codes` (zie hieronder).
 
-Events voor automatiseringen: `gastpagina_login` (zonder gegevens),
-`gastpagina_action` (`device`, `action`) en `gastpagina_code_created`
-(`booking`, `start`, `end`, `code`). Het logboek toont acties als
-"Gastpagina", nooit als een gebruiker.
+Events voor automatiseringen: `gastpagina_login` (`role`, en bij eigenaars
+`owner`), `gastpagina_action` (`device`, `action`, `role`, en bij eigenaars
+`owner`) en `gastpagina_code_created` (`booking`, `start`, `end`, `code`).
+`role` is `guest` of `owner`. Het logboek toont acties als "Gastpagina" of
+"Gastpagina (eigenaar Jeroen)", nooit als een gebruiker.
+
+## Eigenaarscode instellen
+
+Met een eigenaarscode kun je de bediening altijd gebruiken: ook zonder boeking,
+voor en na een verblijf, en ook als `switch.gastpagina_toegang` uit staat (zo
+kun je testen terwijl gasten buitengesloten zijn). Het telt niet als boeking:
+`binary_sensor.gastpagina_boeking_actief` verandert niet. Je kunt precies
+hetzelfde als een gast, met dezelfde grenzen (16–22 °C, maximaal volume).
+
+1. Ontwikkelhulpmiddelen → **Acties** → `gastpagina.add_owner_code`.
+2. Vul een **naam** in (bv. `Jeroen`) en laat **code** leeg.
+3. Klik op *Actie uitvoeren*. Het antwoord bevat de nieuwe code, bv.
+   `DUIN-0937-KREEFT`. **Bewaar ze meteen in je wachtwoordbeheerder**: ze
+   wordt alleen gehasht bewaard en is daarna nergens meer op te vragen.
+4. Vul de code in op de pagina. Bovenaan staat dan het label "Eigenaar".
+
+- Zelf een code kiezen kan ook (veld **code**, minstens de ingestelde
+  codelengte, niet gelijk aan een boekingscode of de code van een andere
+  eigenaar).
+- Dezelfde naam opnieuw toevoegen geeft die eigenaar een nieuwe code; de
+  oude werkt meteen niet meer.
+- `gastpagina.remove_owner_code` (naam) verwijdert een code en meldt die
+  eigenaar meteen af. `gastpagina.list_owner_codes` toont namen,
+  aanmaakdatum en laatst gebruikt, nooit de codes. De namen staan ook bij
+  Gastpagina → *Configureren*.
+- Een eigenaar blijft aangemeld tot 30 dagen na het laatste gebruik.
+- Foute codes tellen mee voor de blokkade, net als bij gasten.
+- Een boeking waarvan de code toevallig gelijk is aan een eigenaarscode,
+  werkt niet (repair-melding); de automatische codes vermijden dat zelf.
 
 Bij een blokkade (te veel foute codes vanaf één adres, of 50 in een uur in
 totaal: dan is aanmelden 15 minuten dicht) komt er een melding. Diagnostics
@@ -207,7 +240,7 @@ Alle antwoorden JSON met `Cache-Control: no-store`. Zonder geldige sessie:
 
 | Methode | Pad | Sessie |
 |---|---|---|
-| POST | `/api/gastpagina/login` `{code}` → `{token, expires_at}` · 401 · 429 | nee |
+| POST | `/api/gastpagina/login` `{code}` → `{token, expires_at}` (eigenaar: ook `role: "owner"`) · 401 · 429 · 503 (gastcode met toegang uit) | nee |
 | POST | `/api/gastpagina/logout` → 204 | header |
 | GET | `/api/gastpagina/config` | nee |
 | GET | `/api/gastpagina/state` | ja |

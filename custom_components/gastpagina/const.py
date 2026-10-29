@@ -64,12 +64,25 @@ SIGNAL_RECHECK: Final = f"{DOMAIN}_recheck"
 SIGNAL_CONFIG: Final = f"{DOMAIN}_config"
 
 STORAGE_KEY: Final = f"{DOMAIN}.sessions"
+OWNER_STORAGE_KEY: Final = f"{DOMAIN}.owners"
+
+ROLE_GUEST: Final = "guest"
+ROLE_OWNER: Final = "owner"
+# Owner sessions last this long after their last use.
+OWNER_SESSION_TTL: Final = timedelta(days=30)
+OWNER_LAST_USED_EVERY: Final = timedelta(hours=1)
 STORAGE_VERSION: Final = 1
 
 SERVICE_RELOAD: Final = "reload"
 SERVICE_REVOKE_SESSIONS: Final = "revoke_sessions"
 SERVICE_GENERATE_CODE: Final = "generate_code"
 SERVICE_FILL_CODES: Final = "fill_codes"
+SERVICE_ADD_OWNER_CODE: Final = "add_owner_code"
+SERVICE_REMOVE_OWNER_CODE: Final = "remove_owner_code"
+SERVICE_LIST_OWNER_CODES: Final = "list_owner_codes"
 ATTR_BOOKING: Final = "booking"
+ATTR_NAME: Final = "name"
+ATTR_CODE: Final = "code"
+ATTR_OWNER: Final = "owner"
 
 SCENE_DEVICE: Final = "scene"

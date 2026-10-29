@@ -36,6 +36,8 @@ async def async_get_config_entry_diagnostics(
         "bookings_valid_now": len(runtime.bookings.valid()),
         "calendar_error": runtime.bookings.last_error,
         "sessions": runtime.sessions.count,
+        "owner_sessions": runtime.sessions.owner_count,
+        "owners": runtime.owners.names(),
         "failed_logins_last_hour": runtime.limiter.failures_last_hour(),
         "issues": issues,
         "recent_errors": list(runtime.errors),

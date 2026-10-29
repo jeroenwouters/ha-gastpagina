@@ -6,6 +6,11 @@ revoke_sessions:
       example: "Familie Peeters"
       selector:
         text:
+    owner:
+      required: false
+      default: false
+      selector:
+        boolean:
 generate_code:
   fields:
     booking:
@@ -14,3 +19,23 @@ generate_code:
       selector:
         text:
 fill_codes:
+add_owner_code:
+  fields:
+    name:
+      required: true
+      example: "Jeroen"
+      selector:
+        text:
+    code:
+      required: false
+      selector:
+        text:
+          type: password
+remove_owner_code:
+  fields:
+    name:
+      required: true
+      example: "Jeroen"
+      selector:
+        text:
+list_owner_codes:

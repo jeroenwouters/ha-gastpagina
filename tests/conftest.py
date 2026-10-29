@@ -224,13 +224,15 @@ class Harness:
         """Advance time and let timers fire."""
         self.freezer.tick(delta)
         async_fire_time_changed(self.hass)
-        await self.hass.async_block_till_done()
+        # The minute timer runs as a background task; wait for it (scrypt runs in the executor).
+        await self.hass.async_block_till_done(wait_background_tasks=True)
 
     async def move_to(self, moment: datetime) -> None:
         """Jump to a moment and let timers fire."""
         self.freezer.move_to(moment)
         async_fire_time_changed(self.hass)
-        await self.hass.async_block_till_done()
+        # The minute timer runs as a background task; wait for it (scrypt runs in the executor).
+        await self.hass.async_block_till_done(wait_background_tasks=True)
 
 
 @pytest.fixture(autouse=True)

@@ -1,6 +1,6 @@
 [project]
 name = "ha-gastpagina"
-version = "0.2.0"
+version = "0.3.0"
 description = "Home Assistant integration: guest access to a whitelisted set of devices with a booking code"
 requires-python = ">=3.13"
 

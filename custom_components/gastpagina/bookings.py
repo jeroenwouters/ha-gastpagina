@@ -7,6 +7,7 @@ the only place they live.
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Awaitable, Callable, Iterable
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 import hashlib
@@ -107,16 +108,22 @@ class BookingIndex:
         self,
         hass: HomeAssistant,
         calendar_entity: str,
+        *,
         before: timedelta,
         after: timedelta,
         min_length: int,
+        owner_taken: Callable[[Iterable[str]], Awaitable[set[str]]] | None = None,
     ) -> None:
-        """Remember where to look and how to read it."""
+        """Remember where to look and how to read it.
+
+        `owner_taken` says which codes equal an owner code; such bookings are refused.
+        """
         self.hass = hass
         self.calendar_entity = calendar_entity
         self.before = before
         self.after = after
         self.min_length = min_length
+        self._owner_taken = owner_taken
         self._bookings: list[Booking] = []
         self._fetched_at: datetime | None = None
         self._issues: set[str] = set()
@@ -166,7 +173,17 @@ class BookingIndex:
             _LOGGER.warning("Calendar %s could not be read: %s", self.calendar_entity, err)
             self._drop_if_stale(now)
             return
-        self._bookings, issues = self._parse(events)
+        bookings, issues = self._parse(events)
+        if self._owner_taken is not None and bookings:
+            clashing = await self._owner_taken(b.code for b in bookings)
+            for booking in bookings:
+                if booking.code in clashing:
+                    issues[f"{ISSUE_PREFIX}owner_{booking.key}"] = (
+                        "owner_code_clash",
+                        {"title": booking.title},
+                    )
+            bookings = [b for b in bookings if b.code not in clashing]
+        self._bookings = bookings
         self._fetched_at = now
         self.last_error = None
         self._sync_issues(issues)
