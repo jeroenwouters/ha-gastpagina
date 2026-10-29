@@ -1,11 +1,13 @@
 {
   "domain": "gastpagina",
   "name": "Gastpagina",
-  "codeowners": [],
+  "codeowners": ["@jeroenwouters"],
   "config_flow": true,
   "dependencies": ["http", "calendar"],
+  "documentation": "https://github.com/jeroenwouters/ha-gastpagina",
   "integration_type": "service",
   "iot_class": "local_push",
+  "issue_tracker": "https://github.com/jeroenwouters/ha-gastpagina/issues",
   "requirements": [],
   "single_config_entry": true,
   "version": "0.3.0"
