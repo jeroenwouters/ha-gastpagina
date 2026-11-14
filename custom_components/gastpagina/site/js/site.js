@@ -121,7 +121,7 @@
   var FIELDS = { naam: "Vul je naam in.", email: "Kijk je e-mailadres na.", telefoon: "Kijk je telefoonnummer na." };
 
   function say(el, text, kind) { el.textContent = text || ""; el.setAttribute("data-kind", kind || ""); }
-  function euro(v) { return "€ " + Number(v).toLocaleString("nl-BE", { minimumFractionDigits: 0, maximumFractionDigits: 2 }); }
+  function euro(v) { return (v < 0 ? "− € " : "€ ") + Math.abs(Number(v)).toLocaleString("nl-BE", { minimumFractionDigits: 0, maximumFractionDigits: 2 }); }
   function value(name) { return (form.elements[name].value || "").trim(); }
   function nightsFree(a, b) {
     if (!info) return true;
@@ -184,6 +184,8 @@
         if (res.ok) {
           var p = res.body, dl = document.createElement("dl");
           [["Verblijf, " + p.nachten + (p.nachten === 1 ? " nacht" : " nachten"), p.logies],
+           ["Extra gasten", p.extra_gasten],
+           ["Weekkorting", p.weekkorting ? -p.weekkorting : 0],
            ["Schoonmaak", p.schoonmaak],
            ["Toeristenbelasting", p.toeristenbelasting]].forEach(function (row) {
             if (!row[1] && row[0].indexOf("Verblijf") !== 0) return; // all-in: no empty rows

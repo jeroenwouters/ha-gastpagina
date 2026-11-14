@@ -76,9 +76,15 @@ verhuur:
   maanden_vooruit: 18
   # aankomstdagen: [vr, za, ma]   # optioneel
   prijzen:                  # indicatief op de website; Airbnb/Booking stel je daar zelf in
-    standaard: 110
-    seizoenen:
-      - { van: "07-01", tot: "08-31", per_nacht: 150, min_nachten: 7 }
-      - { van: "12-20", tot: "01-03", per_nacht: 140 }
-    schoonmaak: 60
+    # Airbnb-prijzen min de servicekosten voor hosts (15,5% + btw = 18,755%), op hele euro's
+    standaard: 85             # Airbnb 105
+    weekendtoeslag_pct: 13    # vrijdag- en zaterdagnacht: 96 (Airbnb 118)
+    seizoenen:                # een seizoensprijs geldt ook in het weekend
+      - { van: "12-19", tot: "01-03", per_nacht: 106, min_nachten: 3 }   # Airbnb 130
+      - { van: "02-05", tot: "02-14", per_nacht: 106, min_nachten: 3 }
+      - { van: "02-19", tot: "02-28", per_nacht: 106, min_nachten: 3 }
+    extra_gast_pn: 6          # per nacht per gast boven 2 (Airbnb 7)
+    inbegrepen_gasten: 2
+    weekkorting_pct: 10       # vanaf 7 nachten, zoals op Airbnb
+    schoonmaak: 154           # per verblijf (Airbnb 190)
     toeristenbelasting_pp_pn: 0   # 0 = all-in prijs; de rij verdwijnt dan van de website

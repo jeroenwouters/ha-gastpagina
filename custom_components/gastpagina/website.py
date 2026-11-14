@@ -12,7 +12,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta
 import re
-from typing import Any
+from typing import Any, Final
 
 from homeassistant.components import persistent_notification
 from homeassistant.core import HomeAssistant
@@ -63,6 +63,10 @@ class Season:
         return md_ >= self.start or md_ <= self.end
 
 
+_WEEKEND_NIGHTS: Final = frozenset({4, 5})  # Friday and Saturday nights
+_WEEK: Final = 7  # nights for the weekly discount
+
+
 @dataclass(frozen=True, slots=True)
 class RentalConfig:
     """The `verhuur:` section of gastpagina.yaml."""
@@ -77,6 +81,10 @@ class RentalConfig:
     seasons: tuple[Season, ...] = ()
     cleaning: float = 0.0
     tourist_tax: float = 0.0
+    weekend_pct: float = 0.0
+    included_guests: int = 0
+    extra_guest: float = 0.0
+    week_discount_pct: float = 0.0
 
     def season(self, day: date) -> Season | None:
         """The first season that covers the day."""
@@ -88,10 +96,18 @@ class RentalConfig:
         return season.min_nights if season and season.min_nights else self.min_nights
 
     def night_price(self, day: date) -> float | None:
-        """Price of one night."""
+        """Price of one night.
+
+        A season price is used as is; the standard price gets the weekend
+        surcharge on Friday and Saturday nights, rounded to whole euros.
+        """
         season = self.season(day)
         if season is not None and season.per_night is not None:
             return season.per_night
+        if self.standard is None:
+            return None
+        if self.weekend_pct and day.weekday() in _WEEKEND_NIGHTS:
+            return float(round(self.standard * (1 + self.weekend_pct / 100)))
         return self.standard
 
 
@@ -126,6 +142,16 @@ _PRICES = vol.Schema(
         vol.Optional("seizoenen", default=list): [_SEASON],
         vol.Optional("schoonmaak", default=0): _MONEY,
         vol.Optional("toeristenbelasting_pp_pn", default=0): _MONEY,
+        vol.Optional("weekendtoeslag_pct", default=0): vol.All(
+            vol.Coerce(float), vol.Range(min=0, max=200)
+        ),
+        vol.Optional("extra_gast_pn", default=0): _MONEY,
+        vol.Optional("inbegrepen_gasten", default=2): vol.All(
+            vol.Coerce(int), vol.Range(min=1, max=30)
+        ),
+        vol.Optional("weekkorting_pct", default=0): vol.All(
+            vol.Coerce(float), vol.Range(min=0, max=90)
+        ),
     }
 )
 _RENTAL = vol.Schema(
@@ -171,6 +197,10 @@ def parse_rental(raw: Any) -> tuple[RentalConfig, list[Problem]]:
             ),
             cleaning=prices["schoonmaak"],
             tourist_tax=prices["toeristenbelasting_pp_pn"],
+            weekend_pct=prices["weekendtoeslag_pct"],
+            included_guests=prices["inbegrepen_gasten"],
+            extra_guest=prices["extra_gast_pn"],
+            week_discount_pct=prices["weekkorting_pct"],
         ),
         [],
     )
@@ -319,13 +349,19 @@ class Website:
         if any(p is None for p in per_night):
             raise RequestError("geen_prijs", 404)
         lodging = round(sum(p for p in per_night if p is not None), 2)
+        extra = round(config.extra_guest * max(0, guests - config.included_guests) * len(nights), 2)
+        discount = 0.0
+        if len(nights) >= _WEEK and config.week_discount_pct:
+            discount = round((lodging + extra) * config.week_discount_pct / 100, 2)
         tax = round(config.tourist_tax * guests * len(nights), 2)
         return {
             "nachten": len(nights),
             "logies": lodging,
+            "extra_gasten": extra,
+            "weekkorting": discount,
             "schoonmaak": config.cleaning,
             "toeristenbelasting": tax,
-            "totaal": round(lodging + config.cleaning + tax, 2),
+            "totaal": round(lodging + extra - discount + config.cleaning + tax, 2),
             "indicatief": True,
         }
 

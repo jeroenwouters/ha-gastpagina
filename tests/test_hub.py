@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 import re
 from typing import Any
 
@@ -31,6 +31,7 @@ from custom_components.gastpagina.const import (
     EVENT_REQUEST_EXPIRED,
     SITE_DIR,
 )
+from custom_components.gastpagina.website import parse_rental
 
 from .conftest import DEVICES_YAML, TZ, Harness
 
@@ -392,6 +393,8 @@ async def test_price(harness: Harness) -> None:
     assert await resp.json() == {
         "nachten": 3,
         "logies": 330,
+        "extra_gasten": 0,
+        "weekkorting": 0,
         "schoonmaak": 60,
         "toeristenbelasting": 18,
         "totaal": 408,
@@ -623,3 +626,58 @@ async def test_diagnostics_hide_feed_links(
     assert "4821" not in text
     for token in (await links(harness)).values():
         assert token.rsplit("/", 2)[-2] not in text
+
+
+# --- weekend surcharge: Friday and Saturday nights, seasons override it -------------------------
+
+
+def test_weekend_surcharge() -> None:
+    config, problems = parse_rental(
+        {
+            "prijzen": {
+                "standaard": 105,
+                "weekendtoeslag_pct": 12,
+                "seizoenen": [{"van": "12-19", "tot": "01-03", "per_nacht": 130}],
+            }
+        }
+    )
+    assert problems == []
+    assert config.night_price(date(2026, 11, 19)) == 105  # Thursday
+    assert config.night_price(date(2026, 11, 20)) == 118  # Friday: 117.60 rounded
+    assert config.night_price(date(2026, 11, 21)) == 118  # Saturday
+    assert config.night_price(date(2026, 11, 22)) == 105  # Sunday
+    assert config.night_price(date(2026, 12, 25)) == 130  # Friday in a season
+
+
+def test_weekend_surcharge_invalid() -> None:
+    config, problems = parse_rental({"prijzen": {"standaard": 105, "weekendtoeslag_pct": 500}})
+    assert not config.enabled
+    assert [p.issue_id for p in problems] == ["rental_invalid"]
+
+
+# --- extra guests and the weekly discount ---------------------------------------------------------
+
+EXTRAS_YAML = """
+verhuur:
+  prijzen:
+    standaard: 100
+    extra_gast_pn: 6
+    weekkorting_pct: 10
+    schoonmaak: 50
+"""
+
+
+@pytest.mark.parametrize("devices_yaml", [DEVICES_YAML + EXTRAS_YAML])
+async def test_price_extra_guests_and_week_discount(harness: Harness) -> None:
+    resp = await harness.client.get(
+        "/api/gastpagina/prijs?aankomst=2027-01-04&vertrek=2027-01-06&personen=3"
+    )
+    body = await resp.json()
+    assert (body["logies"], body["extra_gasten"], body["weekkorting"]) == (200, 12, 0)
+    assert body["totaal"] == 262  # two nights: no weekly discount
+    resp = await harness.client.get(
+        "/api/gastpagina/prijs?aankomst=2027-01-04&vertrek=2027-01-11&personen=4"
+    )
+    body = await resp.json()
+    assert (body["logies"], body["extra_gasten"], body["weekkorting"]) == (700, 84, 78.4)
+    assert body["totaal"] == 755.6  # 10% off the nights and the extra guests, not the cleaning

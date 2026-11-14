@@ -254,6 +254,13 @@ Er wordt niets automatisch verwijderd.
 4. De site staat op `https://<nabu-casa>/verhuur/`. Een eigen domein stuur je daarheen door
    (de hoofdpagina van HA blijft de login).
 
+Prijzen (`verhuur:` → `prijzen:`) zijn een indicatie op de website; Airbnb en Booking stel je
+daar zelf in. Een nacht kost `standaard`, op vrijdag- en zaterdagnacht verhoogd met
+`weekendtoeslag_pct` (afgerond op hele euro's, zoals Airbnb). Een seizoen met `per_nacht` gaat
+daar altijd voor, ook in het weekend. `extra_gast_pn` geldt per nacht voor elke gast boven
+`inbegrepen_gasten` (standaard 2). Vanaf 7 nachten gaat `weekkorting_pct` af van de nachten en
+de extra gasten. `schoonmaak` komt er één keer per verblijf bij, zonder korting.
+
 Geen scripts, lettertypes of widgets van derden toevoegen: de site draait op hetzelfde adres
 als HA. `/verhuur/` stuurt een strikte Content-Security-Policy mee.
 
