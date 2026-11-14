@@ -83,6 +83,9 @@ _FILE = vol.Schema(
         vol.Optional("radio"): dict,
         vol.Optional("climate_limits", default=dict): dict,
         vol.Optional("scenes", default=dict): {cv.string: vol.Any(dict, None)},
+        # Read by website.py and (later) the financial overview.
+        vol.Optional("verhuur"): vol.Any(dict, None),
+        vol.Optional("financieel"): vol.Any(dict, None),
     }
 )
 

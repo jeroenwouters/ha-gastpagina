@@ -15,21 +15,32 @@ from homeassistant.helpers.selector import (
     NumberSelectorConfig,
     NumberSelectorMode,
     TextSelector,
+    TextSelectorConfig,
+    TextSelectorType,
+    TimeSelector,
 )
 import voluptuous as vol
 
 from .const import (
     CONF_AUTO_CODES,
     CONF_CALENDAR,
+    CONF_CHECK_IN,
+    CONF_CHECK_OUT,
     CONF_CODE_PREFIX,
+    CONF_FEED_AIRBNB,
+    CONF_FEED_BOOKING,
     CONF_HOURS_AFTER,
     CONF_HOURS_BEFORE,
     CONF_LOOKAHEAD_DAYS,
     CONF_MAX_ATTEMPTS,
     CONF_MIN_CODE_LENGTH,
     CONF_NOTIFY_NEW_CODE,
+    CONF_OPTION_HOURS,
+    CONF_SYNC_MINUTES,
     DEFAULT_AUTO_CODES,
     DEFAULT_CALENDAR,
+    DEFAULT_CHECK_IN,
+    DEFAULT_CHECK_OUT,
     DEFAULT_CODE_PREFIX,
     DEFAULT_HOURS_AFTER,
     DEFAULT_HOURS_BEFORE,
@@ -37,10 +48,15 @@ from .const import (
     DEFAULT_MAX_ATTEMPTS,
     DEFAULT_MIN_CODE_LENGTH,
     DEFAULT_NOTIFY_NEW_CODE,
+    DEFAULT_OPTION_HOURS,
+    DEFAULT_SYNC_MINUTES,
     DOMAIN,
 )
 
 _PREFIX = re.compile(r"[A-Za-z0-9]{0,6}")
+_URL = TextSelector(TextSelectorConfig(type=TextSelectorType.URL))
+_TEXT_KEYS = (CONF_CALENDAR, CONF_CHECK_IN, CONF_CHECK_OUT)
+_FEED_KEYS = (CONF_FEED_AIRBNB, CONF_FEED_BOOKING)
 
 
 def _number(minimum: int, maximum: int, unit: str | None = None) -> NumberSelector:
@@ -83,6 +99,26 @@ def _schema(current: dict[str, Any]) -> vol.Schema:
                 CONF_LOOKAHEAD_DAYS,
                 default=current.get(CONF_LOOKAHEAD_DAYS, DEFAULT_LOOKAHEAD_DAYS),
             ): _number(1, 365, "d"),
+            vol.Optional(
+                CONF_FEED_AIRBNB,
+                description={"suggested_value": current.get(CONF_FEED_AIRBNB, "")},
+            ): _URL,
+            vol.Optional(
+                CONF_FEED_BOOKING,
+                description={"suggested_value": current.get(CONF_FEED_BOOKING, "")},
+            ): _URL,
+            vol.Required(
+                CONF_CHECK_IN, default=current.get(CONF_CHECK_IN, DEFAULT_CHECK_IN)
+            ): TimeSelector(),
+            vol.Required(
+                CONF_CHECK_OUT, default=current.get(CONF_CHECK_OUT, DEFAULT_CHECK_OUT)
+            ): TimeSelector(),
+            vol.Required(
+                CONF_SYNC_MINUTES, default=current.get(CONF_SYNC_MINUTES, DEFAULT_SYNC_MINUTES)
+            ): _number(5, 240, "min"),
+            vol.Required(
+                CONF_OPTION_HOURS, default=current.get(CONF_OPTION_HOURS, DEFAULT_OPTION_HOURS)
+            ): _number(1, 336, "h"),
         }
     )
 
@@ -91,8 +127,10 @@ def _clean(user_input: dict[str, Any]) -> tuple[dict[str, Any], dict[str, str]]:
     """Whole numbers from number selectors, an upper-case prefix; plus form errors."""
     cleaned: dict[str, Any] = {}
     for key, value in user_input.items():
-        if key == CONF_CALENDAR or isinstance(value, bool):
+        if key in _TEXT_KEYS or isinstance(value, bool):
             cleaned[key] = value
+        elif key in _FEED_KEYS:
+            cleaned[key] = str(value or "").strip()
         elif key == CONF_CODE_PREFIX:
             cleaned[key] = str(value).strip().upper()
         else:
@@ -100,6 +138,9 @@ def _clean(user_input: dict[str, Any]) -> tuple[dict[str, Any], dict[str, str]]:
     errors = {}
     if not _PREFIX.fullmatch(cleaned.get(CONF_CODE_PREFIX, "")):
         errors[CONF_CODE_PREFIX] = "invalid_prefix"
+    for key in _FEED_KEYS:
+        if (url := cleaned.get(key)) and not url.startswith("https://"):
+            errors[key] = "invalid_feed"
     return cleaned, errors
 
 

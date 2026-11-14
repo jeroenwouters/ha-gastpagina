@@ -32,7 +32,7 @@ from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import issue_registry as ir
 from homeassistant.util import dt as dt_util
 
-from . import codegen
+from . import codegen, metadata as md
 from .bookings import booking_key, code_value, is_opt_out, normalize_code, with_code
 from .const import CODE_WRITE_ATTEMPTS, DOMAIN, EVENT_CODE_CREATED
 
@@ -84,6 +84,11 @@ class CodeFiller:
         self._issues: set[str] = set()
         self._failures: dict[str, int] = {}
         self._lock = asyncio.Lock()
+
+    @property
+    def lock(self) -> asyncio.Lock:
+        """Held while the calendar is read and written; shared with the hub and the website."""
+        return self._lock
 
     def _entity(self) -> CalendarEntity | None:
         component = self.hass.data.get(DATA_COMPONENT)
@@ -152,6 +157,8 @@ class CodeFiller:
             for event in events:
                 if code_value(event.description) is not None or event.uid is None:
                     continue
+                if md.is_option(md.read(event.description)):
+                    continue  # a website request gets its code once the owner confirms it
                 if event.end_datetime_local <= now - self.settings.after:
                     continue
                 key = booking_key(event)

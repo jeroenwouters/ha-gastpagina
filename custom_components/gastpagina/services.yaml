@@ -39,3 +39,30 @@ remove_owner_code:
       selector:
         text:
 list_owner_codes:
+bevestig:
+  fields:
+    booking:
+      required: true
+      example: "An Peeters (website)"
+      selector:
+        text:
+weiger:
+  fields:
+    booking:
+      required: true
+      example: "An Peeters (website)"
+      selector:
+        text:
+    reden:
+      required: false
+      selector:
+        text:
+sync_now:
+rotate_feed_token:
+  fields:
+    kanaal:
+      required: false
+      example: "airbnb"
+      selector:
+        text:
+feed_links:

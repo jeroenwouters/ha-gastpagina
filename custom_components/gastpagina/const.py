@@ -86,3 +86,53 @@ ATTR_CODE: Final = "code"
 ATTR_OWNER: Final = "owner"
 
 SCENE_DEVICE: Final = "scene"
+
+# --- v0.4: kanalenhub and website ---------------------------------------------------------
+CONF_FEED_AIRBNB: Final = "feed_airbnb"
+CONF_FEED_BOOKING: Final = "feed_booking"
+CONF_CHECK_IN: Final = "check_in"
+CONF_CHECK_OUT: Final = "check_out"
+CONF_SYNC_MINUTES: Final = "sync_minutes"
+CONF_OPTION_HOURS: Final = "option_hours"
+
+DEFAULT_CHECK_IN: Final = "16:00:00"
+DEFAULT_CHECK_OUT: Final = "10:00:00"
+DEFAULT_SYNC_MINUTES: Final = 10
+DEFAULT_OPTION_HOURS: Final = 48
+
+FEEDS: Final = {CONF_FEED_AIRBNB: "airbnb", CONF_FEED_BOOKING: "booking"}
+FEED_TIMEOUT: Final = timedelta(seconds=30)
+FEED_MAX_BYTES: Final = 2_000_000
+FEED_FAILURES_FOR_ISSUE: Final = 3
+HUB_STORAGE_KEY: Final = f"{DOMAIN}.hub"
+
+# Personal data is removed this long after departure.
+PERSONAL_DATA_DAYS: Final = 30
+CLEANUP_EVERY: Final = timedelta(hours=1)
+
+# Website requests
+REQUESTS_PER_IP_HOUR: Final = 3
+REQUESTS_PER_DAY: Final = 20
+OPEN_REQUESTS_PER_EMAIL: Final = 1
+OPEN_REQUESTS_MAX: Final = 5
+MAX_STAY_NIGHTS: Final = 60
+
+SITE_DIR: Final = "gastpagina_site"
+SITE_URL: Final = "/verhuur"
+
+EVENT_REQUEST: Final = "gastpagina_aanvraag"
+EVENT_REQUEST_CONFIRMED: Final = "gastpagina_aanvraag_bevestigd"
+EVENT_REQUEST_REJECTED: Final = "gastpagina_aanvraag_geweigerd"
+EVENT_REQUEST_EXPIRED: Final = "gastpagina_aanvraag_vervallen"
+EVENT_BOOKING_NEW: Final = "gastpagina_boeking_nieuw"
+EVENT_BOOKING_CHANGED: Final = "gastpagina_boeking_gewijzigd"
+EVENT_BOOKING_CANCELLED: Final = "gastpagina_boeking_geannuleerd"
+EVENT_DOUBLE_BOOKING: Final = "gastpagina_dubbele_boeking"
+
+SERVICE_CONFIRM: Final = "bevestig"
+SERVICE_REJECT: Final = "weiger"
+SERVICE_SYNC_NOW: Final = "sync_now"
+SERVICE_ROTATE_FEED_TOKEN: Final = "rotate_feed_token"  # noqa: S105 (a service name)
+SERVICE_FEED_LINKS: Final = "feed_links"
+ATTR_CHANNEL: Final = "kanaal"
+ATTR_REASON: Final = "reden"

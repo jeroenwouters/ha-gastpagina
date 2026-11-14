@@ -267,7 +267,12 @@ async def test_notification_without_code(harness: Harness) -> None:
     await harness.tick(timedelta(seconds=61))
     code = _code(harness, "nieuw")
     notifications = harness.hass.data["persistent_notification"]
-    created = [n for n in notifications.values() if "Familie Janssens" in n["message"]]
+    # The overlap with the fixture booking also raises a double-booking notice (v0.4).
+    created = [
+        n
+        for n in notifications.values()
+        if "Familie Janssens" in n["message"] and n["title"] == "Gastpagina"
+    ]
     assert len(created) == 1
     assert "03-11-2026" in created[0]["message"]
     assert code not in json.dumps(created[0], default=str)
@@ -278,7 +283,11 @@ async def test_notification_can_be_switched_off(harness: Harness) -> None:
     harness.calendar.add(**NEW, code=None)
     await harness.tick(timedelta(seconds=61))
     notifications = harness.hass.data.get("persistent_notification", {})
-    assert not [n for n in notifications.values() if "Familie Janssens" in n["message"]]
+    assert not [
+        n
+        for n in notifications.values()
+        if "Familie Janssens" in n["message"] and n["title"] == "Gastpagina"
+    ]
 
 
 # --- 25. 1000 codes: unique, right format, long enough -------------------------------------------

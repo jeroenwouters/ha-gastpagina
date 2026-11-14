@@ -211,6 +211,111 @@ Let op:
   (`https://<id>.ui.nabu.casa/local/huisgids.html#bediening`): die werkt binnen
   én buiten.
 
+## Kanalenhub en website (v0.4)
+
+De kalender **Gasten** is de enige bron van waarheid. Airbnb en Booking.com worden elke
+10 minuten ingelezen; elk kanaal krijgt één feed terug zonder zijn eigen boekingen.
+Requirements: `claude/gastpagina-boekingen-requirements.md` in het project.
+
+### Kanalen koppelen
+
+1. Airbnb → Agenda → Beschikbaarheid → *Agenda's koppelen* → **Agenda exporteren**: kopieer de link.
+   Booking.com → Tarieven en beschikbaarheid → *Agenda synchroniseren* → **Exporteren**.
+2. Instellingen → Integraties → Gastpagina → **Configureren**: plak beide links, kijk in- en
+   uitcheckuur na (16:00 en 10:00) en hoe lang een aanvraag openblijft (48 u).
+3. Ontwikkelhulpmiddelen → Acties → `gastpagina.feed_links` geeft de links terug die je
+   **in** Airbnb en Booking.com importeert (*Agenda importeren*). Elke link bevat een geheim; deel ze niet.
+   Gelekt? `gastpagina.rotate_feed_token` maakt een nieuwe (en de oude werkt niet meer).
+4. `gastpagina.sync_now` leest meteen in. Daarna toont `binary_sensor.gastpagina_feed_airbnb_ok`
+   of het lukt.
+
+Wat de importer doet: een Airbnb-boeking wordt een afspraak *Airbnb - 4821* van 16:00 tot
+10:00 met `bron: airbnb`, `extern: …`, `tel4: …` en `reservatie: …`; de code komt er vanzelf
+bij. Gewijzigde data schuiven mee, de code blijft. Verdwijnt een toekomstige boeking uit de
+feed, dan gaat de afspraak weg en krijg je een melding. Vallen er ineens meer dan drie weg,
+dan gebeurt er niets en komt er een reparatie. Afspraken zonder `bron:`/`extern:` van dat kanaal
+raakt de importer nooit aan.
+
+Facebook of telefonisch: maak zelf een afspraak met aankomst- en vertrekuur en zet
+`bron: facebook` in de beschrijving. `blokkeert: nee` houdt een afspraak uit de feeds.
+
+Twee boekingen die een nacht delen → kritieke reparatie *Dubbele boeking* en een melding.
+Er wordt niets automatisch verwijderd.
+
+### Website
+
+1. De site zit in de integratie (`custom_components/gastpagina/site/`) en komt mee met elke update.
+   Een bestand in `/config/gastpagina_site/` met hetzelfde pad gaat voor: zo vervang je teksten of
+   pagina's zonder de integratie aan te passen.
+2. Zet de foto's in `/config/gastpagina_site/img/` (lijst: `docs/website-fotos.md`). Foto's horen
+   niet in de repo.
+3. Voeg de sectie `verhuur:` toe aan `gastpagina.yaml` (zie `config/gastpagina.yaml`) en roep
+   `gastpagina.reload` aan.
+4. De site staat op `https://<nabu-casa>/verhuur/`. Een eigen domein stuur je daarheen door
+   (de hoofdpagina van HA blijft de login).
+
+Geen scripts, lettertypes of widgets van derden toevoegen: de site draait op hetzelfde adres
+als HA. `/verhuur/` stuurt een strikte Content-Security-Policy mee.
+
+Een aanvraag wordt een **optie** in de kalender (`status: optie`): de nachten zijn meteen
+geblokkeerd in de feeds, maar er komt nog geen code. Je beslist met:
+
+- `gastpagina.bevestig` (booking: titel, bv. *An Peeters (website)*) → `status: bevestigd`,
+  de code volgt, event `gastpagina_aanvraag_bevestigd`.
+- `gastpagina.weiger` (+ optionele `reden`) → afspraak weg, event `gastpagina_aanvraag_geweigerd`.
+- Niets doen → na 48 u vervalt de optie (event `gastpagina_aanvraag_vervallen`).
+
+Voorbeeld: melding met knoppen bij een nieuwe aanvraag (pas `notify.mobile_app_…` aan):
+
+```yaml
+- alias: Gastpagina – nieuwe aanvraag
+  triggers:
+    - trigger: event
+      event_type: gastpagina_aanvraag
+  actions:
+    - action: notify.mobile_app_iphone_jeroen
+      data:
+        title: "Aanvraag: {{ trigger.event.data.naam }}"
+        message: >-
+          {{ trigger.event.data.personen }} pers., {{ as_datetime(trigger.event.data.aankomst).strftime('%d/%m') }}
+          – {{ as_datetime(trigger.event.data.vertrek).strftime('%d/%m') }},
+          € {{ trigger.event.data.prijs }}. {{ trigger.event.data.bericht }}
+        data:
+          actions:
+            - action: "GP_OK|{{ trigger.event.data.naam }} (website)"
+              title: Bevestigen
+            - action: "GP_NEE|{{ trigger.event.data.naam }} (website)"
+              title: Weigeren
+- alias: Gastpagina – knop op de melding
+  triggers:
+    - trigger: event
+      event_type: mobile_app_notification_action
+  conditions:
+    - "{{ trigger.event.data.action.startswith('GP_') }}"
+  actions:
+    - action: "gastpagina.{{ 'bevestig' if trigger.event.data.action.startswith('GP_OK') else 'weiger' }}"
+      data:
+        booking: "{{ trigger.event.data.action.split('|', 1)[1] }}"
+```
+
+Mails aan de gast (ontvangen, bevestigd met betaalgegevens, geweigerd) stuur je met een
+automatisering op dezelfde events, bv. met `notify.smtp`.
+
+Privacy: e-mail, telefoon en de laatste 4 cijfers verdwijnen 30 dagen na vertrek uit de
+afspraak; de titel wordt *Boeking (website)*.
+
+Nieuwe entiteiten: `sensor.gastpagina_volgende_boeking`, `sensor.gastpagina_openstaande_aanvragen`,
+per kanaal `binary_sensor.gastpagina_feed_<kanaal>_ok` en `sensor.gastpagina_feed_<kanaal>_laatste_sync`.
+
+### Website-API
+
+| Methode | Pad | |
+|---|---|---|
+| GET | `/api/gastpagina/beschikbaarheid?van=&tot=` | bezette nachten (alleen datums) en de regels |
+| GET | `/api/gastpagina/prijs?aankomst=&vertrek=&personen=` | indicatieve prijs |
+| POST | `/api/gastpagina/aanvraag` | `naam, email, telefoon, personen, aankomst, vertrek, bericht` → `201` / `409 bezet` / `400` / `429` |
+| GET | `/api/gastpagina/ical/<token>/<kanaal>.ics` | uitgaande feed (fout token → `404`) |
+
 ## Testen
 
 Ontwikkelomgeving (Python 3.14):

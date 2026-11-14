@@ -13,7 +13,13 @@
           "auto_codes": "Create codes automatically",
           "code_prefix": "Code prefix (max. 6 letters or digits)",
           "notify_new_code": "Notify on a new code",
-          "lookahead_days": "Look ahead (days)"
+          "lookahead_days": "Look ahead (days)",
+          "feed_airbnb": "Airbnb calendar (iCal export link)",
+          "feed_booking": "Booking.com calendar (iCal export link)",
+          "check_in": "Check-in from",
+          "check_out": "Check-out until",
+          "sync_minutes": "Read the calendars every (minutes)",
+          "option_hours": "Website request expires after (hours)"
         }
       }
     },
@@ -21,7 +27,8 @@
       "single_instance_allowed": "The guest page is already set up."
     },
     "error": {
-      "invalid_prefix": "Letters and digits only, at most 6."
+      "invalid_prefix": "Letters and digits only, at most 6.",
+      "invalid_feed": "Paste the full https:// link from Airbnb or Booking.com."
     }
   },
   "options": {
@@ -37,19 +44,29 @@
           "auto_codes": "Create codes automatically",
           "code_prefix": "Code prefix (max. 6 letters or digits)",
           "notify_new_code": "Notify on a new code",
-          "lookahead_days": "Look ahead (days)"
+          "lookahead_days": "Look ahead (days)",
+          "feed_airbnb": "Airbnb calendar (iCal export link)",
+          "feed_booking": "Booking.com calendar (iCal export link)",
+          "check_in": "Check-in from",
+          "check_out": "Check-out until",
+          "sync_minutes": "Read the calendars every (minutes)",
+          "option_hours": "Website request expires after (hours)"
         },
         "description": "Owner codes: {owners}. Manage them with the actions gastpagina.add_owner_code, remove_owner_code and list_owner_codes (Developer tools → Actions); the codes themselves can never be read back."
       }
     },
     "error": {
-      "invalid_prefix": "Letters and digits only, at most 6."
+      "invalid_prefix": "Letters and digits only, at most 6.",
+      "invalid_feed": "Paste the full https:// link from Airbnb or Booking.com."
     }
   },
   "entity": {
     "binary_sensor": {
       "boeking_actief": {
         "name": "Booking active"
+      },
+      "feed_ok": {
+        "name": "{feed} calendar"
       }
     },
     "sensor": {
@@ -61,6 +78,15 @@
       },
       "eigenaarssessies": {
         "name": "Owner sessions"
+      },
+      "volgende_boeking": {
+        "name": "Next booking"
+      },
+      "openstaande_aanvragen": {
+        "name": "Open requests"
+      },
+      "feed_laatste_sync": {
+        "name": "{feed} calendar read"
       }
     },
     "switch": {
@@ -137,6 +163,22 @@
     "owner_code_clash": {
       "title": "Code of booking {title} is an owner code",
       "description": "This booking does not work while its code equals an owner code. Give the booking another code (or call gastpagina.generate_code); the owner code keeps working."
+    },
+    "feed_failing": {
+      "title": "{feed} calendar unreachable",
+      "description": "The {feed} iCal link failed three times in a row. Bookings from {feed} no longer come in until this is fixed. Check the link in the Gastpagina options."
+    },
+    "feed_mass_removal": {
+      "title": "{feed} drops {count} bookings",
+      "description": "The {feed} calendar no longer lists {count} upcoming bookings. That looks like an error rather than cancellations, so nothing was removed. Check {feed}; this goes away once the calendar is right."
+    },
+    "double_booking": {
+      "title": "Double booking",
+      "description": "{first} and {second} share a night (from {from}). Nothing was removed automatically: cancel one on the platform or in the calendar."
+    },
+    "rental_invalid": {
+      "title": "The verhuur section of gastpagina.yaml is invalid",
+      "description": "The website API is off until this is fixed: {error}"
     }
   },
   "services": {
@@ -199,6 +241,48 @@
     "list_owner_codes": {
       "name": "List owner codes",
       "description": "Names, creation date and last use; never the codes."
+    },
+    "bevestig": {
+      "name": "Confirm request",
+      "description": "Turns a website request into a booking; the code follows.",
+      "fields": {
+        "booking": {
+          "name": "Booking",
+          "description": "Title or uid of the event."
+        }
+      }
+    },
+    "weiger": {
+      "name": "Decline request",
+      "description": "Removes the request; the nights are free again.",
+      "fields": {
+        "booking": {
+          "name": "Booking",
+          "description": "Title or uid of the event."
+        },
+        "reden": {
+          "name": "Reason",
+          "description": "Passed on in the event, for the mail to the guest."
+        }
+      }
+    },
+    "sync_now": {
+      "name": "Read calendars now",
+      "description": "Reads the Airbnb and Booking.com calendars right away."
+    },
+    "rotate_feed_token": {
+      "name": "New calendar link",
+      "description": "Makes a new secret link; the old one stops working. Paste the new link into the platform again.",
+      "fields": {
+        "kanaal": {
+          "name": "Channel",
+          "description": "airbnb or booking; empty = all."
+        }
+      }
+    },
+    "feed_links": {
+      "name": "Show calendar links",
+      "description": "The links to import into Airbnb and Booking.com."
     }
   },
   "exceptions": {
@@ -231,6 +315,12 @@
     },
     "owner_not_found": {
       "message": "No owner code named \"{name}\"."
+    },
+    "request_not_found": {
+      "message": "No open request found for “{booking}”."
+    },
+    "unknown_channel": {
+      "message": "Unknown channel: {channel}."
     }
   }
 }

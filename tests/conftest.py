@@ -95,8 +95,13 @@ class FakeCalendar(CalendarEntity):
         self.events: list[CalendarEvent] = []
         self.updates: list[tuple[str, dict[str, Any]]] = []
         self.fail_updates = 0
+        self.created = 0
         if writable:
-            self._attr_supported_features = CalendarEntityFeature.UPDATE_EVENT
+            self._attr_supported_features = (
+                CalendarEntityFeature.UPDATE_EVENT
+                | CalendarEntityFeature.CREATE_EVENT
+                | CalendarEntityFeature.DELETE_EVENT
+            )
 
     @property
     def event(self) -> CalendarEvent | None:
@@ -134,6 +139,28 @@ class FakeCalendar(CalendarEntity):
             location=event.get("location"),
             uid=uid,
         )
+
+    async def async_create_event(self, **kwargs: Any) -> None:
+        """Add an event with a fresh uid, as Local Calendar does."""
+        self.created += 1
+        self.events.append(
+            CalendarEvent(
+                start=kwargs["dtstart"],
+                end=kwargs["dtend"],
+                summary=kwargs["summary"],
+                description=kwargs.get("description"),
+                uid=f"nieuw-{self.created}",
+            )
+        )
+
+    async def async_delete_event(
+        self,
+        uid: str,
+        recurrence_id: str | None = None,
+        recurrence_range: str | None = None,
+    ) -> None:
+        """Remove an event by uid."""
+        self.events = [e for e in self.events if e.uid != uid]
 
     def add(
         self,

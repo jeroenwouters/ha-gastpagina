@@ -29,6 +29,7 @@ from .const import (
     TOKEN_HEADER,
 )
 from .controller import ActionError
+from .http_site import PUBLIC_VIEWS
 from .runtime import GastRuntime
 from .sessions import Session
 
@@ -66,6 +67,7 @@ def async_register_views(hass: HomeAssistant) -> None:
         StreamTicketView,
         StreamView,
         ActionView,
+        *PUBLIC_VIEWS,
     ):
         hass.http.register_view(view())
 

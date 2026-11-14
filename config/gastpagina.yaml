@@ -67,3 +67,18 @@ climate_limits: { min: 16, max: 22, step: 0.5 }
 scenes:
   slaapwel: { lights_off: true, covers_close: true, climate_night: 17, radio_stop: true }
   alles_uit: { lights_off: true, covers_close: false, climate_night: null, radio_stop: true }
+
+# Website (v0.4). Zonder deze sectie staat de website-API uit.
+verhuur:
+  min_nachten: 2
+  max_personen: 4
+  termijn_uren: 24          # zo lang vóór aankomst kan je nog aanvragen
+  maanden_vooruit: 18
+  # aankomstdagen: [vr, za, ma]   # optioneel
+  prijzen:                  # indicatief op de website; Airbnb/Booking stel je daar zelf in
+    standaard: 110
+    seizoenen:
+      - { van: "07-01", tot: "08-31", per_nacht: 150, min_nachten: 7 }
+      - { van: "12-20", tot: "01-03", per_nacht: 140 }
+    schoonmaak: 60
+    toeristenbelasting_pp_pn: 3.0

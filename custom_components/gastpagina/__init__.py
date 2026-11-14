@@ -23,18 +23,25 @@ import voluptuous as vol
 
 from .const import (
     ATTR_BOOKING,
+    ATTR_CHANNEL,
     ATTR_CODE,
     ATTR_NAME,
     ATTR_OWNER,
+    ATTR_REASON,
     CALENDAR_REFRESH,
     DOMAIN,
     SERVICE_ADD_OWNER_CODE,
+    SERVICE_CONFIRM,
+    SERVICE_FEED_LINKS,
     SERVICE_FILL_CODES,
     SERVICE_GENERATE_CODE,
     SERVICE_LIST_OWNER_CODES,
+    SERVICE_REJECT,
     SERVICE_RELOAD,
     SERVICE_REMOVE_OWNER_CODE,
     SERVICE_REVOKE_SESSIONS,
+    SERVICE_ROTATE_FEED_TOKEN,
+    SERVICE_SYNC_NOW,
 )
 from .http import async_register_views
 from .runtime import GastConfigEntry, GastRuntime
@@ -54,6 +61,11 @@ _ADD_OWNER_SCHEMA = vol.Schema(
 )
 _REMOVE_OWNER_SCHEMA = vol.Schema({vol.Required(ATTR_NAME): cv.string})
 _GENERATE_SCHEMA = vol.Schema({vol.Required(ATTR_BOOKING): cv.string})
+_CONFIRM_SCHEMA = vol.Schema({vol.Required(ATTR_BOOKING): cv.string})
+_REJECT_SCHEMA = vol.Schema(
+    {vol.Required(ATTR_BOOKING): cv.string, vol.Optional(ATTR_REASON): cv.string}
+)
+_ROTATE_SCHEMA = vol.Schema({vol.Optional(ATTR_CHANNEL): cv.string})
 
 
 def _runtime(hass: HomeAssistant) -> GastRuntime:
@@ -89,6 +101,32 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     async def list_owners(call: ServiceCall) -> ServiceResponse:
         return {"owners": _runtime(hass).owners.listing()}
 
+    async def confirm(call: ServiceCall) -> ServiceResponse:
+        return await _runtime(hass).async_confirm(call.data[ATTR_BOOKING])
+
+    async def reject(call: ServiceCall) -> ServiceResponse:
+        return await _runtime(hass).async_reject(
+            call.data[ATTR_BOOKING], call.data.get(ATTR_REASON)
+        )
+
+    async def sync_now(call: ServiceCall) -> ServiceResponse:
+        return {"feeds": await _runtime(hass).async_sync_now()}
+
+    async def rotate(call: ServiceCall) -> ServiceResponse:
+        runtime = _runtime(hass)
+        try:
+            await runtime.hub.async_rotate(call.data.get(ATTR_CHANNEL))
+        except KeyError as err:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="unknown_channel",
+                translation_placeholders={"channel": str(err)},
+            ) from err
+        return {"links": runtime.feed_links()}
+
+    async def links(call: ServiceCall) -> ServiceResponse:
+        return {"links": _runtime(hass).feed_links()}
+
     hass.services.async_register(DOMAIN, SERVICE_RELOAD, reload)
     hass.services.async_register(
         DOMAIN,
@@ -113,6 +151,16 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     hass.services.async_register(
         DOMAIN, SERVICE_LIST_OWNER_CODES, list_owners, supports_response=SupportsResponse.ONLY
     )
+    for name, handler, schema, response in (
+        (SERVICE_CONFIRM, confirm, _CONFIRM_SCHEMA, SupportsResponse.OPTIONAL),
+        (SERVICE_REJECT, reject, _REJECT_SCHEMA, SupportsResponse.OPTIONAL),
+        (SERVICE_SYNC_NOW, sync_now, None, SupportsResponse.OPTIONAL),
+        (SERVICE_ROTATE_FEED_TOKEN, rotate, _ROTATE_SCHEMA, SupportsResponse.OPTIONAL),
+        (SERVICE_FEED_LINKS, links, None, SupportsResponse.ONLY),
+    ):
+        hass.services.async_register(
+            DOMAIN, name, handler, schema=schema, supports_response=response
+        )
     hass.services.async_register(
         DOMAIN,
         SERVICE_REVOKE_SESSIONS,
@@ -128,6 +176,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GastConfigEntry) -> bool
     runtime = GastRuntime(hass, entry)
     await runtime.sessions.async_load()
     await runtime.owners.async_load()
+    await runtime.hub.async_load()
     await runtime.async_reload_config()
     await runtime.bookings.async_refresh()
     entry.runtime_data = runtime

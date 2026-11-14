@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+import asyncio
 from collections import deque
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -13,14 +14,20 @@ from homeassistant.core import Context, HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import entity_registry as er, issue_registry as ir
 from homeassistant.helpers.dispatcher import async_dispatcher_send
+from homeassistant.helpers.network import NoURLAvailableError, get_url
 from homeassistant.util import dt as dt_util
 from homeassistant.util.yaml import load_yaml
 
+from . import occupancy
 from .autocodes import CodeFiller, CodeSettings
 from .bookings import Booking, BookingIndex, normalize_code
+from .calendar_io import CalendarIO, CalendarUnavailable
 from .const import (
+    CLEANUP_EVERY,
     CONF_AUTO_CODES,
     CONF_CALENDAR,
+    CONF_CHECK_IN,
+    CONF_CHECK_OUT,
     CONF_CODE_PREFIX,
     CONF_HOURS_AFTER,
     CONF_HOURS_BEFORE,
@@ -28,8 +35,12 @@ from .const import (
     CONF_MAX_ATTEMPTS,
     CONF_MIN_CODE_LENGTH,
     CONF_NOTIFY_NEW_CODE,
+    CONF_OPTION_HOURS,
+    CONF_SYNC_MINUTES,
     CONFIG_FILE,
     DEFAULT_AUTO_CODES,
+    DEFAULT_CHECK_IN,
+    DEFAULT_CHECK_OUT,
     DEFAULT_CODE_PREFIX,
     DEFAULT_HOURS_AFTER,
     DEFAULT_HOURS_BEFORE,
@@ -37,9 +48,12 @@ from .const import (
     DEFAULT_MAX_ATTEMPTS,
     DEFAULT_MIN_CODE_LENGTH,
     DEFAULT_NOTIFY_NEW_CODE,
+    DEFAULT_OPTION_HOURS,
+    DEFAULT_SYNC_MINUTES,
     DOMAIN,
     EVENT_ACTION,
     EVENT_LOGIN,
+    FEEDS,
     GLOBAL_FAILURE_LIMIT,
     OWNER_SESSION_TTL,
     ROLE_GUEST,
@@ -50,15 +64,24 @@ from .const import (
 )
 from .controller import Controller
 from .devices import DeviceConfig, Problem, parse_config
+from .hub import ChannelHub, HubSettings
 from .owners import OwnerCodes
 from .ratelimit import LoginLimiter
 from .sessions import Session, SessionManager
+from .website import RentalConfig, Website, WebsiteSettings, parse_rental
 
 type GastConfigEntry = ConfigEntry[GastRuntime]
 
 
 def _read_file(path: Path) -> Any:
     return load_yaml(path)
+
+
+def _time(value: Any, default: str) -> time:
+    try:
+        return time.fromisoformat(str(value or default))
+    except ValueError:
+        return time.fromisoformat(default)
 
 
 class GastRuntime:
@@ -92,6 +115,43 @@ class GastRuntime:
             ),
             owner_taken=self.owners.async_taken,
         )
+        self.io = CalendarIO(hass, options[CONF_CALENDAR], self.codes.lock)
+        check_in = _time(options.get(CONF_CHECK_IN), DEFAULT_CHECK_IN)
+        check_out = _time(options.get(CONF_CHECK_OUT), DEFAULT_CHECK_OUT)
+        self.hub = ChannelHub(
+            hass,
+            self.io,
+            HubSettings(
+                feeds={
+                    name: url
+                    for key, name in FEEDS.items()
+                    if (url := str(options.get(key) or "").strip())
+                },
+                check_in=check_in,
+                check_out=check_out,
+                interval=timedelta(
+                    minutes=int(options.get(CONF_SYNC_MINUTES, DEFAULT_SYNC_MINUTES))
+                ),
+            ),
+            on_change=self.async_calendar_changed,
+        )
+        self.rental_config = RentalConfig()
+        self._rental_problems: list[Problem] = []
+        self.website = Website(
+            hass,
+            self.io,
+            WebsiteSettings(
+                check_in=check_in,
+                check_out=check_out,
+                option_lifetime=timedelta(
+                    hours=int(options.get(CONF_OPTION_HOURS, DEFAULT_OPTION_HOURS))
+                ),
+            ),
+            lambda: self.rental_config,
+        )
+        self.stays: list[occupancy.Stay] = []
+        self._sync_task: asyncio.Task[Any] | None = None
+        self._last_cleanup: datetime | None = None
         self.sessions = SessionManager(hass)
         self.limiter = LoginLimiter(int(options.get(CONF_MAX_ATTEMPTS, DEFAULT_MAX_ATTEMPTS)))
         self.errors: deque[str] = deque(maxlen=20)
@@ -118,6 +178,8 @@ class GastRuntime:
             )
         else:
             config = parse_config(raw)
+            section = raw.get("verhuur") if isinstance(raw, dict) else None
+            self.rental_config, self._rental_problems = parse_rental(section)
 
         file_broken = any(
             p.issue_id in ("config_invalid", "config_missing") for p in config.problems
@@ -134,7 +196,9 @@ class GastRuntime:
     def check_entities(self) -> None:
         """Raise issues for entities that do not exist (yet), then sync all file issues."""
         registry = er.async_get(self.hass)
-        problems = list(self.controller.config.problems) + self._file_problems
+        problems = (
+            list(self.controller.config.problems) + self._file_problems + self._rental_problems
+        )
         for device in self.controller.config.devices.values():
             if self.hass.states.get(device.entity_id) is None and not registry.async_get(
                 device.entity_id
@@ -169,9 +233,86 @@ class GastRuntime:
         """Every minute: reread the calendar, fill in missing codes, drop stale sessions."""
         await self.bookings.async_refresh()
         await self.async_fill_codes()
+        await self.async_refresh_stays()
+        try:
+            expired = await self.website.async_expire()
+        except CalendarUnavailable:
+            expired = 0
+        if expired:
+            await self.async_calendar_changed()
+        self._start_sync()
+        await self._cleanup()
         self.prune_sessions()
         self.notify()
         async_dispatcher_send(self.hass, SIGNAL_RECHECK)
+
+    def _start_sync(self, names: list[str] | None = None) -> None:
+        """Read due feeds in the background: a slow platform must not hold up the tick."""
+        if self._sync_task is not None and not self._sync_task.done():
+            return
+        due = names if names is not None else self.hub.due(dt_util.utcnow())
+        if due:
+            self._sync_task = self.hass.async_create_background_task(
+                self.hub.async_sync(due), f"{DOMAIN} feed sync"
+            )
+
+    async def _cleanup(self) -> None:
+        now = dt_util.utcnow()
+        if self._last_cleanup is not None and now - self._last_cleanup < CLEANUP_EVERY:
+            return
+        self._last_cleanup = now
+        try:
+            await self.website.async_cleanup()
+        except CalendarUnavailable:
+            self._last_cleanup = None
+
+    async def async_refresh_stays(self) -> None:
+        """Reread the nights (for the sensors) and look for double bookings."""
+        try:
+            events = await self.io.events(*occupancy.window(dt_util.now()))
+        except CalendarUnavailable:
+            return
+        self.stays = occupancy.stays(events)
+        self.hub.check_clashes(self.stays)
+
+    async def async_calendar_changed(self) -> None:
+        """Something wrote to the calendar: codes, bookings, nights and entities follow."""
+        await self.async_fill_codes()
+        await self.bookings.async_refresh()
+        await self.async_refresh_stays()
+        self.prune_sessions()
+        self.notify()
+        async_dispatcher_send(self.hass, SIGNAL_RECHECK)
+
+    # --- hub and website services ----------------------------------------------------
+
+    async def async_sync_now(self) -> dict[str, dict[str, int]]:
+        """Read every feed now and wait for it."""
+        if self._sync_task is not None and not self._sync_task.done():
+            await self._sync_task
+        result = await self.hub.async_sync()
+        self.notify()
+        return result
+
+    async def async_confirm(self, query: str) -> dict[str, Any]:
+        """Turn an option into a booking."""
+        data = await self.website.async_confirm(query)
+        await self.async_calendar_changed()
+        return data
+
+    async def async_reject(self, query: str, reason: str | None) -> dict[str, Any]:
+        """Decline an option."""
+        data = await self.website.async_reject(query, reason)
+        await self.async_calendar_changed()
+        return data
+
+    def feed_links(self) -> dict[str, str]:
+        """Full feed URLs to paste into Airbnb and Booking.com."""
+        try:
+            base = get_url(self.hass, prefer_external=True, allow_internal=False)
+        except NoURLAvailableError:
+            base = ""
+        return {channel: base + path for channel, path in self.hub.paths().items()}
 
     async def async_started(self, _hass: HomeAssistant) -> None:
         """Once HA runs, every integration has had a chance to add its entities."""
@@ -211,6 +352,9 @@ class GastRuntime:
         async_dispatcher_send(self.hass, SIGNAL_RECHECK)
         self.bookings.clear_issues()
         self.codes.clear_issues()
+        self.hub.clear_issues()
+        if self._sync_task is not None:
+            self._sync_task.cancel()
         for issue_id in self._config_issues:
             ir.async_delete_issue(self.hass, DOMAIN, issue_id)
         self._config_issues = set()

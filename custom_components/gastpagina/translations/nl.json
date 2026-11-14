@@ -13,7 +13,13 @@
           "auto_codes": "Codes automatisch aanmaken",
           "code_prefix": "Voorvoegsel voor codes (max. 6 letters of cijfers)",
           "notify_new_code": "Melding bij een nieuwe code",
-          "lookahead_days": "Vooruit kijken (dagen)"
+          "lookahead_days": "Vooruit kijken (dagen)",
+          "feed_airbnb": "Airbnb-kalender (iCal-exportlink)",
+          "feed_booking": "Booking.com-kalender (iCal-exportlink)",
+          "check_in": "Inchecken vanaf",
+          "check_out": "Uitchecken tot",
+          "sync_minutes": "Kalenders inlezen elke (minuten)",
+          "option_hours": "Aanvraag van de website vervalt na (uren)"
         }
       }
     },
@@ -21,7 +27,8 @@
       "single_instance_allowed": "Gastpagina is al ingesteld."
     },
     "error": {
-      "invalid_prefix": "Alleen letters en cijfers, hoogstens 6."
+      "invalid_prefix": "Alleen letters en cijfers, hoogstens 6.",
+      "invalid_feed": "Plak de volledige https://-link uit Airbnb of Booking.com."
     }
   },
   "options": {
@@ -37,19 +44,29 @@
           "auto_codes": "Codes automatisch aanmaken",
           "code_prefix": "Voorvoegsel voor codes (max. 6 letters of cijfers)",
           "notify_new_code": "Melding bij een nieuwe code",
-          "lookahead_days": "Vooruit kijken (dagen)"
+          "lookahead_days": "Vooruit kijken (dagen)",
+          "feed_airbnb": "Airbnb-kalender (iCal-exportlink)",
+          "feed_booking": "Booking.com-kalender (iCal-exportlink)",
+          "check_in": "Inchecken vanaf",
+          "check_out": "Uitchecken tot",
+          "sync_minutes": "Kalenders inlezen elke (minuten)",
+          "option_hours": "Aanvraag van de website vervalt na (uren)"
         },
         "description": "Eigenaarscodes: {owners}. Beheer ze via de acties gastpagina.add_owner_code, remove_owner_code en list_owner_codes (Ontwikkelhulpmiddelen → Acties); de codes zelf zijn nergens op te vragen."
       }
     },
     "error": {
-      "invalid_prefix": "Alleen letters en cijfers, hoogstens 6."
+      "invalid_prefix": "Alleen letters en cijfers, hoogstens 6.",
+      "invalid_feed": "Plak de volledige https://-link uit Airbnb of Booking.com."
     }
   },
   "entity": {
     "binary_sensor": {
       "boeking_actief": {
         "name": "Boeking actief"
+      },
+      "feed_ok": {
+        "name": "Kalender {feed}"
       }
     },
     "sensor": {
@@ -61,6 +78,15 @@
       },
       "eigenaarssessies": {
         "name": "Eigenaarssessies"
+      },
+      "volgende_boeking": {
+        "name": "Volgende boeking"
+      },
+      "openstaande_aanvragen": {
+        "name": "Openstaande aanvragen"
+      },
+      "feed_laatste_sync": {
+        "name": "Kalender {feed} ingelezen"
       }
     },
     "switch": {
@@ -137,6 +163,22 @@
     "owner_code_clash": {
       "title": "Code van boeking {title} is een eigenaarscode",
       "description": "Deze boeking werkt niet zolang haar code gelijk is aan een eigenaarscode. Geef de boeking een andere code (of roep gastpagina.generate_code aan); de eigenaarscode blijft werken."
+    },
+    "feed_failing": {
+      "title": "Kalender van {feed} niet bereikbaar",
+      "description": "De iCal-link van {feed} gaf drie keer na elkaar een fout. Boekingen van {feed} komen niet meer binnen tot dit hersteld is. Controleer de link in de opties van Gastpagina."
+    },
+    "feed_mass_removal": {
+      "title": "{feed} laat {count} boekingen vallen",
+      "description": "De kalender van {feed} bevat {count} toekomstige boekingen niet meer. Dat lijkt eerder op een fout dan op annuleringen, dus er is niets verwijderd. Kijk het na op {feed}; zodra de kalender klopt, verdwijnt deze melding."
+    },
+    "double_booking": {
+      "title": "Dubbele boeking",
+      "description": "{first} en {second} delen een nacht (vanaf {from}). Er is niets automatisch verwijderd: annuleer er één op het platform of in de kalender."
+    },
+    "rental_invalid": {
+      "title": "De sectie verhuur in gastpagina.yaml is ongeldig",
+      "description": "De website-API staat uit tot dit hersteld is: {error}"
     }
   },
   "services": {
@@ -199,6 +241,48 @@
     "list_owner_codes": {
       "name": "Eigenaarscodes tonen",
       "description": "Namen, aanmaakdatum en laatst gebruikt; nooit de codes."
+    },
+    "bevestig": {
+      "name": "Aanvraag bevestigen",
+      "description": "Maakt van een aanvraag van de website een boeking; de code volgt vanzelf.",
+      "fields": {
+        "booking": {
+          "name": "Boeking",
+          "description": "Titel of uid van de afspraak."
+        }
+      }
+    },
+    "weiger": {
+      "name": "Aanvraag weigeren",
+      "description": "Verwijdert de aanvraag; de nachten komen weer vrij.",
+      "fields": {
+        "booking": {
+          "name": "Boeking",
+          "description": "Titel of uid van de afspraak."
+        },
+        "reden": {
+          "name": "Reden",
+          "description": "Gaat mee in het event, voor de mail aan de gast."
+        }
+      }
+    },
+    "sync_now": {
+      "name": "Kalenders nu inlezen",
+      "description": "Leest de kalenders van Airbnb en Booking.com meteen in."
+    },
+    "rotate_feed_token": {
+      "name": "Nieuwe kalenderlink",
+      "description": "Maakt een nieuwe geheime link; de oude werkt niet meer. Plak de nieuwe link opnieuw in het platform.",
+      "fields": {
+        "kanaal": {
+          "name": "Kanaal",
+          "description": "airbnb of booking; leeg = allemaal."
+        }
+      }
+    },
+    "feed_links": {
+      "name": "Kalenderlinks tonen",
+      "description": "De links om in Airbnb en Booking.com te importeren."
     }
   },
   "exceptions": {
@@ -231,6 +315,12 @@
     },
     "owner_not_found": {
       "message": "Geen eigenaarscode met de naam \"{name}\"."
+    },
+    "request_not_found": {
+      "message": "Geen openstaande aanvraag gevonden voor “{booking}”."
+    },
+    "unknown_channel": {
+      "message": "Onbekend kanaal: {channel}."
     }
   }
 }
