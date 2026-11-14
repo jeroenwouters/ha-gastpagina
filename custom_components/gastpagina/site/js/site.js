@@ -186,6 +186,7 @@
           [["Verblijf, " + p.nachten + (p.nachten === 1 ? " nacht" : " nachten"), p.logies],
            ["Schoonmaak", p.schoonmaak],
            ["Toeristenbelasting", p.toeristenbelasting]].forEach(function (row) {
+            if (!row[1] && row[0].indexOf("Verblijf") !== 0) return; // all-in: no empty rows
             var dt = document.createElement("dt"), dd = document.createElement("dd");
             dt.textContent = row[0]; dd.textContent = euro(row[1]); dl.appendChild(dt); dl.appendChild(dd);
           });

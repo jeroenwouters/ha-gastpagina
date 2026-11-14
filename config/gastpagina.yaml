@@ -81,4 +81,4 @@ verhuur:
       - { van: "07-01", tot: "08-31", per_nacht: 150, min_nachten: 7 }
       - { van: "12-20", tot: "01-03", per_nacht: 140 }
     schoonmaak: 60
-    toeristenbelasting_pp_pn: 3.0
+    toeristenbelasting_pp_pn: 0   # 0 = all-in prijs; de rij verdwijnt dan van de website
